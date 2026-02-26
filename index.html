@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StepWise — Participant Portal</title>
+  <title>StepWise — Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -27,6 +27,7 @@
       --success: #22c55e;
       --error: #E8573A;
       --white: #FFFFFF;
+      --info: #3B82F6;
     }
 
     body {
@@ -39,11 +40,10 @@
       background-size: 48px 48px;
     }
 
-    /* Typography */
     .heading-serif { font-family: 'Playfair Display', Georgia, serif; }
     .heading-serif-italic { font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
 
-    /* Top Nav Bar */
+    /* Top Nav */
     .top-nav {
       background: var(--white);
       border-bottom: 1px solid var(--border);
@@ -56,11 +56,7 @@
       top: 0;
       z-index: 100;
     }
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
     .brand-name {
       font-family: 'DM Sans', sans-serif;
       font-weight: 700;
@@ -70,325 +66,43 @@
       text-decoration: none;
     }
     .brand-name:hover { opacity: 0.8; }
-    .brand-dots {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-    .brand-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
+    .brand-dots { display: flex; gap: 4px; align-items: center; }
+    .brand-dot { width: 10px; height: 10px; border-radius: 50%; }
     .brand-dot.amber { background: var(--brand-amber); }
     .brand-dot.red { background: var(--brand-red); }
     .brand-dot.purple { background: var(--brand-purple); }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      background: var(--brand-amber);
+      color: var(--white);
+      padding: 4px 10px;
+      border-radius: 4px;
     }
-    .nav-link {
+    .nav-signout {
       font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary);
-      text-decoration: none;
-      padding: 8px 14px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 12px;
       border-radius: 6px;
       transition: all 0.2s;
     }
-    .nav-link:hover {
-      color: var(--text-primary);
-      background: var(--cream-dark);
-    }
-    .nav-link.active {
-      color: var(--brand-amber);
-      font-weight: 600;
-    }
-    .nav-mobile-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      color: var(--text-primary);
-      padding: 4px;
-    }
-    .nav-mobile-menu {
-      display: none;
-      position: absolute;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
-      flex-direction: column;
-      gap: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-    .nav-mobile-menu.open { display: flex; }
-    .nav-mobile-menu .nav-link {
-      padding: 10px 14px;
-      font-size: 14px;
-    }
-    @media (max-width: 700px) {
-      .top-nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      .nav-mobile-toggle { display: block; }
-    }
+    .nav-signout:hover { color: var(--text-primary); background: var(--cream-dark); }
 
-    /* Brand Header (used inside cards) */
-    .brand-bar {
-      padding: 24px 32px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Page Container */
-    .page-container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
-    }
-
-    /* Page Title */
-    .page-title {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .page-title h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-style: italic;
-      font-weight: 600;
-      font-size: 42px;
-      color: var(--text-primary);
-      line-height: 1.15;
-    }
-    .page-subtitle {
-      text-align: center;
-      font-size: 15px;
-      color: var(--text-secondary);
-      margin-bottom: 40px;
-      line-height: 1.6;
-    }
-
-    /* Section Title */
-    .section-title {
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    .section-title h2 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 600;
-      font-size: 28px;
-      color: var(--text-primary);
-    }
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--brand-amber);
-      text-align: center;
-      margin-bottom: 6px;
-    }
-
-    /* Step Progress Bar */
-    .step-progress-wrapper {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .step-counter {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--brand-amber);
-      margin-bottom: 12px;
-    }
-    .step-bar {
-      display: flex;
-      gap: 6px;
-      max-width: 320px;
-      margin: 0 auto;
-    }
-    .step-segment {
-      flex: 1;
-      height: 5px;
-      border-radius: 3px;
-      background: var(--border);
-      transition: background 0.4s ease;
-    }
-    .step-segment.active { background: var(--brand-red); }
-    .step-segment.done { background: var(--brand-amber); }
-
-    /* Conversational Form */
-    .form-section {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px 36px;
-      margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-
-    .conv-line {
-      font-size: 18px;
-      line-height: 2.4;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .conv-line .inline-input {
-      border: none;
-      border-bottom: 2px solid var(--input-line);
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-primary);
-      padding: 2px 6px;
-      min-width: 120px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    .conv-line .inline-input:focus {
-      border-bottom-color: var(--brand-amber);
-    }
-    .conv-line .inline-input::placeholder {
-      color: var(--text-muted);
-      font-weight: 400;
-    }
-    .conv-line .inline-input.wide { min-width: 240px; }
-    .conv-line .inline-input.date-part { min-width: 50px; max-width: 60px; text-align: center; }
-    .conv-line .inline-input.date-part.year { min-width: 70px; max-width: 80px; }
-
-    .conv-line .read-only-value {
-      font-weight: 600;
-      color: var(--text-secondary);
-      border-bottom: 2px solid transparent;
-      padding: 2px 6px;
-    }
-
-    /* Block textarea for longer inputs */
-    .conv-textarea-label {
-      font-size: 17px;
-      color: var(--text-primary);
-      margin-bottom: 10px;
-      line-height: 1.5;
-    }
-    .conv-textarea {
-      width: 100%;
-      min-height: 90px;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      color: var(--text-primary);
-      background: var(--cream);
-      resize: vertical;
-      outline: none;
-      transition: border-color 0.3s;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-    .conv-textarea:focus {
-      border-color: var(--brand-amber);
-      background: var(--white);
-    }
-    .conv-textarea::placeholder {
-      color: var(--text-muted);
-    }
-
-    /* Buttons */
-    .btn-continue {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 32px;
-      border: 2px solid var(--text-primary);
-      border-radius: 40px;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .btn-continue:hover {
-      background: var(--text-primary);
-      color: var(--white);
-    }
-    .btn-continue:active { transform: scale(0.97); }
-    .btn-continue:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-    .btn-continue:disabled:hover {
-      background: transparent;
-      color: var(--text-primary);
-    }
-
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .btn-back:hover { color: var(--text-primary); }
-
-    .btn-primary-fill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 36px;
-      border: none;
-      border-radius: 40px;
-      background: var(--brand-amber);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--white);
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: 0 2px 8px rgba(245,166,35,0.3);
-    }
-    .btn-primary-fill:hover {
-      background: #e0950e;
-      box-shadow: 0 4px 16px rgba(245,166,35,0.35);
-    }
-    .btn-primary-fill:active { transform: scale(0.97); }
-    .btn-primary-fill:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-nav-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-top: 32px;
-    }
-
-    /* Login-specific */
+    /* Login Card */
     .login-card {
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 48px 40px;
       max-width: 480px;
-      margin: 40px auto 0;
+      margin: 80px auto 0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.04);
       text-align: center;
     }
@@ -427,50 +141,51 @@
     .login-email-input:focus { border-bottom-color: var(--brand-amber); }
     .login-email-input::placeholder { color: var(--text-muted); font-weight: 400; }
 
-    /* Check Email */
-    .check-email-icon {
-      font-size: 56px;
-      margin-bottom: 20px;
+    /* Gradient line */
+    .gradient-line {
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--brand-amber), var(--brand-red), var(--brand-purple));
+      margin-bottom: 28px;
     }
 
-    /* Success */
-    .success-icon { font-size: 64px; margin-bottom: 16px; }
-
-    /* Not Found */
-    .not-found-icon { font-size: 48px; margin-bottom: 16px; }
-
-    /* Review Section */
-    .review-card {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin-bottom: 16px;
-    }
-    .review-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--brand-amber);
-      margin-bottom: 6px;
-    }
-    .review-value {
+    /* Buttons */
+    .btn-continue {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 32px;
+      border: 2px solid var(--text-primary);
+      border-radius: 40px;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
       font-size: 15px;
+      font-weight: 600;
       color: var(--text-primary);
-      line-height: 1.6;
+      cursor: pointer;
+      transition: all 0.25s;
     }
-    .review-value.empty {
-      color: var(--text-muted);
-      font-style: italic;
-    }
-    .review-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
+    .btn-continue:hover { background: var(--text-primary); color: var(--white); }
+    .btn-continue:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-continue:disabled:hover { background: transparent; color: var(--text-primary); }
 
-    /* Alert Banner */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .btn-back:hover { color: var(--text-primary); }
+
+    /* Alert */
     .alert-banner {
       padding: 12px 20px;
       border-radius: 10px;
@@ -480,16 +195,8 @@
       align-items: center;
       gap: 10px;
     }
-    .alert-banner.error {
-      background: rgba(232,87,58,0.08);
-      color: var(--brand-red);
-      border: 1px solid rgba(232,87,58,0.15);
-    }
-    .alert-banner.success {
-      background: rgba(34,197,94,0.08);
-      color: var(--success);
-      border: 1px solid rgba(34,197,94,0.15);
-    }
+    .alert-banner.error { background: rgba(232,87,58,0.08); color: var(--brand-red); border: 1px solid rgba(232,87,58,0.15); }
+    .alert-banner.success { background: rgba(34,197,94,0.08); color: var(--success); border: 1px solid rgba(34,197,94,0.15); }
 
     /* Spinner */
     .spinner {
@@ -501,277 +208,383 @@
       border-radius: 50%;
       animation: spin 0.65s linear infinite;
     }
-    .spinner.white {
-      border-color: rgba(255,255,255,0.3);
-      border-top-color: white;
-    }
+    .spinner.white { border-color: rgba(255,255,255,0.3); border-top-color: white; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Decorative gradient line */
-    .gradient-line {
-      height: 4px;
-      border-radius: 2px;
-      background: linear-gradient(90deg, var(--brand-amber), var(--brand-red), var(--brand-purple));
-      margin-bottom: 28px;
-    }
-
-    /* Fade animations */
-    .fade-in {
-      animation: fadeIn 0.4s ease forwards;
-    }
+    /* Fade */
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Sign-out link */
-    .signout-link {
-      position: fixed;
-      bottom: 20px;
-      right: 24px;
-      font-size: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-family: 'DM Sans', sans-serif;
-      transition: color 0.2s;
+    /* Dashboard Layout */
+    .dash-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px 80px;
     }
-    .signout-link:hover { color: var(--text-secondary); }
-
-    /* Training badge */
-    .training-badge {
-      display: inline-flex;
+    .dash-header {
+      display: flex;
       align-items: center;
-      gap: 6px;
-      background: var(--cream-dark);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-size: 13px;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .dash-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
       font-weight: 600;
+      font-size: 32px;
       color: var(--text-primary);
-      margin-bottom: 8px;
+    }
+    .dash-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
 
-    /* Chip Select Grid */
-    .chip-grid {
+    /* Stats Row */
+    .stats-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
     }
-    .chip-option {
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 14px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      padding: 7px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
       background: var(--white);
       cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-      user-select: none;
-    }
-    .chip-option:hover {
-      border-color: var(--text-muted);
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .chip-option.selected {
-      border-width: 2px;
-      font-weight: 600;
-    }
-    .chip-option .chip-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      border: 2px solid currentColor;
       transition: all 0.2s;
     }
-    .chip-option.selected .chip-dot {
-      border: none;
-      width: 12px;
-      height: 12px;
-    }
-    /* Color themes for chip groups */
-    .chip-option.color-amber.selected { border-color: var(--brand-amber); background: #FFF9F0; color: #B8760A; }
-    .chip-option.color-amber .chip-dot { border-color: var(--brand-amber); }
-    .chip-option.color-amber.selected .chip-dot { background: var(--brand-amber); }
-
-    .chip-option.color-red.selected { border-color: var(--brand-red); background: #FEF2F0; color: #B83D25; }
-    .chip-option.color-red .chip-dot { border-color: var(--brand-red); }
-    .chip-option.color-red.selected .chip-dot { background: var(--brand-red); }
-
-    .chip-option.color-purple.selected { border-color: var(--brand-purple); background: #F8F0FA; color: #5E1D6E; }
-    .chip-option.color-purple .chip-dot { border-color: var(--brand-purple); }
-    .chip-option.color-purple.selected .chip-dot { background: var(--brand-purple); }
-
-    .chip-option.color-teal.selected { border-color: #0D9488; background: #F0FDFA; color: #0F766E; }
-    .chip-option.color-teal .chip-dot { border-color: #0D9488; }
-    .chip-option.color-teal.selected .chip-dot { background: #0D9488; }
-
-    .chip-option.color-blue.selected { border-color: #3B82F6; background: #EFF6FF; color: #1D4ED8; }
-    .chip-option.color-blue .chip-dot { border-color: #3B82F6; }
-    .chip-option.color-blue.selected .chip-dot { background: #3B82F6; }
-
-    .chip-option.color-rose.selected { border-color: #E11D48; background: #FFF1F2; color: #BE123C; }
-    .chip-option.color-rose .chip-dot { border-color: #E11D48; }
-    .chip-option.color-rose.selected .chip-dot { background: #E11D48; }
-
-    .chip-other-input {
-      width: 100%;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      color: var(--text-primary);
-      background: var(--cream);
-      outline: none;
-      transition: border-color 0.3s;
-      margin-top: -10px;
-      margin-bottom: 20px;
-    }
-    .chip-other-input:focus {
+    .filter-chip:hover { border-color: var(--text-muted); color: var(--text-primary); }
+    .filter-chip.active {
       border-color: var(--brand-amber);
+      background: #FFF9F0;
+      color: var(--brand-amber);
+      font-weight: 600;
+    }
+    .search-input {
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      width: 220px;
+      transition: border-color 0.2s;
       background: var(--white);
     }
-    .chip-other-input::placeholder { color: var(--text-muted); }
+    .search-input:focus { border-color: var(--brand-amber); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    /* Applications Table */
+    .app-table {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .app-table-header {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr 1.2fr 1fr;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+    }
+    .app-table-header span {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .app-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr 1.2fr 1fr;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      align-items: center;
+    }
+    .app-row:last-child { border-bottom: none; }
+    .app-row:hover { background: var(--cream); }
+    .app-row-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+    .app-row-email {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .app-row-level {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .app-row-date {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .status-badge.submitted { background: rgba(59,130,246,0.1); color: #2563EB; }
+    .status-badge.under_review { background: rgba(245,166,35,0.12); color: #B8760A; }
+    .status-badge.interview_scheduled { background: rgba(168,85,247,0.1); color: #7C3AED; }
+    .status-badge.interview_approved { background: rgba(34,197,94,0.1); color: #16A34A; }
+    .status-badge.accepted { background: rgba(34,197,94,0.15); color: #15803D; }
+    .status-badge.rejected { background: rgba(232,87,58,0.1); color: #DC2626; }
+    .status-badge.withdrawn { background: rgba(180,180,180,0.15); color: #737373; }
+    .status-badge.draft { background: rgba(180,180,180,0.1); color: #A3A3A3; }
+
+    /* Detail View */
+    .detail-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px 32px 80px;
+    }
+    .detail-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .detail-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 28px;
+      color: var(--text-primary);
+    }
+    .detail-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    .detail-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Status Select */
+    .status-select {
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--white);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .status-select:focus { border-color: var(--brand-amber); }
+
+    /* Detail Section */
+    .detail-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .detail-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--brand-amber);
+      margin-bottom: 16px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .detail-field {}
+    .detail-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .detail-field-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .detail-field-value.empty {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .detail-field.full { grid-column: 1 / -1; }
+
+    /* Chip display (read-only) */
+    .chip-display {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--cream-dark);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    /* Stress meter */
+    .stress-meter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stress-bar {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border);
+      overflow: hidden;
+    }
+    .stress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
 
     /* Responsive */
-    @media (max-width: 600px) {
-      .brand-bar { padding: 16px 20px; }
-      .page-container { padding: 0 16px 60px; }
-      .page-title h1 { font-size: 32px; }
-      .form-section { padding: 28px 24px; }
-      .conv-line { font-size: 16px; }
-      .conv-line .inline-input { font-size: 16px; min-width: 100px; }
-      .conv-line .inline-input.wide { min-width: 180px; }
-      .login-card { padding: 32px 24px; margin-top: 40px; }
+    @media (max-width: 800px) {
+      .top-nav { padding: 0 16px; }
+      .dash-container, .detail-container { padding: 16px 16px 60px; }
+      .app-table-header, .app-row { grid-template-columns: 1fr 1fr; gap: 4px; }
+      .app-table-header span:nth-child(n+3), .app-row > *:nth-child(n+3) { display: none; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .filter-bar { gap: 6px; }
+      .search-input { width: 100%; order: -1; }
+      .login-card { padding: 32px 20px; margin-top: 40px; }
       .login-email-input { min-width: 200px; font-size: 16px; }
-      .review-row { grid-template-columns: 1fr; }
-      .chip-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .chip-option { padding: 10px 12px; font-size: 13px; }
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect, useCallback } = React;
+    const { useState, useEffect, useMemo } = React;
     const { createClient } = window.supabase;
 
     /* ── CONFIG ── */
-    const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
+    const SUPABASE_URL = 'https://ofgdycudacoqvkxtbadr.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mZ2R5Y3VkYWNvcXZreHRiYWRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0NDgzNTUsImV4cCI6MjA4NjAyNDM1NX0.HK4soZte-vjDj28Ec93XzbuqEHDcKlX5ch95qrAQZQQ';
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    /* ── HELPERS ── */
-    const safe = (val) => val || '';
-
-    /* Parse a stored string back into { selected: [...], other: '...' } */
-    const parseChipValue = (val, options) => {
-      if (!val) return { selected: [], other: '' };
-      const parts = val.split(',').map(s => s.trim()).filter(Boolean);
-      const optionLabels = options.map(o => o.label);
-      const selected = parts.filter(p => optionLabels.includes(p));
-      const otherParts = parts.filter(p => !optionLabels.includes(p));
-      return { selected, other: otherParts.join(', ') };
-    };
-
-    /* Serialize chip selections + other text back to a single string */
-    const serializeChipValue = (selected, other) => {
-      const all = [...selected];
-      if (other.trim()) all.push(other.trim());
-      return all.join(', ');
-    };
-
-    /* ── CHIP SELECT COMPONENT ── */
-    function ChipSelect({ label, options, colorTheme, value, onChange, columns }) {
-      const parsed = parseChipValue(value, options);
-      const [selected, setSelected] = useState(parsed.selected);
-      const [other, setOther] = useState(parsed.other);
-      const [showOther, setShowOther] = useState(parsed.other.length > 0);
-
-      const toggle = (optionLabel) => {
-        setSelected(prev => {
-          const next = prev.includes(optionLabel)
-            ? prev.filter(l => l !== optionLabel)
-            : [...prev, optionLabel];
-          onChange(serializeChipValue(next, other));
-          return next;
-        });
-      };
-
-      const toggleOther = () => {
-        if (showOther) {
-          setShowOther(false);
-          setOther('');
-          onChange(serializeChipValue(selected, ''));
-        } else {
-          setShowOther(true);
-        }
-      };
-
-      const onOtherChange = (val) => {
-        setOther(val);
-        onChange(serializeChipValue(selected, val));
-      };
-
-      return (
-        <div>
-          {label && <div className="conv-textarea-label">{label}</div>}
-          <div className="chip-grid" style={columns ? { gridTemplateColumns: `repeat(${columns}, 1fr)` } : {}}>
-            {options.map(opt => (
-              <div
-                key={opt.label}
-                className={`chip-option color-${opt.color || colorTheme} ${selected.includes(opt.label) ? 'selected' : ''}`}
-                onClick={() => toggle(opt.label)}
-              >
-                <span className="chip-dot"></span>
-                {opt.label}
-              </div>
-            ))}
-            <div
-              className={`chip-option color-${colorTheme} ${showOther ? 'selected' : ''}`}
-              onClick={toggleOther}
-              style={showOther ? {} : { color: 'var(--text-muted)' }}
-            >
-              <span className="chip-dot"></span>
-              Other
-            </div>
-          </div>
-          {showOther && (
-            <input
-              className="chip-other-input"
-              type="text"
-              placeholder="Please specify..."
-              value={other}
-              onChange={(e) => onOtherChange(e.target.value)}
-              autoFocus
-            />
-          )}
-        </div>
-      );
-    }
-
+    const PORTAL_URL = 'https://stepwise.education/portal';
     const MAIN_SITE = 'https://stepwise.education';
 
+    const STATUS_OPTIONS = [
+      'submitted',
+      'under_review',
+      'interview_scheduled',
+      'interview_approved',
+      'accepted',
+      'rejected',
+      'withdrawn',
+    ];
+
+    const statusLabel = (s) => {
+      if (!s) return 'Draft';
+      return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    };
+
+    const statusClass = (s) => {
+      if (!s) return 'draft';
+      return s.toLowerCase().replace(/ /g, '_');
+    };
+
+    const formatDate = (d) => {
+      if (!d) return '—';
+      try {
+        return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch { return d; }
+    };
+
+    const safe = (val) => val || '';
+
+    /* Parse JSONB arrays from Supabase */
+    const parseJsonArray = (val) => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val;
+      try { return JSON.parse(val); } catch { return []; }
+    };
+
     /* ── NAV BAR ── */
-    function NavBar() {
-      const [mobileOpen, setMobileOpen] = useState(false);
-      const links = [
-        { label: 'Home', href: MAIN_SITE },
-        { label: 'Apply', href: MAIN_SITE + '/apply' },
-        { label: 'Find a Facilitator', href: MAIN_SITE + '/facilitators' },
-        { label: 'Common Questions', href: MAIN_SITE + '/#faq' },
-      ];
+    function NavBar({ isAdmin, onSignOut }) {
       return (
         <nav className="top-nav">
           <div className="nav-left">
@@ -782,39 +595,13 @@
               <span className="brand-dot purple"></span>
             </div>
           </div>
-          <div className="nav-links">
-            {links.map(l => (
-              <a key={l.label} className="nav-link" href={l.href}>{l.label}</a>
-            ))}
-            <a className="nav-link active" href="#">Portal</a>
-          </div>
-          <button className="nav-mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? '\u2715' : '\u2630'}
-          </button>
-          <div className={`nav-mobile-menu ${mobileOpen ? 'open' : ''}`}>
-            {links.map(l => (
-              <a key={l.label} className="nav-link" href={l.href}>{l.label}</a>
-            ))}
-            <a className="nav-link active" href="#">Portal</a>
+          <div className="nav-right">
+            {isAdmin && <span className="nav-badge">Admin</span>}
+            {onSignOut && (
+              <button className="nav-signout" onClick={onSignOut}>Sign out</button>
+            )}
           </div>
         </nav>
-      );
-    }
-
-    /* ── STEP PROGRESS ── */
-    function StepProgress({ current, total }) {
-      return (
-        <div className="step-progress-wrapper">
-          <div className="step-counter">{current} / {total}</div>
-          <div className="step-bar">
-            {Array.from({ length: total }, (_, i) => (
-              <div
-                key={i}
-                className={`step-segment ${i + 1 === current ? 'active' : i + 1 < current ? 'done' : ''}`}
-              ></div>
-            ))}
-          </div>
-        </div>
       );
     }
 
@@ -832,14 +619,12 @@
         try {
           const { error: authError } = await supabase.auth.signInWithOtp({
             email: email.trim(),
-            options: {
-              emailRedirectTo: window.location.origin + window.location.pathname
-            }
+            options: { emailRedirectTo: window.location.origin + window.location.pathname }
           });
           if (authError) throw authError;
           onSendLink(email.trim());
         } catch (err) {
-          setError(err.message || 'Something went wrong. Please try again.');
+          setError(err.message || 'Something went wrong.');
         } finally {
           setLoading(false);
         }
@@ -850,11 +635,8 @@
           <NavBar />
           <div className="login-card fade-in">
             <div className="gradient-line"></div>
-            <h2 className="heading-serif">Participant Portal</h2>
-            <p>
-              Welcome! Enter the email address you used when applying
-              to your StepWise training and we'll send you a secure link.
-            </p>
+            <h2 className="heading-serif">Admin Dashboard</h2>
+            <p>Sign in with your StepWise admin email to manage applications.</p>
             {error && <div className="alert-banner error">{error}</div>}
             <form onSubmit={handleSubmit}>
               <div className="login-email-row">
@@ -862,18 +644,14 @@
                 <input
                   className="login-email-input"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="admin@stepwise.education"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoFocus
                 />
               </div>
-              <button
-                type="submit"
-                className="btn-continue"
-                disabled={loading || !email.trim()}
-              >
+              <button type="submit" className="btn-continue" disabled={loading || !email.trim()}>
                 {loading ? <span className="spinner"></span> : <>Send Magic Link &rsaquo;</>}
               </button>
             </form>
@@ -889,437 +667,383 @@
           <NavBar />
           <div className="login-card fade-in">
             <div className="gradient-line"></div>
-            <div className="check-email-icon">&#9993;</div>
+            <div style={{fontSize: '56px', marginBottom: '20px'}}>&#9993;</div>
             <h2 className="heading-serif">Check Your Inbox</h2>
             <p>
               We sent a magic link to <strong>{email}</strong>.<br />
-              Click the link in the email to securely access your profile.
+              Click the link in the email to access the admin dashboard.
             </p>
             <p style={{fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px'}}>
-              The link expires in 1 hour. Check your spam folder if you don't see it.
+              The link expires in 1 hour. Check spam if you don't see it.
             </p>
-            <button className="btn-back" onClick={onBack}>
-              &lsaquo; Use a different email
-            </button>
+            <button className="btn-back" onClick={onBack}>&lsaquo; Use a different email</button>
           </div>
         </div>
       );
     }
 
-    /* ── NOT FOUND VIEW ── */
-    function NotFoundView({ email, onSignOut }) {
+    /* ── NOT ADMIN VIEW ── */
+    function NotAdminView({ email, onSignOut }) {
       return (
         <div>
-          <NavBar />
+          <NavBar onSignOut={onSignOut} />
           <div className="login-card fade-in">
             <div className="gradient-line"></div>
-            <div className="not-found-icon">&#128269;</div>
-            <h2 className="heading-serif">Record Not Found</h2>
+            <div style={{fontSize: '48px', marginBottom: '16px'}}>&#128274;</div>
+            <h2 className="heading-serif">Access Denied</h2>
             <p>
-              We couldn't find a participant record for <strong>{email}</strong>.
-              Please make sure you're using the same email you applied with,
-              or reach out to StepWise for assistance.
+              <strong>{email}</strong> does not have admin access.
+              If you're a participant, please use the participant portal instead.
             </p>
-            <div style={{marginTop: '8px'}}>
-              <a href="mailto:stepwisetraining@proton.me" style={{color: 'var(--brand-amber)', fontWeight: 600, textDecoration: 'none'}}>
-                stepwisetraining@proton.me
+            <div style={{marginTop: '8px', display: 'flex', gap: '12px', justifyContent: 'center'}}>
+              <a href={PORTAL_URL} className="btn-continue" style={{textDecoration: 'none'}}>
+                Go to Portal &rsaquo;
               </a>
-            </div>
-            <div style={{marginTop: '24px'}}>
-              <button className="btn-back" onClick={onSignOut}>
-                &lsaquo; Try a different email
-              </button>
+              <button className="btn-back" onClick={onSignOut}>&lsaquo; Sign out</button>
             </div>
           </div>
         </div>
       );
     }
 
-    /* ── PROFILE FORM ── */
-    function ProfileView({ applicant, training, onSave }) {
-      const [step, setStep] = useState(1);
-      const totalSteps = 5;
-      const [form, setForm] = useState({
-        name: safe(applicant.name),
-        birth_date: safe(applicant.birth_date),
-        phone: safe(applicant.phone),
-        dietary_preferences: safe(applicant.dietary_preferences),
-        allergies: safe(applicant.allergies),
-        physical_health: safe(applicant.physical_health),
-        physical_medications: safe(applicant.physical_medications),
-        mental_health_dx: safe(applicant.mental_health_dx),
-        current_mental_health: safe(applicant.current_mental_health),
-        psych_medications: safe(applicant.psych_medications),
-        notes: safe(applicant.notes),
-      });
-      const [loading, setLoading] = useState(false);
-      const [error, setError] = useState('');
+    /* ── APPLICATION DETAIL VIEW ── */
+    function ApplicationDetail({ app, onBack, onStatusChange }) {
+      const [status, setStatus] = useState(app.status || 'submitted');
+      const [saving, setSaving] = useState(false);
+      const [saved, setSaved] = useState(false);
 
-      const u = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
-
-      const parseBirthDate = () => {
-        if (!form.birth_date) return { mm: '', dd: '', yyyy: '' };
-        const parts = form.birth_date.split('-');
-        return { yyyy: parts[0] || '', mm: parts[1] || '', dd: parts[2] || '' };
-      };
-      const bd = parseBirthDate();
-      const setBirthPart = (part, val) => {
-        const cur = parseBirthDate();
-        cur[part] = val.replace(/\D/g, '');
-        if (cur.yyyy || cur.mm || cur.dd) {
-          const y = cur.yyyy.padStart(4, '0').slice(0, 4);
-          const m = cur.mm.padStart(2, '0').slice(0, 2);
-          const d = cur.dd.padStart(2, '0').slice(0, 2);
-          u('birth_date', `${y}-${m}-${d}`);
-        } else {
-          u('birth_date', '');
-        }
-      };
-
-      const handleSubmit = async () => {
-        setLoading(true);
-        setError('');
+      const handleStatusChange = async (newStatus) => {
+        setStatus(newStatus);
+        setSaving(true);
+        setSaved(false);
         try {
-          const { error: updateError } = await supabase
-            .from('applicants')
-            .update(form)
-            .eq('id', applicant.id);
-          if (updateError) throw updateError;
-          onSave();
+          const { error } = await supabase
+            .from('applications')
+            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .eq('id', app.id);
+          if (error) throw error;
+          setSaved(true);
+          if (onStatusChange) onStatusChange(app.id, newStatus);
+          setTimeout(() => setSaved(false), 2000);
         } catch (err) {
-          setError(err.message);
-          setLoading(false);
+          console.error('Status update failed:', err);
+        } finally {
+          setSaving(false);
         }
       };
 
-      const next = () => setStep(s => Math.min(s + 1, totalSteps));
-      const back = () => setStep(s => Math.max(s - 1, 1));
+      const Field = ({ label, value, full }) => (
+        <div className={`detail-field ${full ? 'full' : ''}`}>
+          <div className="detail-field-label">{label}</div>
+          <div className={`detail-field-value ${!value ? 'empty' : ''}`}>
+            {value || 'Not provided'}
+          </div>
+        </div>
+      );
+
+      const ChipField = ({ label, value, full }) => {
+        const items = parseJsonArray(value);
+        return (
+          <div className={`detail-field ${full ? 'full' : ''}`}>
+            <div className="detail-field-label">{label}</div>
+            {items.length > 0 ? (
+              <div className="chip-display">
+                {items.map((item, i) => <span key={i} className="chip-tag">{item}</span>)}
+              </div>
+            ) : (
+              <div className="detail-field-value empty">None selected</div>
+            )}
+          </div>
+        );
+      };
+
+      const stressLevel = app.stress_level || 0;
+      const stressColor = stressLevel <= 3 ? 'var(--success)' : stressLevel <= 6 ? 'var(--brand-amber)' : 'var(--brand-red)';
 
       return (
         <div>
-          <NavBar />
-          <div className="page-container fade-in">
-            <div className="page-title">
-              <h1 className="heading-serif-italic">Your Profile</h1>
+          <NavBar isAdmin onSignOut={() => {}} />
+          <div className="detail-container fade-in">
+            <button className="btn-back" onClick={onBack} style={{marginBottom: '16px'}}>&lsaquo; Back to all applications</button>
+
+            <div className="detail-header">
+              <div>
+                <div className="detail-name">{app.preferred_name || app.first_name} {app.last_name}</div>
+                <div className="detail-meta">
+                  {app.email} &middot; Applied {formatDate(app.created_at)} &middot; Level {app.training_level || '?'}
+                </div>
+              </div>
+              <div className="detail-actions">
+                <select
+                  className="status-select"
+                  value={status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                  disabled={saving}
+                >
+                  {STATUS_OPTIONS.map(s => (
+                    <option key={s} value={s}>{statusLabel(s)}</option>
+                  ))}
+                </select>
+                {saving && <span className="spinner"></span>}
+                {saved && <span style={{color: 'var(--success)', fontSize: '13px', fontWeight: 600}}>Saved</span>}
+              </div>
             </div>
-            {training && (
-              <div style={{textAlign: 'center', marginBottom: '8px'}}>
-                <span className="training-badge">
-                  <span className="brand-dot amber" style={{width: '8px', height: '8px'}}></span>
-                  {training.name}
-                </span>
+
+            {/* About You */}
+            <div className="detail-section">
+              <div className="detail-section-title">About</div>
+              <div className="detail-grid">
+                <Field label="First Name" value={app.first_name} />
+                <Field label="Last Name" value={app.last_name} />
+                <Field label="Preferred Name" value={app.preferred_name} />
+                <Field label="Birthday" value={[app.birth_month, app.birth_day, app.birth_year].filter(Boolean).join('/')} />
+                <Field label="Email" value={app.email} />
+                <Field label="Phone" value={app.phone} />
+                <Field label="Signal" value={app.signal_handle} />
+                <Field label="Training Level" value={app.training_level} />
               </div>
-            )}
+            </div>
 
-            <StepProgress current={step} total={totalSteps} />
-
-            {error && <div className="alert-banner error">{error}</div>}
-
-            {/* STEP 1: About You */}
-            {step === 1 && (
-              <div className="form-section fade-in">
-                <div className="section-label">ABOUT YOU</div>
-                <div className="section-title"><h2 className="heading-serif">The Basics</h2></div>
-                <div style={{marginTop: '28px'}}>
-                  <div className="conv-line">
-                    My name is{' '}
-                    <input
-                      className="inline-input wide"
-                      type="text"
-                      placeholder="full name"
-                      value={form.name}
-                      onChange={(e) => u('name', e.target.value)}
-                      autoFocus
-                    />.
-                  </div>
-                  <div className="conv-line">
-                    I was born on{' '}
-                    <input className="inline-input date-part" placeholder="MM" maxLength="2" value={bd.mm} onChange={(e) => setBirthPart('mm', e.target.value)} />
-                    {' / '}
-                    <input className="inline-input date-part" placeholder="DD" maxLength="2" value={bd.dd} onChange={(e) => setBirthPart('dd', e.target.value)} />
-                    {' / '}
-                    <input className="inline-input date-part year" placeholder="YYYY" maxLength="4" value={bd.yyyy} onChange={(e) => setBirthPart('yyyy', e.target.value)} />.
-                  </div>
-                  <div className="conv-line">
-                    You can reach me at{' '}
-                    <span className="read-only-value">{applicant.email}</span>.
-                  </div>
-                  <div className="conv-line">
-                    Or call me at{' '}
-                    <input
-                      className="inline-input"
-                      type="tel"
-                      placeholder="phone number"
-                      value={form.phone}
-                      onChange={(e) => u('phone', e.target.value)}
-                      style={{minWidth: '160px'}}
-                    />.
-                  </div>
-                </div>
-                <div className="btn-nav-row">
-                  <button className="btn-continue" onClick={next}>Continue &rsaquo;</button>
-                </div>
+            {/* Address */}
+            <div className="detail-section">
+              <div className="detail-section-title">Address</div>
+              <div className="detail-grid">
+                <Field label="Street" value={app.street_address} full />
+                {app.street_address_2 && <Field label="Line 2" value={app.street_address_2} full />}
+                <Field label="City" value={app.city} />
+                <Field label="State/Province" value={app.state_province} />
+                <Field label="Postal Code" value={app.postal_code} />
+                <Field label="Country" value={app.country} />
               </div>
-            )}
+            </div>
 
-            {/* STEP 2: Dietary & Allergies */}
-            {step === 2 && (
-              <div className="form-section fade-in">
-                <div className="section-label">NOURISHMENT</div>
-                <div className="section-title"><h2 className="heading-serif">Diet & Sensitivities</h2></div>
-                <div style={{marginTop: '28px'}}>
-                  <ChipSelect
-                    label="My dietary preferences or needs are:"
-                    colorTheme="amber"
-                    options={[
-                      { label: 'Vegetarian', color: 'teal' },
-                      { label: 'Vegan', color: 'teal' },
-                      { label: 'Gluten-free', color: 'amber' },
-                      { label: 'Dairy-free', color: 'amber' },
-                      { label: 'Halal', color: 'purple' },
-                      { label: 'Kosher', color: 'purple' },
-                      { label: 'Pescatarian', color: 'teal' },
-                      { label: 'No restrictions', color: 'blue' },
-                    ]}
-                    value={form.dietary_preferences}
-                    onChange={(val) => u('dietary_preferences', val)}
-                  />
-                  <ChipSelect
-                    label="I have the following allergies or sensitivities:"
-                    colorTheme="red"
-                    options={[
-                      { label: 'Peanuts', color: 'red' },
-                      { label: 'Tree nuts', color: 'red' },
-                      { label: 'Shellfish', color: 'rose' },
-                      { label: 'Dairy', color: 'amber' },
-                      { label: 'Eggs', color: 'amber' },
-                      { label: 'Gluten/wheat', color: 'purple' },
-                      { label: 'Soy', color: 'teal' },
-                      { label: 'No allergies', color: 'blue' },
-                    ]}
-                    value={form.allergies}
-                    onChange={(val) => u('allergies', val)}
-                  />
-                </div>
-                <div className="btn-nav-row">
-                  <button className="btn-back" onClick={back}>&lsaquo; Back</button>
-                  <button className="btn-continue" onClick={next}>Continue &rsaquo;</button>
-                </div>
+            {/* Emergency Contact */}
+            <div className="detail-section">
+              <div className="detail-section-title">Emergency Contact</div>
+              <div className="detail-grid">
+                <Field label="First Name" value={app.emergency_first_name} />
+                <Field label="Last Name" value={app.emergency_last_name} />
+                <Field label="Phone" value={app.emergency_phone} />
               </div>
-            )}
+            </div>
 
-            {/* STEP 3: Physical Health */}
-            {step === 3 && (
-              <div className="form-section fade-in">
-                <div className="section-label">PHYSICAL WELLBEING</div>
-                <div className="section-title"><h2 className="heading-serif">Your Body</h2></div>
-                <div style={{marginTop: '28px'}}>
-                  <ChipSelect
-                    label="I live with the following physical health conditions:"
-                    colorTheme="red"
-                    options={[
-                      { label: 'Chronic pain', color: 'red' },
-                      { label: 'Back/spine issues', color: 'red' },
-                      { label: 'Joint problems', color: 'amber' },
-                      { label: 'Mobility limitations', color: 'amber' },
-                      { label: 'Heart condition', color: 'rose' },
-                      { label: 'Respiratory issues', color: 'purple' },
-                      { label: 'Diabetes', color: 'teal' },
-                      { label: 'Autoimmune condition', color: 'blue' },
-                      { label: 'Recent surgery', color: 'purple' },
-                      { label: 'Pregnancy', color: 'rose' },
-                      { label: 'No conditions to note', color: 'teal' },
-                    ]}
-                    value={form.physical_health}
-                    onChange={(val) => u('physical_health', val)}
-                  />
-                  <div className="conv-textarea-label">I currently take these medications for my physical health:</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="Include name, dosage, and frequency if possible..."
-                    value={form.physical_medications}
-                    onChange={(e) => u('physical_medications', e.target.value)}
-                  ></textarea>
-                </div>
-                <div className="btn-nav-row">
-                  <button className="btn-back" onClick={back}>&lsaquo; Back</button>
-                  <button className="btn-continue" onClick={next}>Continue &rsaquo;</button>
-                </div>
+            {/* Experience */}
+            <div className="detail-section">
+              <div className="detail-section-title">Experience & Background</div>
+              <div className="detail-grid">
+                <Field label="Journey Work Experience" value={app.journey_work_experience} full />
+                <Field label="Medicine Experience" value={app.medicine_experience} full />
+                <Field label="Serving Experience" value={app.serving_experience} full />
+                <Field label="Life Circumstances" value={app.life_circumstances} full />
+                <Field label="Integration Support" value={app.integration_support} full />
               </div>
-            )}
+            </div>
 
-            {/* STEP 4: Mental Health */}
-            {step === 4 && (
-              <div className="form-section fade-in">
-                <div className="section-label">MENTAL WELLBEING</div>
-                <div className="section-title"><h2 className="heading-serif">Inner Landscape</h2></div>
-                <div style={{marginTop: '28px'}}>
-                  <ChipSelect
-                    label="I have been diagnosed with (past or current):"
-                    colorTheme="purple"
-                    options={[
-                      { label: 'Anxiety', color: 'amber' },
-                      { label: 'Depression', color: 'blue' },
-                      { label: 'PTSD/trauma', color: 'red' },
-                      { label: 'Bipolar', color: 'purple' },
-                      { label: 'ADHD', color: 'teal' },
-                      { label: 'OCD', color: 'amber' },
-                      { label: 'Eating disorder', color: 'rose' },
-                      { label: 'Personality disorder', color: 'purple' },
-                      { label: 'Substance use', color: 'red' },
-                      { label: 'Grief/loss', color: 'blue' },
-                      { label: 'None', color: 'teal' },
-                    ]}
-                    value={form.mental_health_dx}
-                    onChange={(val) => u('mental_health_dx', val)}
-                  />
-                  <ChipSelect
-                    label="I have experienced the following:"
-                    colorTheme="blue"
-                    columns={1}
-                    options={[
-                      { label: 'Recent losses or death', color: 'blue' },
-                      { label: 'Recent fright or shock', color: 'amber' },
-                      { label: 'Chronic illness', color: 'red' },
-                      { label: 'Relationship stress', color: 'rose' },
-                      { label: 'Recently divorced/separated', color: 'purple' },
-                      { label: 'Recent or traumatic surgeries, accidents, injuries', color: 'red' },
-                      { label: 'Recent job loss', color: 'amber' },
-                      { label: 'Financial hardship', color: 'amber' },
-                      { label: 'Working more than 40h per week or two jobs', color: 'teal' },
-                      { label: 'Being a single parent or primary caregiver', color: 'purple' },
-                      { label: 'Abuse: sexual, physical, emotional, or mental', color: 'rose' },
-                      { label: 'Family history of addiction or mental illness', color: 'blue' },
-                    ]}
-                    value={form.current_mental_health}
-                    onChange={(val) => u('current_mental_health', val)}
-                  />
-                  <div className="conv-textarea-label">I currently take these psychiatric medications:</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="Include name, dosage, and frequency if possible..."
-                    value={form.psych_medications}
-                    onChange={(e) => u('psych_medications', e.target.value)}
-                  ></textarea>
-                </div>
-                <div className="btn-nav-row">
-                  <button className="btn-back" onClick={back}>&lsaquo; Back</button>
-                  <button className="btn-continue" onClick={next}>Continue &rsaquo;</button>
-                </div>
+            {/* Physical Health */}
+            <div className="detail-section">
+              <div className="detail-section-title">Physical Health</div>
+              <div className="detail-grid">
+                <Field label="Health Issues" value={app.physical_health_issues} full />
+                <Field label="Medications" value={app.physical_medications} full />
+                <Field label="Supplements" value={app.supplements} full />
+                <Field label="Allergies" value={app.allergies} full />
+                <ChipField label="Physical Symptoms" value={app.physical_symptoms} full />
+                {app.physical_symptoms_other && <Field label="Other Symptoms" value={app.physical_symptoms_other} full />}
+                <ChipField label="Dietary Preferences" value={app.dietary_preferences} full />
+                {app.dietary_other && <Field label="Other Dietary" value={app.dietary_other} full />}
               </div>
-            )}
+            </div>
 
-            {/* STEP 5: Review & Submit */}
-            {step === 5 && (
-              <div className="form-section fade-in">
-                <div className="section-label">REVIEW</div>
-                <div className="section-title"><h2 className="heading-serif">Almost There</h2></div>
-                <p style={{textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px', marginBottom: '28px'}}>
-                  Please review your information below, then submit.
-                </p>
+            {/* Mental Health */}
+            <div className="detail-section">
+              <div className="detail-section-title">Mental Health</div>
+              <div className="detail-grid">
+                <Field label="DSM Diagnosis" value={app.dsm_diagnosis} full />
+                <Field label="Mental Health Issues" value={app.mental_health_issues} full />
+                <Field label="Psychiatric Medications" value={app.psych_medications} full />
+                <Field label="Recreational Drug Use" value={app.recreational_drug_use} full />
+                <Field label="Suicide Consideration" value={app.suicide_consideration} full />
+                <Field label="Mental Health Professional" value={app.mental_health_professional} full />
+              </div>
+            </div>
 
-                <div className="review-card">
-                  <div className="review-label">About You</div>
-                  <div className="review-row">
-                    <div>
-                      <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Name</div>
-                      <div className={`review-value ${!form.name ? 'empty' : ''}`}>{form.name || 'Not provided'}</div>
+            {/* Stress & Coping */}
+            <div className="detail-section">
+              <div className="detail-section-title">Stress & Coping</div>
+              <div className="detail-grid">
+                <div className="detail-field full">
+                  <div className="detail-field-label">Stress Level</div>
+                  <div className="stress-meter">
+                    <div className="stress-bar">
+                      <div className="stress-fill" style={{width: `${stressLevel * 10}%`, background: stressColor}}></div>
                     </div>
-                    <div>
-                      <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Birth Date</div>
-                      <div className={`review-value ${!form.birth_date ? 'empty' : ''}`}>{form.birth_date || 'Not provided'}</div>
-                    </div>
-                  </div>
-                  <div className="review-row" style={{marginTop: '12px'}}>
-                    <div>
-                      <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Email</div>
-                      <div className="review-value">{applicant.email}</div>
-                    </div>
-                    <div>
-                      <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Phone</div>
-                      <div className={`review-value ${!form.phone ? 'empty' : ''}`}>{form.phone || 'Not provided'}</div>
-                    </div>
+                    <span style={{fontWeight: 700, fontSize: '16px', color: stressColor}}>{stressLevel}/10</span>
                   </div>
                 </div>
-
-                <div className="review-card">
-                  <div className="review-label">Diet & Sensitivities</div>
-                  <div style={{marginBottom: '10px'}}>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Dietary Preferences</div>
-                    <div className={`review-value ${!form.dietary_preferences ? 'empty' : ''}`}>{form.dietary_preferences || 'None noted'}</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Allergies</div>
-                    <div className={`review-value ${!form.allergies ? 'empty' : ''}`}>{form.allergies || 'None noted'}</div>
-                  </div>
-                </div>
-
-                <div className="review-card">
-                  <div className="review-label">Physical Health</div>
-                  <div style={{marginBottom: '10px'}}>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Physical Health</div>
-                    <div className={`review-value ${!form.physical_health ? 'empty' : ''}`}>{form.physical_health || 'None noted'}</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Medications</div>
-                    <div className={`review-value ${!form.physical_medications ? 'empty' : ''}`}>{form.physical_medications || 'None noted'}</div>
-                  </div>
-                </div>
-
-                <div className="review-card">
-                  <div className="review-label">Mental Health</div>
-                  <div style={{marginBottom: '10px'}}>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Diagnoses</div>
-                    <div className={`review-value ${!form.mental_health_dx ? 'empty' : ''}`}>{form.mental_health_dx || 'None noted'}</div>
-                  </div>
-                  <div style={{marginBottom: '10px'}}>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Life Experiences</div>
-                    <div className={`review-value ${!form.current_mental_health ? 'empty' : ''}`}>{form.current_mental_health || 'None noted'}</div>
-                  </div>
-                  <div>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Psychiatric Medications</div>
-                    <div className={`review-value ${!form.psych_medications ? 'empty' : ''}`}>{form.psych_medications || 'None noted'}</div>
-                  </div>
-                </div>
-
-                <div className="btn-nav-row" style={{marginTop: '36px'}}>
-                  <button className="btn-back" onClick={back}>&lsaquo; Back</button>
-                  <button className="btn-primary-fill" onClick={handleSubmit} disabled={loading}>
-                    {loading ? <span className="spinner white"></span> : <>Submit Updates</>}
-                  </button>
-                </div>
+                <ChipField label="Life Experiences" value={app.life_experiences} full />
+                <Field label="Stress Sources" value={app.stress_sources} full />
+                <ChipField label="Cognitive Symptoms" value={app.cognitive_symptoms} full />
+                {app.cognitive_symptoms_other && <Field label="Other Cognitive" value={app.cognitive_symptoms_other} full />}
+                <ChipField label="Coping Mechanisms" value={app.coping_mechanisms} full />
+                {app.coping_other && <Field label="Other Coping" value={app.coping_other} full />}
+                <Field label="Trauma Details" value={app.trauma_details} full />
               </div>
-            )}
+            </div>
+
+            {/* Self-Care & Goals */}
+            <div className="detail-section">
+              <div className="detail-section-title">Self-Care & Goals</div>
+              <div className="detail-grid">
+                <Field label="Self Care" value={app.self_care} full />
+                {app.self_care_other && <Field label="Other Self-Care" value={app.self_care_other} full />}
+                <ChipField label="Support Network" value={app.support_network} full />
+                {app.support_other && <Field label="Other Support" value={app.support_other} full />}
+                <Field label="Strengths & Hobbies" value={app.strengths_hobbies} full />
+                <Field label="Training Goals" value={app.training_goals} full />
+                <Field label="Anything Else" value={app.anything_else} full />
+              </div>
+            </div>
+
+            {/* Accommodation */}
+            <div className="detail-section">
+              <div className="detail-section-title">Accommodation</div>
+              <div className="detail-grid">
+                <Field label="VRBO Listing" value={app.vrbo_listing_url} full />
+                <Field label="Bedroom Choice" value={app.bedroom_choice} />
+                <Field label="Dietary Notes" value={app.dietary_notes} full />
+                <Field label="Special Accommodations" value={app.special_accommodations} full />
+              </div>
+            </div>
+
           </div>
         </div>
       );
     }
 
-    /* ── SUCCESS VIEW ── */
-    function SuccessView({ onReturn, onSignOut }) {
+    /* ── DASHBOARD VIEW ── */
+    function DashboardView({ applications, onSelectApp, onSignOut, onRefresh }) {
+      const [filter, setFilter] = useState('all');
+      const [search, setSearch] = useState('');
+
+      const filtered = useMemo(() => {
+        let list = applications;
+        if (filter !== 'all') {
+          list = list.filter(a => a.status === filter);
+        }
+        if (search.trim()) {
+          const q = search.toLowerCase();
+          list = list.filter(a =>
+            (a.first_name || '').toLowerCase().includes(q) ||
+            (a.last_name || '').toLowerCase().includes(q) ||
+            (a.preferred_name || '').toLowerCase().includes(q) ||
+            (a.email || '').toLowerCase().includes(q)
+          );
+        }
+        return list;
+      }, [applications, filter, search]);
+
+      const counts = useMemo(() => {
+        const c = { all: applications.length };
+        STATUS_OPTIONS.forEach(s => { c[s] = applications.filter(a => a.status === s).length; });
+        return c;
+      }, [applications]);
+
       return (
         <div>
-          <NavBar />
-          <div className="login-card fade-in">
-            <div className="gradient-line"></div>
-            <div className="success-icon">&#10003;</div>
-            <h2 className="heading-serif">All Updated</h2>
-            <p>
-              Your information has been saved. You'll receive a confirmation
-              email at your address shortly.
-            </p>
-            <p style={{fontSize: '13px', color: 'var(--text-muted)', marginBottom: '28px'}}>
-              If anything changes before your training, you can always come back
-              and update your profile.
-            </p>
-            <div style={{display: 'flex', gap: '12px', justifyContent: 'center'}}>
-              <button className="btn-continue" onClick={onReturn}>
-                Edit Again
-              </button>
-              <button className="btn-back" onClick={onSignOut}>
-                Sign Out
+          <NavBar isAdmin onSignOut={onSignOut} />
+          <div className="dash-container fade-in">
+            <div className="dash-header">
+              <div>
+                <div className="dash-title">Applications</div>
+                <div className="dash-subtitle">{applications.length} total application{applications.length !== 1 ? 's' : ''}</div>
+              </div>
+              <button className="btn-continue" onClick={onRefresh} style={{padding: '8px 20px', fontSize: '13px'}}>
+                Refresh
               </button>
             </div>
+
+            <div className="stats-row">
+              <div className="stat-card">
+                <div className="stat-number">{counts.all}</div>
+                <div className="stat-label">Total</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{color: 'var(--info)'}}>{counts.submitted || 0}</div>
+                <div className="stat-label">Submitted</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{color: 'var(--brand-amber)'}}>{counts.under_review || 0}</div>
+                <div className="stat-label">Under Review</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{color: 'var(--brand-purple)'}}>{counts.interview_scheduled || 0}</div>
+                <div className="stat-label">Interview</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{color: 'var(--success)'}}>{(counts.interview_approved || 0) + (counts.accepted || 0)}</div>
+                <div className="stat-label">Approved</div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-number" style={{color: 'var(--brand-red)'}}>{counts.rejected || 0}</div>
+                <div className="stat-label">Rejected</div>
+              </div>
+            </div>
+
+            <div className="filter-bar">
+              <input
+                className="search-input"
+                placeholder="Search by name or email..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <div className={`filter-chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
+                All ({counts.all})
+              </div>
+              {STATUS_OPTIONS.filter(s => counts[s] > 0).map(s => (
+                <div
+                  key={s}
+                  className={`filter-chip ${filter === s ? 'active' : ''}`}
+                  onClick={() => setFilter(s)}
+                >
+                  {statusLabel(s)} ({counts[s]})
+                </div>
+              ))}
+            </div>
+
+            {filtered.length > 0 ? (
+              <div className="app-table">
+                <div className="app-table-header">
+                  <span>Name</span>
+                  <span>Email</span>
+                  <span>Level</span>
+                  <span>Status</span>
+                  <span>Date</span>
+                </div>
+                {filtered.map(app => (
+                  <div key={app.id} className="app-row" onClick={() => onSelectApp(app)}>
+                    <div className="app-row-name">
+                      {app.preferred_name || app.first_name} {app.last_name}
+                    </div>
+                    <div className="app-row-email">{app.email}</div>
+                    <div className="app-row-level">{app.training_level || '—'}</div>
+                    <div>
+                      <span className={`status-badge ${statusClass(app.status)}`}>
+                        {statusLabel(app.status)}
+                      </span>
+                    </div>
+                    <div className="app-row-date">{formatDate(app.created_at)}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-state-icon">&#128203;</div>
+                <p style={{fontSize: '16px', fontWeight: 500}}>No applications found</p>
+                <p style={{fontSize: '13px', marginTop: '4px'}}>
+                  {search ? 'Try a different search term.' : 'No applications match this filter.'}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -1332,7 +1056,7 @@
           <NavBar />
           <div style={{textAlign: 'center', marginTop: '120px'}}>
             <div className="spinner" style={{width: '28px', height: '28px'}}></div>
-            <p style={{marginTop: '16px', color: 'var(--text-secondary)', fontSize: '14px'}}>Loading your profile...</p>
+            <p style={{marginTop: '16px', color: 'var(--text-secondary)', fontSize: '14px'}}>Loading...</p>
           </div>
         </div>
       );
@@ -1342,31 +1066,29 @@
     function App() {
       const [view, setView] = useState('loading');
       const [session, setSession] = useState(null);
-      const [applicant, setApplicant] = useState(null);
-      const [training, setTraining] = useState(null);
+      const [applications, setApplications] = useState([]);
+      const [selectedApp, setSelectedApp] = useState(null);
       const [pendingEmail, setPendingEmail] = useState('');
 
       useEffect(() => {
-        /* Check for existing session */
         supabase.auth.getSession().then(({ data: { session: s } }) => {
           if (s) {
             setSession(s);
-            loadApplicant(s.user.email);
+            checkAdmin(s.user);
           } else {
             setView('login');
           }
         });
 
-        /* Listen for auth changes (magic link callback) */
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
           if (event === 'SIGNED_IN' && s) {
             setSession(s);
-            loadApplicant(s.user.email);
+            checkAdmin(s.user);
           }
           if (event === 'SIGNED_OUT') {
             setSession(null);
-            setApplicant(null);
-            setTraining(null);
+            setApplications([]);
+            setSelectedApp(null);
             setView('login');
           }
         });
@@ -1374,37 +1096,43 @@
         return () => subscription.unsubscribe();
       }, []);
 
-      const loadApplicant = async (email) => {
+      const checkAdmin = async (user) => {
         setView('loading');
         try {
-          const { data, error } = await supabase
-            .from('applicants')
-            .select('*')
-            .eq('email', email)
-            .limit(1)
-            .single();
+          const { data: isAdmin, error } = await supabase.rpc('has_role', {
+            _user_id: user.id,
+            _role: 'admin'
+          });
 
-          if (error || !data) {
-            setView('not-found');
+          if (error || !isAdmin) {
+            setView('not-admin');
             return;
           }
 
-          setApplicant(data);
-
-          /* Load training info */
-          if (data.training_id) {
-            const { data: t } = await supabase
-              .from('trainings')
-              .select('*')
-              .eq('id', data.training_id)
-              .single();
-            if (t) setTraining(t);
-          }
-
-          setView('profile');
+          await loadApplications();
+          setView('dashboard');
         } catch (err) {
-          setView('not-found');
+          console.error('Admin check failed:', err);
+          setView('not-admin');
         }
+      };
+
+      const loadApplications = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('applications')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (error) throw error;
+          setApplications(data || []);
+        } catch (err) {
+          console.error('Failed to load applications:', err);
+        }
+      };
+
+      const handleRefresh = async () => {
+        await loadApplications();
       };
 
       const handleSendLink = (email) => {
@@ -1414,17 +1142,22 @@
 
       const handleSignOut = async () => {
         await supabase.auth.signOut();
-        setView('login');
       };
 
-      const handleSaveSuccess = () => {
-        setView('success');
+      const handleSelectApp = (app) => {
+        setSelectedApp(app);
+        setView('detail');
       };
 
-      const handleReturnToProfile = () => {
-        if (session) {
-          loadApplicant(session.user.email);
-        }
+      const handleBackToDashboard = () => {
+        setSelectedApp(null);
+        setView('dashboard');
+      };
+
+      const handleStatusChange = (appId, newStatus) => {
+        setApplications(prev =>
+          prev.map(a => a.id === appId ? { ...a, status: newStatus } : a)
+        );
       };
 
       return (
@@ -1432,40 +1165,30 @@
           {view === 'loading' && <LoadingView />}
           {view === 'login' && <LoginView onSendLink={handleSendLink} />}
           {view === 'check-email' && (
-            <CheckEmailView
-              email={pendingEmail}
-              onBack={() => setView('login')}
-            />
+            <CheckEmailView email={pendingEmail} onBack={() => setView('login')} />
           )}
-          {view === 'not-found' && (
-            <NotFoundView
-              email={session?.user?.email || ''}
+          {view === 'not-admin' && (
+            <NotAdminView email={session?.user?.email || ''} onSignOut={handleSignOut} />
+          )}
+          {view === 'dashboard' && (
+            <DashboardView
+              applications={applications}
+              onSelectApp={handleSelectApp}
               onSignOut={handleSignOut}
+              onRefresh={handleRefresh}
             />
           )}
-          {view === 'profile' && applicant && (
-            <ProfileView
-              applicant={applicant}
-              training={training}
-              onSave={handleSaveSuccess}
+          {view === 'detail' && selectedApp && (
+            <ApplicationDetail
+              app={selectedApp}
+              onBack={handleBackToDashboard}
+              onStatusChange={handleStatusChange}
             />
-          )}
-          {view === 'success' && (
-            <SuccessView
-              onReturn={handleReturnToProfile}
-              onSignOut={handleSignOut}
-            />
-          )}
-          {session && view !== 'login' && view !== 'check-email' && view !== 'loading' && (
-            <button className="signout-link" onClick={handleSignOut}>
-              Sign out
-            </button>
           )}
         </div>
       );
     }
 
-    /* Render */
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
