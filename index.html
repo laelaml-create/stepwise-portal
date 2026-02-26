@@ -693,7 +693,7 @@
     };
 
     /* ── CHIP SELECT COMPONENT ── */
-    function ChipSelect({ label, options, colorTheme, value, onChange }) {
+    function ChipSelect({ label, options, colorTheme, value, onChange, columns }) {
       const parsed = parseChipValue(value, options);
       const [selected, setSelected] = useState(parsed.selected);
       const [other, setOther] = useState(parsed.other);
@@ -727,7 +727,7 @@
       return (
         <div>
           {label && <div className="conv-textarea-label">{label}</div>}
-          <div className="chip-grid">
+          <div className="chip-grid" style={columns ? { gridTemplateColumns: `repeat(${columns}, 1fr)` } : {}}>
             {options.map(opt => (
               <div
                 key={opt.label}
@@ -1115,7 +1115,7 @@
                 <div className="section-title"><h2 className="heading-serif">Your Body</h2></div>
                 <div style={{marginTop: '28px'}}>
                   <ChipSelect
-                    label="Please share anything about your physical health we should know:"
+                    label="I live with the following physical health conditions:"
                     colorTheme="red"
                     options={[
                       { label: 'Chronic pain', color: 'red' },
@@ -1133,7 +1133,7 @@
                     value={form.physical_health}
                     onChange={(val) => u('physical_health', val)}
                   />
-                  <div className="conv-textarea-label">Medications you currently take for physical health:</div>
+                  <div className="conv-textarea-label">I currently take these medications for my physical health:</div>
                   <textarea
                     className="conv-textarea"
                     placeholder="Include name, dosage, and frequency if possible..."
@@ -1155,7 +1155,7 @@
                 <div className="section-title"><h2 className="heading-serif">Inner Landscape</h2></div>
                 <div style={{marginTop: '28px'}}>
                   <ChipSelect
-                    label="Any past or current mental health diagnoses:"
+                    label="I have been diagnosed with (past or current):"
                     colorTheme="purple"
                     options={[
                       { label: 'Anxiety', color: 'amber' },
@@ -1174,22 +1174,27 @@
                     onChange={(val) => u('mental_health_dx', val)}
                   />
                   <ChipSelect
-                    label="How would you describe your current mental health?"
+                    label="I have experienced the following:"
                     colorTheme="blue"
+                    columns={1}
                     options={[
-                      { label: 'Stable and well', color: 'teal' },
-                      { label: 'Mostly good', color: 'teal' },
-                      { label: 'Managing day-to-day', color: 'amber' },
-                      { label: 'Struggling', color: 'amber' },
-                      { label: 'In crisis', color: 'red' },
-                      { label: 'In active treatment', color: 'purple' },
-                      { label: 'In recovery', color: 'blue' },
-                      { label: 'Prefer not to say', color: 'blue' },
+                      { label: 'Recent losses or death', color: 'blue' },
+                      { label: 'Recent fright or shock', color: 'amber' },
+                      { label: 'Chronic illness', color: 'red' },
+                      { label: 'Relationship stress', color: 'rose' },
+                      { label: 'Recently divorced/separated', color: 'purple' },
+                      { label: 'Recent or traumatic surgeries, accidents, injuries', color: 'red' },
+                      { label: 'Recent job loss', color: 'amber' },
+                      { label: 'Financial hardship', color: 'amber' },
+                      { label: 'Working more than 40h per week or two jobs', color: 'teal' },
+                      { label: 'Being a single parent or primary caregiver', color: 'purple' },
+                      { label: 'Abuse: sexual, physical, emotional, or mental', color: 'rose' },
+                      { label: 'Family history of addiction or mental illness', color: 'blue' },
                     ]}
                     value={form.current_mental_health}
                     onChange={(val) => u('current_mental_health', val)}
                   />
-                  <div className="conv-textarea-label">Psychiatric medications you currently take:</div>
+                  <div className="conv-textarea-label">I currently take these psychiatric medications:</div>
                   <textarea
                     className="conv-textarea"
                     placeholder="Include name, dosage, and frequency if possible..."
@@ -1268,7 +1273,7 @@
                     <div className={`review-value ${!form.mental_health_dx ? 'empty' : ''}`}>{form.mental_health_dx || 'None noted'}</div>
                   </div>
                   <div style={{marginBottom: '10px'}}>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Current Mental Health</div>
+                    <div style={{fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px'}}>Life Experiences</div>
                     <div className={`review-value ${!form.current_mental_health ? 'empty' : ''}`}>{form.current_mental_health || 'None noted'}</div>
                   </div>
                   <div>
