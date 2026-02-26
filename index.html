@@ -554,6 +554,95 @@
       margin-bottom: 8px;
     }
 
+    /* Chip Select Grid */
+    .chip-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .chip-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      user-select: none;
+    }
+    .chip-option:hover {
+      border-color: var(--text-muted);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .chip-option.selected {
+      border-width: 2px;
+      font-weight: 600;
+    }
+    .chip-option .chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid currentColor;
+      transition: all 0.2s;
+    }
+    .chip-option.selected .chip-dot {
+      border: none;
+      width: 12px;
+      height: 12px;
+    }
+    /* Color themes for chip groups */
+    .chip-option.color-amber.selected { border-color: var(--brand-amber); background: #FFF9F0; color: #B8760A; }
+    .chip-option.color-amber .chip-dot { border-color: var(--brand-amber); }
+    .chip-option.color-amber.selected .chip-dot { background: var(--brand-amber); }
+
+    .chip-option.color-red.selected { border-color: var(--brand-red); background: #FEF2F0; color: #B83D25; }
+    .chip-option.color-red .chip-dot { border-color: var(--brand-red); }
+    .chip-option.color-red.selected .chip-dot { background: var(--brand-red); }
+
+    .chip-option.color-purple.selected { border-color: var(--brand-purple); background: #F8F0FA; color: #5E1D6E; }
+    .chip-option.color-purple .chip-dot { border-color: var(--brand-purple); }
+    .chip-option.color-purple.selected .chip-dot { background: var(--brand-purple); }
+
+    .chip-option.color-teal.selected { border-color: #0D9488; background: #F0FDFA; color: #0F766E; }
+    .chip-option.color-teal .chip-dot { border-color: #0D9488; }
+    .chip-option.color-teal.selected .chip-dot { background: #0D9488; }
+
+    .chip-option.color-blue.selected { border-color: #3B82F6; background: #EFF6FF; color: #1D4ED8; }
+    .chip-option.color-blue .chip-dot { border-color: #3B82F6; }
+    .chip-option.color-blue.selected .chip-dot { background: #3B82F6; }
+
+    .chip-option.color-rose.selected { border-color: #E11D48; background: #FFF1F2; color: #BE123C; }
+    .chip-option.color-rose .chip-dot { border-color: #E11D48; }
+    .chip-option.color-rose.selected .chip-dot { background: #E11D48; }
+
+    .chip-other-input {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--cream);
+      outline: none;
+      transition: border-color 0.3s;
+      margin-top: -10px;
+      margin-bottom: 20px;
+    }
+    .chip-other-input:focus {
+      border-color: var(--brand-amber);
+      background: var(--white);
+    }
+    .chip-other-input::placeholder { color: var(--text-muted); }
+
     /* Responsive */
     @media (max-width: 600px) {
       .brand-bar { padding: 16px 20px; }
@@ -566,6 +655,8 @@
       .login-card { padding: 32px 24px; margin-top: 40px; }
       .login-email-input { min-width: 200px; font-size: 16px; }
       .review-row { grid-template-columns: 1fr; }
+      .chip-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .chip-option { padding: 10px 12px; font-size: 13px; }
     }
   </style>
 </head>
@@ -583,6 +674,92 @@
 
     /* ── HELPERS ── */
     const safe = (val) => val || '';
+
+    /* Parse a stored string back into { selected: [...], other: '...' } */
+    const parseChipValue = (val, options) => {
+      if (!val) return { selected: [], other: '' };
+      const parts = val.split(',').map(s => s.trim()).filter(Boolean);
+      const optionLabels = options.map(o => o.label);
+      const selected = parts.filter(p => optionLabels.includes(p));
+      const otherParts = parts.filter(p => !optionLabels.includes(p));
+      return { selected, other: otherParts.join(', ') };
+    };
+
+    /* Serialize chip selections + other text back to a single string */
+    const serializeChipValue = (selected, other) => {
+      const all = [...selected];
+      if (other.trim()) all.push(other.trim());
+      return all.join(', ');
+    };
+
+    /* ── CHIP SELECT COMPONENT ── */
+    function ChipSelect({ label, options, colorTheme, value, onChange }) {
+      const parsed = parseChipValue(value, options);
+      const [selected, setSelected] = useState(parsed.selected);
+      const [other, setOther] = useState(parsed.other);
+      const [showOther, setShowOther] = useState(parsed.other.length > 0);
+
+      const toggle = (optionLabel) => {
+        setSelected(prev => {
+          const next = prev.includes(optionLabel)
+            ? prev.filter(l => l !== optionLabel)
+            : [...prev, optionLabel];
+          onChange(serializeChipValue(next, other));
+          return next;
+        });
+      };
+
+      const toggleOther = () => {
+        if (showOther) {
+          setShowOther(false);
+          setOther('');
+          onChange(serializeChipValue(selected, ''));
+        } else {
+          setShowOther(true);
+        }
+      };
+
+      const onOtherChange = (val) => {
+        setOther(val);
+        onChange(serializeChipValue(selected, val));
+      };
+
+      return (
+        <div>
+          {label && <div className="conv-textarea-label">{label}</div>}
+          <div className="chip-grid">
+            {options.map(opt => (
+              <div
+                key={opt.label}
+                className={`chip-option color-${opt.color || colorTheme} ${selected.includes(opt.label) ? 'selected' : ''}`}
+                onClick={() => toggle(opt.label)}
+              >
+                <span className="chip-dot"></span>
+                {opt.label}
+              </div>
+            ))}
+            <div
+              className={`chip-option color-${colorTheme} ${showOther ? 'selected' : ''}`}
+              onClick={toggleOther}
+              style={showOther ? {} : { color: 'var(--text-muted)' }}
+            >
+              <span className="chip-dot"></span>
+              Other
+            </div>
+          </div>
+          {showOther && (
+            <input
+              className="chip-other-input"
+              type="text"
+              placeholder="Please specify..."
+              value={other}
+              onChange={(e) => onOtherChange(e.target.value)}
+              autoFocus
+            />
+          )}
+        </div>
+      );
+    }
 
     const MAIN_SITE = 'https://stepwise.education';
 
@@ -891,21 +1068,38 @@
                 <div className="section-label">NOURISHMENT</div>
                 <div className="section-title"><h2 className="heading-serif">Diet & Sensitivities</h2></div>
                 <div style={{marginTop: '28px'}}>
-                  <div className="conv-textarea-label">My dietary preferences or needs are:</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="e.g., vegetarian, vegan, gluten-free, halal, kosher..."
+                  <ChipSelect
+                    label="My dietary preferences or needs are:"
+                    colorTheme="amber"
+                    options={[
+                      { label: 'Vegetarian', color: 'teal' },
+                      { label: 'Vegan', color: 'teal' },
+                      { label: 'Gluten-free', color: 'amber' },
+                      { label: 'Dairy-free', color: 'amber' },
+                      { label: 'Halal', color: 'purple' },
+                      { label: 'Kosher', color: 'purple' },
+                      { label: 'Pescatarian', color: 'teal' },
+                      { label: 'No restrictions', color: 'blue' },
+                    ]}
                     value={form.dietary_preferences}
-                    onChange={(e) => u('dietary_preferences', e.target.value)}
-                    autoFocus
-                  ></textarea>
-                  <div className="conv-textarea-label">I have the following allergies or sensitivities:</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="e.g., peanuts, shellfish, latex, bee stings..."
+                    onChange={(val) => u('dietary_preferences', val)}
+                  />
+                  <ChipSelect
+                    label="I have the following allergies or sensitivities:"
+                    colorTheme="red"
+                    options={[
+                      { label: 'Peanuts', color: 'red' },
+                      { label: 'Tree nuts', color: 'red' },
+                      { label: 'Shellfish', color: 'rose' },
+                      { label: 'Dairy', color: 'amber' },
+                      { label: 'Eggs', color: 'amber' },
+                      { label: 'Gluten/wheat', color: 'purple' },
+                      { label: 'Soy', color: 'teal' },
+                      { label: 'No allergies', color: 'blue' },
+                    ]}
                     value={form.allergies}
-                    onChange={(e) => u('allergies', e.target.value)}
-                  ></textarea>
+                    onChange={(val) => u('allergies', val)}
+                  />
                 </div>
                 <div className="btn-nav-row">
                   <button className="btn-back" onClick={back}>&lsaquo; Back</button>
@@ -920,16 +1114,25 @@
                 <div className="section-label">PHYSICAL WELLBEING</div>
                 <div className="section-title"><h2 className="heading-serif">Your Body</h2></div>
                 <div style={{marginTop: '28px'}}>
-                  <div className="conv-textarea-label">
-                    Please share anything about your physical health we should know:
-                  </div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="e.g., chronic conditions, mobility needs, recent surgeries..."
+                  <ChipSelect
+                    label="Please share anything about your physical health we should know:"
+                    colorTheme="red"
+                    options={[
+                      { label: 'Chronic pain', color: 'red' },
+                      { label: 'Back/spine issues', color: 'red' },
+                      { label: 'Joint problems', color: 'amber' },
+                      { label: 'Mobility limitations', color: 'amber' },
+                      { label: 'Heart condition', color: 'rose' },
+                      { label: 'Respiratory issues', color: 'purple' },
+                      { label: 'Diabetes', color: 'teal' },
+                      { label: 'Autoimmune condition', color: 'blue' },
+                      { label: 'Recent surgery', color: 'purple' },
+                      { label: 'Pregnancy', color: 'rose' },
+                      { label: 'No conditions to note', color: 'teal' },
+                    ]}
                     value={form.physical_health}
-                    onChange={(e) => u('physical_health', e.target.value)}
-                    autoFocus
-                  ></textarea>
+                    onChange={(val) => u('physical_health', val)}
+                  />
                   <div className="conv-textarea-label">Medications you currently take for physical health:</div>
                   <textarea
                     className="conv-textarea"
@@ -951,21 +1154,41 @@
                 <div className="section-label">MENTAL WELLBEING</div>
                 <div className="section-title"><h2 className="heading-serif">Inner Landscape</h2></div>
                 <div style={{marginTop: '28px'}}>
-                  <div className="conv-textarea-label">Any past or current mental health diagnoses:</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="e.g., PTSD, anxiety, depression, bipolar..."
+                  <ChipSelect
+                    label="Any past or current mental health diagnoses:"
+                    colorTheme="purple"
+                    options={[
+                      { label: 'Anxiety', color: 'amber' },
+                      { label: 'Depression', color: 'blue' },
+                      { label: 'PTSD/trauma', color: 'red' },
+                      { label: 'Bipolar', color: 'purple' },
+                      { label: 'ADHD', color: 'teal' },
+                      { label: 'OCD', color: 'amber' },
+                      { label: 'Eating disorder', color: 'rose' },
+                      { label: 'Personality disorder', color: 'purple' },
+                      { label: 'Substance use', color: 'red' },
+                      { label: 'Grief/loss', color: 'blue' },
+                      { label: 'None', color: 'teal' },
+                    ]}
                     value={form.mental_health_dx}
-                    onChange={(e) => u('mental_health_dx', e.target.value)}
-                    autoFocus
-                  ></textarea>
-                  <div className="conv-textarea-label">How would you describe your current mental health?</div>
-                  <textarea
-                    className="conv-textarea"
-                    placeholder="Share whatever feels relevant about where you are right now..."
+                    onChange={(val) => u('mental_health_dx', val)}
+                  />
+                  <ChipSelect
+                    label="How would you describe your current mental health?"
+                    colorTheme="blue"
+                    options={[
+                      { label: 'Stable and well', color: 'teal' },
+                      { label: 'Mostly good', color: 'teal' },
+                      { label: 'Managing day-to-day', color: 'amber' },
+                      { label: 'Struggling', color: 'amber' },
+                      { label: 'In crisis', color: 'red' },
+                      { label: 'In active treatment', color: 'purple' },
+                      { label: 'In recovery', color: 'blue' },
+                      { label: 'Prefer not to say', color: 'blue' },
+                    ]}
                     value={form.current_mental_health}
-                    onChange={(e) => u('current_mental_health', e.target.value)}
-                  ></textarea>
+                    onChange={(val) => u('current_mental_health', val)}
+                  />
                   <div className="conv-textarea-label">Psychiatric medications you currently take:</div>
                   <textarea
                     className="conv-textarea"
