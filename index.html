@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StepWise Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -13,206 +14,366 @@
         }
 
         :root {
-            --color-bg-dark: #0a0a1a;
-            --color-bg-medium: #1a1a3e;
-            --color-accent-orange: #F59E0B;
-            --color-accent-red: #EF4444;
-            --color-accent-purple: #8B5CF6;
-            --color-accent-blue: #3B82F6;
-            --color-glass-bg: rgba(255, 255, 255, 0.05);
-            --color-glass-border: rgba(255, 255, 255, 0.08);
-            --color-text-primary: #ffffff;
-            --color-text-secondary: rgba(255, 255, 255, 0.7);
-            --color-text-tertiary: rgba(255, 255, 255, 0.5);
-            --transition-speed: 0.3s;
+            --bg-dark: #0f1419;
+            --bg-darker: #0a0e13;
+            --glass: rgba(20, 25, 35, 0.7);
+            --glass-light: rgba(30, 40, 60, 0.5);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #e0e0e0;
+            --text-muted: #9ca3af;
+            --accent-primary: #7c3aed;
+            --accent-secondary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --spacing: 1rem;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-medium) 100%);
-            color: var(--color-text-primary);
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #1a2235 100%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .container {
             display: flex;
-            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: var(--glass);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            position: fixed;
             height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 100;
         }
 
-        /* Navigation */
-        .navbar {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--color-glass-border);
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            gap: 3rem;
-        }
-
-        .logo {
+        .sidebar-logo {
             font-size: 1.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .nav-tabs {
-            display: flex;
-            gap: 0;
-            flex: 1;
+        .nav-group {
+            margin-bottom: 2rem;
         }
 
-        .nav-tab {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--color-text-secondary);
+        .nav-group-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all var(--transition-speed);
-            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-            font-weight: 500;
+            gap: 0.75rem;
         }
 
-        .nav-tab:hover {
-            color: var(--color-text-primary);
+        .nav-item:hover {
+            background: var(--glass-light);
+            color: var(--text);
         }
 
-        .nav-tab.active {
-            color: var(--color-text-primary);
-            border-bottom-color: var(--color-accent-purple);
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(59, 130, 246, 0.2));
+            color: var(--accent-primary);
+            border-left: 3px solid var(--accent-primary);
+            padding-left: calc(1rem - 3px);
         }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            overflow: hidden;
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .tab-content {
-            display: none;
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 280px;
             flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            width: 100%;
-        }
-
-        .tab-content.active {
             display: flex;
             flex-direction: column;
         }
 
-        /* General Components */
-        .card {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all var(--transition-speed);
+        .navbar {
+            background: var(--glass);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
         }
 
-        .card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.12);
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
         }
 
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--glass-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--glass-light);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-light);
+            border: 1px solid var(--border);
+        }
+
+        .btn-icon:hover {
+            background: var(--glass);
+        }
+
+        /* CONTENT AREA */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* KPI CARDS */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .kpi-card {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-glass-border);
+            background: var(--glass);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 1.5rem;
-            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
 
         .kpi-value {
             font-size: 2.5rem;
             font-weight: 700;
-            margin: 0.5rem 0;
-            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 0.5rem;
         }
 
-        .kpi-label {
+        .kpi-trend {
             font-size: 0.85rem;
-            color: var(--color-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all var(--transition-speed);
-            display: inline-flex;
+            color: var(--success);
+            display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        /* ACTION BAR */
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* TABLES */
+        .table-container {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 0.9rem;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
-            color: white;
+        thead {
+            background: rgba(124, 58, 237, 0.05);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
         }
 
-        .btn-secondary {
-            background: var(--color-glass-bg);
-            border: 1px solid var(--color-glass-border);
-            color: var(--color-text-primary);
+        th:hover {
+            background: rgba(124, 58, 237, 0.1);
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+        tbody tr:hover {
+            background: rgba(124, 58, 237, 0.05);
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
+        tbody tr:last-child td {
+            border-bottom: none;
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #EF4444, #DC2626);
-            color: white;
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
         }
 
-        .btn-warning {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            color: white;
-        }
-
-        /* Badges */
+        /* BADGES */
         .badge {
             display: inline-block;
             padding: 0.35rem 0.75rem;
@@ -223,138 +384,32 @@
             letter-spacing: 0.5px;
         }
 
-        .badge-beginning {
-            background: var(--color-accent-orange);
-            color: #000;
+        .badge-primary {
+            background: rgba(124, 58, 237, 0.2);
+            color: #c4b5fd;
         }
 
-        .badge-intermediate {
-            background: var(--color-accent-red);
-            color: #fff;
-        }
-
-        .badge-advanced {
-            background: var(--color-accent-purple);
-            color: #fff;
-        }
-
-        .badge-open {
+        .badge-success {
             background: rgba(16, 185, 129, 0.2);
-            color: #10B981;
-            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #86efac;
         }
 
-        .badge-closed {
-            background: rgba(107, 114, 128, 0.2);
-            color: #9CA3AF;
-            border: 1px solid rgba(107, 114, 128, 0.5);
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fcd34d;
         }
 
-        .badge-draft {
+        .badge-error {
             background: rgba(239, 68, 68, 0.2);
-            color: #FECACA;
-            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
         }
 
-        .badge-stage {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
+        .badge-secondary {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
         }
 
-        /* Forms */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--color-text-primary);
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            color: var(--color-text-primary);
-            font-family: inherit;
-            font-size: 0.9rem;
-            transition: all var(--transition-speed);
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--color-accent-purple);
-            background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .toggle-switch {
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .toggle-switch input {
-            display: none;
-        }
-
-        .toggle-slider {
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            position: relative;
-            transition: all var(--transition-speed);
-            border: 1px solid var(--color-glass-border);
-        }
-
-        .toggle-switch input:checked + .toggle-slider {
-            background: var(--color-accent-purple);
-            border-color: var(--color-accent-purple);
-        }
-
-        .toggle-slider::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: all var(--transition-speed);
-        }
-
-        .toggle-switch input:checked + .toggle-slider::after {
-            left: 22px;
-        }
-
-        /* Modal */
+        /* MODAL */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -363,26 +418,27 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-overlay.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal {
-            background: linear-gradient(135deg, rgba(26, 26, 62, 0.95), rgba(10, 10, 26, 0.95));
-            border: 1px solid var(--color-glass-border);
+            background: var(--glass);
+            border: 1px solid var(--border);
             border-radius: 16px;
             padding: 2rem;
-            max-width: 500px;
             width: 90%;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
 
         .modal-header {
@@ -398,28 +454,69 @@
         }
 
         .modal-close {
-            background: none;
+            width: 32px;
+            height: 32px;
             border: none;
-            color: var(--color-text-secondary);
-            font-size: 1.5rem;
+            background: transparent;
+            color: var(--text);
             cursor: pointer;
-            transition: all var(--transition-speed);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
         .modal-close:hover {
-            color: var(--color-text-primary);
+            background: var(--glass-light);
         }
 
-        .modal-footer {
-            display: flex;
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--glass-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--color-glass-border);
         }
 
-        /* Side Panel */
+        /* SIDE PANEL */
         .side-panel-overlay {
             display: none;
             position: fixed;
@@ -427,9 +524,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 999;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 150;
         }
 
         .side-panel-overlay.active {
@@ -438,368 +535,168 @@
 
         .side-panel {
             position: fixed;
-            right: -450px;
+            right: -500px;
             top: 0;
-            bottom: 0;
-            width: 450px;
-            background: linear-gradient(135deg, rgba(26, 26, 62, 0.98), rgba(10, 10, 26, 0.98));
-            border-left: 1px solid var(--color-glass-border);
+            width: 480px;
+            height: 100vh;
+            background: var(--glass);
+            border-left: 1px solid var(--border);
             overflow-y: auto;
-            z-index: 1001;
-            transition: right var(--transition-speed);
-            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+            z-index: 160;
+            transition: right 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
         .side-panel.active {
             right: 0;
         }
 
-        .side-panel-header {
+        .panel-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 1.5rem;
-            border-bottom: 1px solid var(--color-glass-border);
+            border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(10px);
+            background: var(--glass);
+            z-index: 10;
         }
 
-        .side-panel-title {
-            font-size: 1.25rem;
+        .panel-title {
+            font-size: 1.3rem;
             font-weight: 700;
         }
 
-        .side-panel-close {
-            background: none;
-            border: none;
-            color: var(--color-text-secondary);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-        }
-
-        .side-panel-close:hover {
-            color: var(--color-text-primary);
-        }
-
-        .side-panel-content {
+        .panel-content {
             padding: 1.5rem;
         }
 
-        .side-panel-section {
+        .panel-section {
             margin-bottom: 2rem;
         }
 
-        .side-panel-section-title {
-            font-size: 0.85rem;
+        .panel-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .panel-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .panel-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--color-text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 700;
+            margin-bottom: 0.4rem;
         }
 
-        .side-panel-section-content {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            padding: 1rem;
+        .panel-value {
+            font-size: 0.95rem;
+            color: var(--text);
+            padding: 0.5rem 0;
+            word-break: break-word;
         }
 
-        /* Training Grid */
-        .training-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .training-card {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all var(--transition-speed);
+        .panel-editable {
             cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        .training-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.15);
+        .panel-editable:hover {
+            background: var(--glass-light);
         }
 
-        .training-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .training-card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            flex: 1;
-        }
-
-        .training-card-toggle {
-            margin-left: 1rem;
-        }
-
-        .training-card-meta {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .training-card-date {
-            font-size: 0.85rem;
-            color: var(--color-text-secondary);
-        }
-
-        .training-card-location {
-            font-size: 0.85rem;
-            color: var(--color-text-secondary);
-        }
-
-        .progress-bar {
+        .panel-editable input,
+        .panel-editable textarea,
+        .panel-editable select {
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 0.75rem 0;
+            padding: 0.5rem;
+            background: var(--glass-light);
+            border: 1px solid var(--accent-primary);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-blue));
-            transition: width var(--transition-speed);
-        }
-
-        .progress-text {
-            font-size: 0.8rem;
-            color: var(--color-text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--color-text-secondary);
-            border-bottom: 1px solid var(--color-glass-border);
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--color-glass-border);
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        /* Pipeline */
-        .pipeline-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .pipeline-column {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            padding: 1rem;
-            min-height: 600px;
-        }
-
-        .pipeline-column-header {
-            font-weight: 700;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--color-glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pipeline-column-count {
-            background: var(--color-glass-bg);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 20px;
-            padding: 0.25rem 0.75rem;
+        .save-indicator {
             font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .pipeline-card {
-            background: var(--color-glass-bg);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-        }
-
-        .pipeline-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
-
-        .pipeline-card-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .pipeline-card-training {
-            font-size: 0.8rem;
-            color: var(--color-text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .pipeline-card-days {
-            font-size: 0.75rem;
-            color: var(--color-text-tertiary);
-        }
-
-        /* Stage Progress */
-        .stage-progress {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 0.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .stage-dot {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--color-glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition-speed);
-            color: var(--color-text-tertiary);
-        }
-
-        .stage-dot:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .stage-dot.current {
-            background: var(--color-accent-purple);
-            border-color: var(--color-accent-purple);
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
-        }
-
-        .stage-dot.completed {
-            background: #10B981;
-            border-color: #10B981;
-            color: white;
-            font-weight: 700;
-        }
-
-        .stage-label {
-            font-size: 0.7rem;text-align: center;
-            color: var(--color-text-tertiary);
-            margin-top: 0.25rem;
-        }
-
-        .stage-section {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .stage-section-header {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            padding-bottom: 0.75rem;
-            color: var(--color-text-primary);
-        }
-
-        .stage-section-toggle {
-            transition: transform var(--transition-speed);
-        }
-
-        .stage-section-toggle.open {
-            transform: rotate(90deg);
-        }
-
-        .stage-section-content {
+            color: var(--success);
+            margin-top: 0.2rem;
             display: none;
-            padding-top: 1rem;
-            border-top: 1px solid var(--color-glass-border);
         }
 
-        .stage-section.open .stage-section-content {
+        .save-indicator.show {
             display: block;
         }
 
-        /* Toast */
+        /* INLINE EDITABLE */
+        .inline-editable {
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .inline-editable:hover {
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .inline-edit-input {
+            padding: 0.25rem 0.5rem;
+            background: var(--glass-light);
+            border: 1px solid var(--accent-primary);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        /* TOAST */
         .toast-container {
             position: fixed;
-            bottom: 2rem;
+            top: 2rem;
             right: 2rem;
-            z-index: 2000;
-            max-width: 400px;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .toast {
-            background: var(--color-glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-glass-border);
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent-primary);
             border-radius: 8px;
             padding: 1rem 1.5rem;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10B981;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease;
+            min-width: 300px;
         }
 
         .toast.error {
-            border-left: 4px solid #EF4444;
+            border-left-color: var(--error);
         }
 
-        .toast.info {
-            border-left: 4px solid #3B82F6;
+        .toast.success {
+            border-left-color: var(--success);
         }
 
         @keyframes slideIn {
@@ -813,62 +710,158 @@
             }
         }
 
-        /* Loading Spinner */
-        .spinner {
+        /* LOADING */
+        .loading {
             display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading-spinner {
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top-color: var(--color-accent-purple);
+            border: 2px solid var(--border);
+            border-top-color: var(--accent-primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        /* Responsive */
+        /* PROGRESS BAR */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--glass-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* STAGE PROGRESS */
+        .stage-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stage-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--glass-light);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .stage-dot.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .stage-dot.completed {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .stage-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .stage-connector.active {
+            background: var(--accent-primary);
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main {
+                margin-left: 240px;
+            }
+
             .side-panel {
-                width: 350px;
-                right: -350px;
+                width: 400px;
+                right: -400px;
             }
 
-            .modal {
-                max-width: 90%;
-            }
-
-            .training-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .pipeline-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
         }
 
         @media (max-width: 768px) {
-            .navbar {
+            .sidebar {
+                width: 70px;
+                padding: 1rem 0;
+            }
+
+            .sidebar-logo,
+            .nav-group-title,
+            .nav-item-text {
+                display: none;
+            }
+
+            .nav-item {
                 padding: 1rem;
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .navbar {
+                flex-direction: column;
                 gap: 1rem;
             }
 
-            .logo {
-                font-size: 1.2rem;
+            .navbar-left {
+                width: 100%;
             }
 
-            .nav-tab {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.8rem;
-            }
-
-            .nav-tabs {
-                gap: 0.5rem;
+            .search-bar {
+                max-width: 100%;
             }
 
             .side-panel {
@@ -876,1595 +869,1409 @@
                 right: -100%;
             }
 
-            .main-content {
-                padding: 0;
-            }
-
-            .tab-content {
-                padding: 1rem;
+            .modal {
+                width: 95%;
             }
 
             .kpi-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
             }
 
-            .pipeline-grid {
+            .form-row {
                 grid-template-columns: 1fr;
             }
 
-            .modal {
-                max-width: 95%;
-                padding: 1.5rem;
+            .content {
+                padding: 1rem;
             }
-        }
-
-        /* Activity Feed */
-        .activity-feed {
-            background: var(--color-glass-bg);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-
-        .activity-item {
-            display: flex;
-            gap: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--color-glass-border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .activity-timestamp {
-            font-size: 0.75rem;
-            color: var(--color-text-tertiary);
-            min-width: 60px;
-            text-align: right;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-description {
-            font-size: 0.9rem;
-            color: var(--color-text-secondary);
-        }
-
-        /* Expandable Sections */
-        .expandable {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--color-glass-border);
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-
-        .expandable-header {
-            padding: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-
-        .expandable-toggle {
-            transition: transform var(--transition-speed);
-        }
-
-        .expandable.open .expandable-toggle {
-            transform: rotate(90deg);
-        }
-
-        .expandable-content {
-            display: none;
-            padding: 0 1rem 1rem 1rem;
-            border-top: 1px solid var(--color-glass-border);
-        }
-
-        .expandable.open .expandable-content {
-            display: block;
-        }
-
-        /* Utility Classes */
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-2 {
-            margin-top: 1rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 1rem;
-        }
-
-        .gap-1 {
-            gap: 0.5rem;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-
-        .align-center {
-            align-items: center;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .w-full {
-            width: 100%;
-        }
-
-        .opacity-75 {
-            opacity: 0.75;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        /* Shipping Status Badges */
-        .shipping-status {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .shipping-status.not-shipped {
-            background: rgba(107, 114, 128, 0.2);
-            color: #D1D5DB;
-        }
-
-        .shipping-status.label-created {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93C5FD;
-        }
-
-        .shipping-status.in-transit {
-            background: rgba(245, 158, 11, 0.2);
-            color: #FCD34D;
-        }
-
-        .shipping-status.delivered {
-            background: rgba(16, 185, 129, 0.2);
-            color: #86EFAC;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="navbar">
-            <div class="logo">🧠 StepWise</div>
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
-                <button class="nav-tab" data-tab="trainings">📋 Trainings</button>
-                <button class="nav-tab" data-tab="pipeline">🔀 Pipeline</button>
-                <button class="nav-tab" data-tab="shipping">🚚 Shipping</button>
-                <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-logo">SW</div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Main</div>
+                <div class="nav-item active" data-page="dashboard">
+                    <div class="nav-item-icon">📊</div>
+                    <span class="nav-item-text">Dashboard</span>
+                </div>
+                <div class="nav-item" data-page="trainings">
+                    <div class="nav-item-icon">🎓</div>
+                    <span class="nav-item-text">Trainings</span>
+                </div>
+                <div class="nav-item" data-page="participants">
+                    <div class="nav-item-icon">👥</div>
+                    <span class="nav-item-text">Participants</span>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Operations</div>
+                <div class="nav-item" data-page="shipping">
+                    <div class="nav-item-icon">📦</div>
+                    <span class="nav-item-text">Shipping</span>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Admin</div>
+                <div class="nav-item" data-page="settings">
+                    <div class="nav-item-icon">⚙️</div>
+                    <span class="nav-item-text">Settings</span>
+                </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- Dashboard Tab -->
-            <div class="tab-content active" id="dashboard-tab">
-                <div class="kpi-grid" id="kpi-container">
-                    <!-- KPIs populated by JS -->
+        <!-- MAIN CONTENT -->
+        <div class="main">
+            <!-- NAVBAR -->
+            <div class="navbar">
+                <div class="navbar-left">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" id="globalSearch" placeholder="Search participants...">
+                    </div>
                 </div>
-
-                <div class="flex gap-1 mb-2" style="margin-bottom: 2rem;">
-                    <h2 style="flex: 1;">Active Trainings</h2>
-                </div>
-
-                <div class="training-grid" id="dashboard-trainings">
-                    <!-- Training overview cards -->
-                </div>
-
-                <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Recent Activity</h2>
-                <div class="activity-feed" id="activity-feed">
-                    <!-- Activity populated by JS -->
+                <div class="navbar-right">
+                    <div class="btn-icon" id="refreshBtn" title="Refresh data">
+                        🔄
+                    </div>
+                    <div class="btn-icon" id="connectionStatus" title="Connection status">
+                        🟢
+                    </div>
                 </div>
             </div>
 
-            <!-- Trainings Tab -->
-            <div class="tab-content" id="trainings-tab">
-                <div class="flex justify-between align-center mb-2">
-                    <h2>Manage Trainings</h2>
-                    <button class="btn btn-primary" id="create-training-btn">+ Create Training</button>
-                </div>
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- DASHBOARD TAB -->
+                <section class="content-section active" id="dashboard">
+                    <h1 class="page-title">Dashboard</h1>
 
-                <div class="training-grid" id="trainings-grid">
-                    <!-- Training cards populated by JS -->
-                </div>
-            </div>
-
-            <!-- Pipeline Tab -->
-            <div class="tab-content" id="pipeline-tab">
-                <div class="flex justify-between align-center mb-2">
-                    <h2>Participant Pipeline</h2>
-                    <select id="pipeline-filter" class="form-select" style="max-width: 200px;">
-                        <option value="">All Trainings</option>
-                    </select>
-                </div>
-
-                <div class="pipeline-grid" id="pipeline-container">
-                    <!-- Pipeline columns populated by JS -->
-                </div>            <!-- Shipping Tab -->
-            <div class="tab-content" id="shipping-tab">
-                <div class="flex justify-between align-center mb-2">
-                    <h2>Shipping Dashboard</h2>
-                    <button class="btn btn-primary" id="bulk-mark-shipped">Mark Selected as Shipped</button>
-                </div>
-
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-label">Not Shipped</div>
-                        <div class="kpi-value" id="shipping-not-shipped">0</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">In Transit</div>
-                        <div class="kpi-value" id="shipping-in-transit">0</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">Delivered</div>
-                        <div class="kpi-value" id="shipping-delivered">0</div>
-                    </div>
-                </div>
-
-                <div class="table-container" style="margin-top: 2rem;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select-all-shipping"></th>
-                                <th>Name</th>
-                                <th>Training</th>
-                                <th>Tracking #</th>
-                                <th>Carrier</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="shipping-table-body">
-                            <!-- Shipping rows populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div class="tab-content" id="settings-tab">
-                <h2 style="margin-bottom: 2rem;">Settings</h2>
-
-                <div class="card" style="max-width: 500px; margin-bottom: 2rem;">
-                    <h3 style="margin-bottom: 1.5rem;">Training Defaults</h3>
-
-                    <div class="form-group">
-                        <label class="form-label">Default Price (cents)</label>
-                        <input type="number" id="default-price" class="form-input" placeholder="50000">
+                    <!-- KPI CARDS -->
+                    <div class="kpi-grid" id="kpiGrid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Participants</div>
+                            <div class="kpi-value" id="kpiTotalParticipants">0</div>
+                            <div class="kpi-trend">↑ 12% from last month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Active Pipeline</div>
+                            <div class="kpi-value" id="kpiActivePipeline">0</div>
+                            <div class="kpi-trend">In progress</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Revenue Collected</div>
+                            <div class="kpi-value" id="kpiRevenue">$0</div>
+                            <div class="kpi-trend">This period</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Upcoming Trainings</div>
+                            <div class="kpi-value" id="kpiUpcomingTrainings">0</div>
+                            <div class="kpi-trend">Next 90 days</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Needs Attention</div>
+                            <div class="kpi-value" id="kpiNeedsAttention">0</div>
+                            <div class="kpi-trend">Stuck > 7 days</div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Default Location</label>
-                        <input type="text" id="default-location" class="form-input" placeholder="Online">
+                    <!-- ACTION BAR -->
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="newTrainingBtn">+ New Training</button>
+                        <button class="btn btn-primary" id="addParticipantBtn">+ Add Participant</button>
+                        <button class="btn btn-secondary" id="exportAllBtn">Export All Data</button>
                     </div>
 
-                    <button class="btn btn-primary" id="save-settings">Save Settings</button>
-                </div>
+                    <!-- TRAINING OVERVIEW -->
+                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Active Trainings</h2>
+                    <div id="trainingOverviewCards"></div>
 
-                <div class="card" style="max-width: 500px;">
-                    <h3 style="margin-bottom: 1.5rem;">Export Data</h3>
-                    <button class="btn btn-secondary" id="export-csv">📥 Export All Applicants (CSV)</button>
-                </div>
+                    <!-- PIPELINE SNAPSHOT -->
+                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Pipeline Snapshot</h2>
+                    <div id="pipelineSnapshot" class="table-container"></div>
+
+                    <!-- ALERTS -->
+                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Alerts & Action Items</h2>
+                    <div id="alertsSection" class="table-container"></div>
+                </section>
+
+                <!-- TRAININGS TAB -->
+                <section class="content-section" id="trainings">
+                    <h1 class="page-title">Trainings</h1>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="newTrainingBtn2">+ New Training</button>
+                        <input type="text" class="form-input" id="trainingSearch" placeholder="Search trainings..." style="max-width: 300px;">
+                    </div>
+                    <div id="trainingsList" class="table-container"></div>
+                </section>
+
+                <!-- PARTICIPANTS TAB -->
+                <section class="content-section" id="participants">
+                    <h1 class="page-title">Participants</h1>
+                    <div class="action-bar">
+                        <button class="btn btn-primary" id="addParticipantBtn2">+ Add Participant</button>
+                        <select class="form-select" id="stageFilter" style="max-width: 200px;">
+                            <option value="">All Stages</option>
+                            <option value="lead">Lead</option>
+                            <option value="chemistry_call">Chemistry Call</option>
+                            <option value="application">Application</option>
+                            <option value="interview">Interview</option>
+                            <option value="approval">Approval</option>
+                            <option value="payment">Payment</option>
+                            <option value="onboarding">Onboarding</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                        <select class="form-select" id="paymentFilter" style="max-width: 200px;">
+                            <option value="">All Payment Status</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Deposit">Deposit</option>
+                            <option value="Paid in Full">Paid in Full</option>
+                        </select>
+                    </div>
+                    <div id="participantsList" class="table-container"></div>
+                </section>
+
+                <!-- SHIPPING TAB -->
+                <section class="content-section" id="shipping">
+                    <h1 class="page-title">Shipping Operations</h1>
+                    <div class="action-bar">
+                        <select class="form-select" id="shippingStatusFilter" style="max-width: 200px;">
+                            <option value="">All Status</option>
+                            <option value="not_shipped">Not Shipped</option>
+                            <option value="label_created">Label Created</option>
+                            <option value="in_transit">In Transit</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div id="shippingList" class="table-container"></div>
+                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Shipping Stats</h2>
+                    <div id="shippingStats" class="table-container"></div>
+                </section>
+
+                <!-- SETTINGS TAB -->
+                <section class="content-section" id="settings">
+                    <h1 class="page-title">Settings</h1>
+                    <div class="kpi-card" style="max-width: 600px;">
+                        <div class="panel-section">
+                            <div class="panel-section-title">Defaults</div>
+                            <div class="form-group">
+                                <label class="form-label">Default Price ($)</label>
+                                <input type="number" class="form-input" id="defaultPrice" value="2500">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Default Location</label>
+                                <input type="text" class="form-input" id="defaultLocation" value="TBD">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Default Max Capacity</label>
+                                <input type="number" class="form-input" id="defaultCapacity" value="12">
+                            </div>
+                        </div>
+                        <div class="panel-section">
+                            <div class="panel-section-title">Database</div>
+                            <div class="form-group">
+                                <label class="form-label">Connection Status</label>
+                                <div class="badge badge-success">Connected</div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <button class="btn btn-secondary" id="exportCsvBtn">Export CSV</button>
+                                <button class="btn btn-secondary" id="syncDataBtn">Sync Data</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Create/Edit Training -->
-    <div class="modal-overlay" id="training-modal">
+    <!-- MODALS -->
+    <div class="modal-overlay" id="trainingModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="training-modal-title">Create Training</h2>
-                <button class="modal-close" id="training-modal-close">✕</button>
+                <h2 class="modal-title">New Training</h2>
+                <button class="modal-close" onclick="closeModal('trainingModal')">✕</button>
             </div>
-            <form id="training-form">
+            <form id="trainingForm">
+                <input type="hidden" id="trainingId">
                 <div class="form-group">
                     <label class="form-label">Training Name</label>
-                    <input type="text" id="training-name" class="form-input" required>
+                    <input type="text" class="form-input" id="trainingName" required>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Cohort Name</label>
-                    <input type="text" id="training-cohort" class="form-input">
-                </div>
-
                 <div class="form-row">
                     <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" class="form-input" id="trainingStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-input" id="trainingEndDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Location</label>
+                        <input type="text" class="form-input" id="trainingLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Max Capacity</label>
+                        <input type="number" class="form-input" id="trainingCapacity" required value="12">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Training Type</label>
+                        <input type="text" class="form-input" id="trainingType">
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Level</label>
-                        <select id="training-level" class="form-select" required>
-                            <option value="">Select Level</option>
-                            <option value="beginning">Beginning</option>
-                            <option value="intermediate">Intermediate</option>
-                            <option value="advanced">Advanced</option>
+                        <select class="form-select" id="trainingLevel">
+                            <option value="Beginning">Beginning</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
                         </select>
                     </div>
-
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Status</label>
-                        <select id="training-status" class="form-select" required>
+                        <select class="form-select" id="trainingStatus">
                             <option value="Draft">Draft</option>
                             <option value="Open">Open</option>
                             <option value="Closed">Closed</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" id="training-start" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">End Date</label>
-                        <input type="date" id="training-end" class="form-input" required>
+                        <label class="form-label">Price ($)</label>
+                        <input type="number" class="form-input" id="trainingPrice">
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-label">Location</label>
-                    <input type="text" id="training-location" class="form-input" required>
+                    <label class="form-label">Cohort Name</label>
+                    <input type="text" class="form-input" id="trainingCohort">
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Max Capacity</label>
-                        <input type="number" id="training-capacity" class="form-input" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Price (cents)</label>
-                        <input type="number" id="training-price" class="form-input" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Stripe Price ID</label>
-                    <input type="text" id="training-stripe" class="form-input">
-                </div>
-
                 <div class="form-group">
                     <label class="form-label">Description</label>
-                    <textarea id="training-description" class="form-textarea"></textarea>
+                    <textarea class="form-textarea" id="trainingDescription"></textarea>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Notes</label>
-                    <textarea id="training-notes" class="form-textarea"></textarea>
+                    <textarea class="form-textarea" id="trainingNotes"></textarea>
                 </div>
-
-                <div class="form-group">
-                    <label class="flex align-center gap-1">
-                        <input type="checkbox" id="training-show-apply">
-                        <span class="form-label" style="margin: 0;">Show on Apply Page</span>
-                    </label>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="training-cancel">Cancel</button>
+                <div style="display: flex; gap: 1rem;">
                     <button type="submit" class="btn btn-primary">Save Training</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('trainingModal')">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Side Panel for Participant Details -->
-    <div class="side-panel-overlay" id="side-panel-overlay"></div>
-    <div class="side-panel" id="side-panel">
-        <div class="side-panel-header">
-            <h2 class="side-panel-title" id="side-panel-title">Participant Details</h2>
-            <button class="side-panel-close" id="side-panel-close">✕</button>
-        </div>
-
-        <div class="side-panel-content">
-            <!-- Contact Info -->
-            <div class="side-panel-section">
-                <div class="side-panel-section-title">Contact Information</div>
-                <div class="side-panel-section-content">
-                    <div style="margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Name</div>
-                        <div id="panel-name" style="font-weight: 600;"></div>
+    <div class="modal-overlay" id="participantModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Participant</h2>
+                <button class="modal-close" onclick="closeModal('participantModal')">✕</button>
+            </div>
+            <form id="participantForm">
+                <input type="hidden" id="participantId">
+                <div class="form-group">
+                    <label class="form-label">Training</label>
+                    <select class="form-select" id="participantTraining" required>
+                        <option value="">Select a training</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="participantName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="participantEmail" required>
                     </div>
-                    <div style="margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Email</div>
-                        <div id="panel-email" style="font-weight: 600;"></div>
-                    </div>
-                    <div style="margin-bottom: 0.75rem;">
-                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Phone</div>
-                        <div id="panel-phone" style="font-weight: 600;"></div>
-                    </div>
-                    <div class="flex gap-1" style="margin-top: 1rem;">
-                        <button class="btn btn-small btn-secondary" id="panel-email-btn">📧 Email</button>
-                        <button class="btn btn-small btn-secondary" id="panel-call-btn">📞 Call</button>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="participantPhone">
                     </div>
                 </div>
-            </div>
-
-            <!-- Pipeline Progress -->
-            <div class="side-panel-section">
-                <div class="side-panel-section-title">Pipeline Progress</div>
-                <div id="panel-progress" class="stage-progress">
-                    <!-- Stages populated by JS -->
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-input" id="participantAddress">
                 </div>
-            </div>
-
-            <!-- Stages -->
-            <div id="stage-sections-container">
-                <!-- Stage sections populated by JS -->
-            </div>
-
-            <!-- Admin Notes -->
-            <div class="side-panel-section">
-                <div class="side-panel-section-title">Admin Notes</div>
-                <div class="side-panel-section-content">
-                    <textarea id="panel-admin-notes" class="form-textarea" placeholder="Add notes..."></textarea>
-                    <button class="btn btn-small btn-primary" id="save-admin-notes" style="margin-top: 0.75rem;">Save Notes</button>
+                <div class="form-group">
+                    <label class="form-label">Birth Date</label>
+                    <input type="date" class="form-input" id="participantBirthDate">
                 </div>
-            </div>
-
-            <!-- Activity Log -->
-            <div class="side-panel-section">
-                <div class="side-panel-section-title">Activity Log</div>
-                <div id="panel-activity" style="font-size: 0.85rem;">
-                    <!-- Activity populated by JS -->
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">Add Participant</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('participantModal')">Cancel</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
-    <div class="toast-container" id="toast-container"></div>
+    <!-- SIDE PANEL -->
+    <div class="side-panel-overlay" id="sidePanelOverlay" onclick="closeSidePanel()"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <h2 class="panel-title" id="panelTitle">Participant</h2>
+            <button class="modal-close" onclick="closeSidePanel()">✕</button>
+        </div>
+        <div class="panel-content" id="panelContent"></div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // Initialize Supabase
-        const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
+        // ==================== INITIALIZATION ====================
         const { createClient } = window.supabase;
-        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const db = createClient(
+            'https://ybludwecmqghoheotzzz.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk'
+        );
 
-        // Global State
-        const state = {
-            trainings: [],
-            applicants: [],
-            currentTab: 'dashboard',
-            currentApplicant: null,
-            selectedApplicants: new Set(),
-            defaultPrice: 50000,
-            defaultLocation: 'Online',
-            settings: {}
-        };
+        let currentPage = 'dashboard';
+        let trainingsData = [];
+        let applicantsData = [];
+        let editDebounceTimer = {};
+        const STAGE_ORDER = ['lead', 'chemistry_call', 'application', 'interview', 'approval', 'payment', 'onboarding', 'complete'];
 
-        const stageNames = ['lead', 'chemistry_call', 'application', 'interview', 'approval', 'payment', 'onboarding', 'complete'];
-        const stageLabels = ['Lead', 'Chemistry Call', 'Application', 'Interview', 'Approval', 'Payment', 'Onboarding', 'Complete'];
-
-        // Initialize App
-        async function initApp() {
-            await loadSettings();
-            await fetchTrainings();
-            await fetchApplicants();
-            setupEventListeners();
-            setupRealTimeSubscriptions();
-            renderDashboard();
-        }
-
-        // Load Settings
-        async function loadSettings() {
-            const saved = localStorage.getItem('stepwise-settings');
-            if (saved) {
-                state.settings = JSON.parse(saved);
-                state.defaultPrice = state.settings.defaultPrice || 50000;
-                state.defaultLocation = state.settings.defaultLocation || 'Online';
-                document.getElementById('default-price').value = state.defaultPrice;
-                document.getElementById('default-location').value = state.defaultLocation;
-            }
-        }
-
-        // Fetch Trainings
-        async function fetchTrainings() {
+        // ==================== DATA FETCHING ====================
+        async function fetchAllData() {
             try {
-                const { data, error } = await db
-                    .from('trainings')
-                    .select('*')
-                    .order('start_date', { ascending: false });
+                updateConnectionStatus(true);
+                const [trainings, applicants] = await Promise.all([
+                    db.from('trainings').select('*'),
+                    db.from('applicants').select('*')
+                ]);
 
-                if (error) throw error;
-                state.trainings = data || [];
+                if (trainings.error) throw trainings.error;
+                if (applicants.error) throw applicants.error;
+
+                trainingsData = trainings.data || [];
+                applicantsData = applicants.data || [];
+
+                renderCurrentPage();
+                updateDashboard();
             } catch (error) {
-                showToast('Error fetching trainings', 'error');
-                console.error(error);
+                console.error('Error fetching data:', error);
+                updateConnectionStatus(false);
+                showToast('Error loading data: ' + error.message, 'error');
             }
         }
 
-        // Fetch Applicants
-        async function fetchApplicants() {
-            try {
-                const { data, error } = await db
-                    .from('applicants')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+        // ==================== REAL-TIME SUBSCRIPTIONS ====================
+        function setupSubscriptions() {
+            db.from('trainings').on('*', payload => {
+                console.log('Training update:', payload);
+                fetchAllData();
+            }).subscribe();
 
-                if (error) throw error;
-                state.applicants = data || [];
-            } catch (error) {
-                showToast('Error fetching applicants', 'error');
-                console.error(error);
-            }
+            db.from('applicants').on('*', payload => {
+                console.log('Applicant update:', payload);
+                fetchAllData();
+            }).subscribe();
         }
 
-        // Real-time Subscriptions
-        function setupRealTimeSubscriptions() {
-            db
-                .channel('trainings')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'trainings' }, (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        state.trainings.push(payload.new);
-                    } else if (payload.eventType === 'UPDATE') {
-                        const idx = state.trainings.findIndex(t => t.id === payload.new.id);
-                        if (idx >= 0) state.trainings[idx] = payload.new;
-                    } else if (payload.eventType === 'DELETE') {
-                        state.trainings = state.trainings.filter(t => t.id !== payload.old.id);
-                    }
-                    refreshCurrentTab();
-                })
-                .subscribe();
-
-            db
-                .channel('applicants')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' }, (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        state.applicants.push(payload.new);
-                    } else if (payload.eventType === 'UPDATE') {
-                        const idx = state.applicants.findIndex(a => a.id === payload.new.id);
-                        if (idx >= 0) state.applicants[idx] = payload.new;
-                    } else if (payload.eventType === 'DELETE') {
-                        state.applicants = state.applicants.filter(a => a.id !== payload.old.id);
-                    }
-                    refreshCurrentTab();
-                })
-                .subscribe();
+        // ==================== MODAL FUNCTIONS ====================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
         }
 
-        // Event Listeners
-        function setupEventListeners() {
-            // Tab Navigation
-            document.querySelectorAll('.nav-tab').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-                    e.target.classList.add('active');
-                    const tab = e.target.dataset.tab;
-                    state.currentTab = tab;
-                    document.getElementById(`${tab}-tab`).classList.add('active');
-                    refreshCurrentTab();
-                });
-            });
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.getElementById(modalId).querySelector('form')?.reset();
+            document.getElementById('trainingId').value = '';
+            document.getElementById('participantId').value = '';
+        }
 
-            // Training Modal
-            document.getElementById('create-training-btn').addEventListener('click', () => {
-                openTrainingModal();
-            });
+        // ==================== SIDE PANEL FUNCTIONS ====================
+        function openSidePanel(content) {
+            document.getElementById('sidePanelOverlay').classList.add('active');
+            document.getElementById('sidePanel').classList.add('active');
+            document.getElementById('panelContent').innerHTML = content;
+        }
 
-            document.getElementById('training-modal-close').addEventListener('click', () => {
-                closeTrainingModal();
-            });
+        function closeSidePanel() {
+            document.getElementById('sidePanelOverlay').classList.remove('active');
+            document.getElementById('sidePanel').classList.remove('active');
+        }
 
-            document.getElementById('training-cancel').addEventListener('click', () => {
-                closeTrainingModal();
-            });
+        // ==================== TOAST NOTIFICATIONS ====================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
-            document.getElementById('training-modal').addEventListener('click', (e) => {
-                if (e.target.id === 'training-modal') {
-                    closeTrainingModal();
+        // ==================== CONNECTION STATUS ====================
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            status.textContent = connected ? '🟢' : '🔴';
+            status.title = connected ? 'Connected' : 'Disconnected';
+        }
+
+        // ==================== PAGE NAVIGATION ====================
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                navigateToPage(page);
+            });
+        });
+
+        function navigateToPage(page) {
+            currentPage = page;
+            window.location.hash = '#' + page;
+
+            // Update active nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === page) {
+                    item.classList.add('active');
                 }
             });
 
-            document.getElementById('training-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                await saveTraining();
+            // Show/hide sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
             });
+            document.getElementById(page).classList.add('active');
 
-            // Side Panel
-            document.getElementById('side-panel-close').addEventListener('click', closeSidePanel);
-            document.getElementById('side-panel-overlay').addEventListener('click', closeSidePanel);
-
-            // Settings
-            document.getElementById('save-settings').addEventListener('click', saveSettings);
-            document.getElementById('export-csv').addEventListener('click', exportCSV);
-
-            // Shipping
-            document.getElementById('select-all-shipping').addEventListener('change', (e) => {
-                document.querySelectorAll('.shipping-checkbox').forEach(cb => {
-                    cb.checked = e.target.checked;
-                });
-            });
-
-            document.getElementById('bulk-mark-shipped').addEventListener('click', markSelectedAsShipped);
-
-            // Panel Actions
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('stage-section-header')) {
-                    const section = e.target.closest('.stage-section');
-                    section.classList.toggle('open');
-                }
-            });
+            renderCurrentPage();
         }
 
-        // Training Modal Functions
-        function openTrainingModal(training = null) {
-            const modal = document.getElementById('training-modal');
-            const form = document.getElementById('training-form');
-            form.reset();
-
-            if (training) {
-                document.getElementById('training-modal-title').textContent = 'Edit Training';
-                document.getElementById('training-name').value = training.name;
-                document.getElementById('training-cohort').value = training.cohort_name || '';
-                document.getElementById('training-level').value = training.training_level || '';
-                document.getElementById('training-status').value = training.status || 'Draft';
-                document.getElementById('training-start').value = training.start_date || '';
-                document.getElementById('training-end').value = training.end_date || '';
-                document.getElementById('training-location').value = training.location || '';
-                document.getElementById('training-capacity').value = training.max_capacity || '';
-                document.getElementById('training-price').value = training.price_cents || state.defaultPrice;
-                document.getElementById('training-stripe').value = training.stripe_price_id || '';
-                document.getElementById('training-description').value = training.description || '';
-                document.getElementById('training-notes').value = training.notes || '';
-                document.getElementById('training-show-apply').checked = training.show_on_apply || false;
-                form.dataset.trainingId = training.id;
-            } else {
-                document.getElementById('training-modal-title').textContent = 'Create Training';
-                document.getElementById('training-price').value = state.defaultPrice;
-                document.getElementById('training-location').value = state.defaultLocation;
-                delete form.dataset.trainingId;
-            }
-
-            modal.classList.add('active');
+        function renderCurrentPage() {
+            if (currentPage === 'dashboard') renderDashboard();
+            else if (currentPage === 'trainings') renderTrainings();
+            else if (currentPage === 'participants') renderParticipants();
+            else if (currentPage === 'shipping') renderShipping();
         }
 
-        function closeTrainingModal() {
-            document.getElementById('training-modal').classList.remove('active');
-        }
-
-        async function saveTraining() {
-            const form = document.getElementById('training-form');
-            const trainingId = form.dataset.trainingId;
-
-            const trainingData = {
-                name: document.getElementById('training-name').value,
-                cohort_name: document.getElementById('training-cohort').value,
-                training_level: document.getElementById('training-level').value,
-                status: document.getElementById('training-status').value,
-                start_date: document.getElementById('training-start').value,
-                end_date: document.getElementById('training-end').value,
-                location: document.getElementById('training-location').value,
-                max_capacity: parseInt(document.getElementById('training-capacity').value),
-                price_cents: parseInt(document.getElementById('training-price').value),
-                stripe_price_id: document.getElementById('training-stripe').value || null,
-                description: document.getElementById('training-description').value,
-                notes: document.getElementById('training-notes').value,
-                show_on_apply: document.getElementById('training-show-apply').checked
-            };
-
-            try {
-                if (trainingId) {
-                    const { error } = await db
-                        .from('trainings')
-                        .update(trainingData)
-                        .eq('id', trainingId);
-                    if (error) throw error;
-                    showToast('Training updated successfully', 'success');
-                } else {
-                    const { error } = await db
-                        .from('trainings')
-                        .insert([trainingData]);
-                    if (error) throw error;
-                    showToast('Training created successfully', 'success');
-                }
-                closeTrainingModal();
-                await fetchTrainings();
-                refreshCurrentTab();
-            } catch (error) {
-                showToast('Error saving training: ' + error.message, 'error');
-                console.error(error);
-            }
-        }
-
-        // Render Functions
-        function renderDashboard() {
-            renderKPIs();
-            renderDashboardTrainings();
-            renderActivityFeed();
-        }
-
-        function renderKPIs() {
-            const totalParticipants = state.applicants.length;
-            const activePipeline = state.applicants.filter(a => a.pipeline_stage && a.pipeline_stage !== 'complete').length;
-            const paidApplicants = state.applicants.filter(a => a.payment_status === 'Paid in Full');
-            const totalRevenue = paidApplicants.reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
-            const revenueDisplay = (totalRevenue / 100).toFixed(2);
-            const upcomingTrainings = state.trainings.filter(t => new Date(t.start_date) > new Date()).length;
-            const thisWeekSignups = state.applicants.filter(a => {
-                const date = new Date(a.created_at);
-                const now = new Date();
-                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                return date > weekAgo;
+        // ==================== DASHBOARD ====================
+        function updateDashboard() {
+            const totalParticipants = applicantsData.length;
+            const activePipeline = applicantsData.filter(a => !['complete', 'Withdrawn'].includes(a.pipeline_stage || a.app_status)).length;
+            const revenue = applicantsData
+                .filter(a => a.payment_status === 'Paid in Full')
+                .reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
+            const upcomingTrainings = trainingsData.filter(t => new Date(t.start_date) > new Date()).length;
+            const needsAttention = applicantsData.filter(a => {
+                const updated = new Date(a.updated_at);
+                const days = (new Date() - updated) / (1000 * 60 * 60 * 24);
+                return days > 7 && !['complete', 'Withdrawn'].includes(a.pipeline_stage || a.app_status);
             }).length;
 
-            const kpiContainer = document.getElementById('kpi-container');
-            kpiContainer.innerHTML = `
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Participants</div>
-                    <div class="kpi-value">${totalParticipants}</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Active Pipeline</div>
-                    <div class="kpi-value">${activePipeline}</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Revenue (Paid)</div>
-                    <div class="kpi-value">$${revenueDisplay}</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Upcoming Trainings</div>
-                    <div class="kpi-value">${upcomingTrainings}</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">This Week's Signups</div>
-                    <div class="kpi-value">${thisWeekSignups}</div>
-                </div>
-            `;
+            document.getElementById('kpiTotalParticipants').textContent = totalParticipants;
+            document.getElementById('kpiActivePipeline').textContent = activePipeline;
+            document.getElementById('kpiRevenue').textContent = '$' + (revenue / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('kpiUpcomingTrainings').textContent = upcomingTrainings;
+            document.getElementById('kpiNeedsAttention').textContent = needsAttention;
         }
 
-        function renderDashboardTrainings() {
-            const container = document.getElementById('dashboard-trainings');
-            const upcomingTrainings = state.trainings
-                .filter(t => new Date(t.start_date) > new Date())
-                .slice(0, 6);
+        function renderDashboard() {
+            updateDashboard();
 
-            container.innerHTML = upcomingTrainings.map(training => {
-                const participants = state.applicants.filter(a => a.training_id === training.id).length;
-                const enrolled = participants;
-                const capacity = training.max_capacity || 10;
-                const percentage = (enrolled / capacity) * 100;
+            // Training Overview Cards
+            const trainingCards = trainingsData
+                .filter(t => new Date(t.start_date) > new Date() || new Date(t.end_date) > new Date())
+                .slice(0, 5)
+                .map(training => {
+                    const trainingApplicants = applicantsData.filter(a => a.training_id === training.id);
+                    const filled = trainingApplicants.length;
+                    const capacity = training.max_capacity || 12;
+                    const percent = Math.round((filled / capacity) * 100);
+                    const preview = trainingApplicants.slice(0, 5).map(a => `<span class="badge badge-secondary">${a.name}</span>`).join('');
 
-                return `
-                    <div class="training-card" onclick="openTrainingDetail('${training.id}')">
-                        <div class="training-card-header">
-                            <div class="training-card-title">${training.name}</div>
-                            <span class="badge badge-${training.training_level}">${training.training_level}</span>
-                        </div>
-                        <div class="training-card-meta">
-                            <span class="training-card-date">📋 ${formatDate(training.start_date)}</span>
-                            <span class="training-card-location">📍 ${training.location}</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="progress-text">${enrolled}/${capacity} participants</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderActivityFeed() {
-            const container = document.getElementById('activity-feed');
-            const recentChanges = state.applicants
-                .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-                .slice(0, 10);
-
-            if (recentChanges.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--color-text-secondary);">No recent activity</div>';
-                return;
-            }
-
-            container.innerHTML = recentChanges.map(applicant => {
-                const training = state.trainings.find(t => t.id === applicant.training_id);
-                const trainingName = training ? training.name : 'Unknown Training';
-                const stage = applicant.pipeline_stage || 'unknown';
-                const updateTime = formatRelativeTime(applicant.updated_at);
-
-                return `
-                    <div class="activity-item">
-                        <div class="activity-timestamp">${updateTime}</div>
-                        <div class="activity-content">
-                            <div class="activity-title">${applicant.name}</div>
-                            <div class="activity-description">
-                                ${trainingName} · Stage: ${formatStageLabel(stage)}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderTrainingsTab() {
-            const container = document.getElementById('trainings-grid');
-            container.innerHTML = state.trainings.map(training => {
-                const participants = state.applicants.filter(a => a.training_id === training.id).length;
-                const enrolled = participants;
-                const capacity = training.max_capacity || 10;
-                const percentage = (enrolled / capacity) * 100;
-                const revenue = state.applicants
-                    .filter(a => a.training_id === training.id && a.payment_status === 'Paid in Full')
-                    .reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
-                const revenueDisplay = (revenue / 100).toFixed(0);
-
-                return `
-                    <div class="training-card">
-                        <div class="training-card-header">
-                            <div>
-                                <div class="training-card-title" style="cursor: pointer; margin-bottom: 0.5rem;" onclick="openTrainingDetail('${training.id}')">${training.name}</div>
-                                <div class="training-card-meta">
-                                    <span class="training-card-date">📋 ${formatDate(training.start_date)} - ${formatDate(training.end_date)}</span>
-                                </div>
-                                <div class="training-card-meta">
-                                    <span class="badge badge-${training.training_level}">${training.training_level}</span>
-                                    <span class="badge badge-${training.status.toLowerCase()}">${training.status}</span>
-                                </div>
-                            </div>
-                            <div class="training-card-toggle">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" ${training.show_on_apply ? 'checked' : ''} onchange="toggleShowOnApply('${training.id}', this.checked)">
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div style="margin: 1rem 0;">
-                            <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Enrollment</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${percentage}%"></div>
-                            </div>
-                            <div class="progress-text">${enrolled}/${capacity} • Revenue: $${revenueDisplay}</div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
-                            <button class="btn btn-small btn-secondary" onclick="openTrainingModal(${JSON.stringify(training).replace(/'/g, '&quot;')})">Edit</button>
-                            <button class="btn btn-small btn-secondary" onclick="openTrainingDetail('${training.id}')">View</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function openTrainingDetail(trainingId) {
-            // For simplicity, we'll show participants in a modal-like view
-            const training = state.trainings.find(t => t.id === trainingId);
-            const participants = state.applicants.filter(a => a.training_id === trainingId);
-
-            // Switch to trainings tab and filter to show detail
-            const modal = document.getElementById('training-modal');
-            modal.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h2 class="modal-title">${training.name} - Participants</h2>
-                        <button class="modal-close" onclick="document.getElementById('training-modal').classList.remove('active')">✕</button>
-                    </div>
-                    <div style="max-height: 60vh; overflow-y: auto;">
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Stage</th>
-                                        <th>Status</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${participants.map(p => `
-                                        <tr>
-                                            <td>${p.name}</td>
-                                            <td>${p.email}</td>
-                                            <td>${formatStageLabel(p.pipeline_stage || 'lead')}</td>
-                                            <td>${p.app_status || 'N/A'}</td>
-                                            <td><button class="btn btn-small btn-secondary" onclick="openApplicantPanel('${p.id}')">View</button></td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" onclick="document.getElementById('training-modal').classList.remove('active')">Close</button>
-                    </div>
-                </div>
-            `;
-            modal.classList.add('active');
-        }
-
-        function renderPipelineTab() {
-            const container = document.getElementById('pipeline-container');
-            const filterValue = document.getElementById('pipeline-filter').value;
-
-            const applicantsToShow = filterValue
-                ? state.applicants.filter(a => a.training_id === filterValue)
-                : state.applicants;
-
-            const columns = stageNames.map(stageName => {
-                const stageApplicants = applicantsToShow.filter(a => (a.pipeline_stage || 'lead') === stageName);
-
-                return `
-                    <div class="pipeline-column" data-stage="${stageName}">
-                        <div class="pipeline-column-header">
-                            <div>${formatStageLabel(stageName)}</div>
-                            <div class="pipeline-column-count">${stageApplicants.length}</div>
-                        </div>
-                        <div>
-                            ${stageApplicants.map(applicant => {
-                                const training = state.trainings.find(t => t.id === applicant.training_id);
-                                const daysInStage = calculateDaysInStage(applicant, stageName);
-                                return `
-                                    <div class="pipeline-card" onclick="openApplicantPanel('${applicant.id}')">
-                                        <div class="pipeline-card-name">${applicant.name}</div>
-                                        <div class="pipeline-card-training">${training?.name || 'Unknown'}</div>
-                                        <div class="pipeline-card-days">${daysInStage} days in stage</div>
+                    return `
+                        <div class="kpi-card" style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <h3 style="margin-bottom: 0.5rem;">${training.name}</h3>
+                                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                                        ${formatDate(training.start_date)} - ${formatDate(training.end_date)}
                                     </div>
-                                `;
-                            }).join('')}
+                                    <div style="margin-bottom: 1rem;">
+                                        <span class="badge badge-primary">${training.training_level || 'TBD'}</span>
+                                        <span class="badge badge-secondary">${training.location}</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-small btn-primary" onclick="showAddParticipantModal('${training.id}')">Add</button>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <div class="progress-text">${filled} / ${capacity} spots filled</div>
+                            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                ${preview}
+                            </div>
+                        </div>
+                    `;
+                })
+                .join('');
+
+            document.getElementById('trainingOverviewCards').innerHTML = trainingCards || '<p style="color: var(--text-muted);">No upcoming trainings</p>';
+
+            // Pipeline Snapshot
+            const pipelineCounts = {};
+            STAGE_ORDER.forEach(stage => {
+                pipelineCounts[stage] = applicantsData.filter(a => a.pipeline_stage === stage).length;
+            });
+
+            const pipelineHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Count</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${STAGE_ORDER.map(stage => {
+                            const count = pipelineCounts[stage] || 0;
+                            const total = applicantsData.length;
+                            const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+                            const stageLabel = stage.replace(/_/g, ' ').toUpperCase();
+                            return `
+                                <tr>
+                                    <td>${stageLabel}</td>
+                                    <td>${count}</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${percent}%"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('pipelineSnapshot').innerHTML = pipelineHTML;
+
+            // Alerts
+            const alerts = [];
+
+            // Stuck participants
+            applicantsData.forEach(a => {
+                const updated = new Date(a.updated_at);
+                const days = Math.floor((new Date() - updated) / (1000 * 60 * 60 * 24));
+                if (days > 7) {
+                    const training = trainingsData.find(t => t.id === a.training_id);
+                    alerts.push({
+                        type: 'warning',
+                        message: `${a.name} stuck in ${a.pipeline_stage || a.app_status} for ${days} days`,
+                        action: a.id
+                    });
+                }
+            });
+
+            // Trainings at capacity
+            trainingsData.forEach(t => {
+                const filled = applicantsData.filter(a => a.training_id === t.id).length;
+                if (filled >= (t.max_capacity || 12)) {
+                    alerts.push({
+                        type: 'warning',
+                        message: `${t.name} is at capacity`,
+                        action: t.id
+                    });
+                }
+            });
+
+            const alertsHTML = alerts.length > 0 ? `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Alert</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${alerts.map(alert => `
+                            <tr>
+                                <td>${alert.message}</td>
+                                <td><span class="badge badge-warning">⚠️ ${alert.type}</span></td>
+                                <td><button class="btn btn-small btn-secondary">Review</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            ` : '<p style="color: var(--text-muted); padding: 2rem; text-align: center;">No alerts</p>';
+
+            document.getElementById('alertsSection').innerHTML = alertsHTML;
+        }
+
+        // ==================== TRAININGS ====================
+        function renderTrainings() {
+            const searchTerm = (document.getElementById('trainingSearch')?.value || '').toLowerCase();
+            const filtered = trainingsData.filter(t =>
+                t.name.toLowerCase().includes(searchTerm) ||
+                t.location.toLowerCase().includes(searchTerm)
+            );
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Training Name</th>
+                            <th>Dates</th>
+                            <th>Location</th>
+                            <th>Level</th>
+                            <th>Status</th>
+                            <th>Spots</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(training => {
+                            const filled = applicantsData.filter(a => a.training_id === training.id).length;
+                            const price = training.price_cents ? '$' + (training.price_cents / 100).toFixed(2) : 'TBD';
+                            return `
+                                <tr>
+                                    <td><strong>${training.name}</strong></td>
+                                    <td>${formatDate(training.start_date)} - ${formatDate(training.end_date)}</td>
+                                    <td>${training.location}</td>
+                                    <td><span class="badge badge-primary">${training.training_level || 'TBD'}</span></td>
+                                    <td><span class="badge ${training.status === 'Open' ? 'badge-success' : 'badge-secondary'}">${training.status}</span></td>
+                                    <td>${filled}/${training.max_capacity || 12}</td>
+                                    <td>${price}</td>
+                                    <td>
+                                        <button class="btn btn-small btn-secondary" onclick="editTraining('${training.id}')">Edit</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('trainingsList').innerHTML = html;
+        }
+
+        // ==================== PARTICIPANTS ====================
+        function renderParticipants() {
+            const stageFilter = document.getElementById('stageFilter')?.value || '';
+            const paymentFilter = document.getElementById('paymentFilter')?.value || '';
+            const searchTerm = (document.getElementById('globalSearch')?.value || '').toLowerCase();
+
+            let filtered = applicantsData.filter(a => {
+                const nameMatch = a.name.toLowerCase().includes(searchTerm) || a.email.toLowerCase().includes(searchTerm);
+                const stageMatch = !stageFilter || a.pipeline_stage === stageFilter;
+                const paymentMatch = !paymentFilter || a.payment_status === paymentFilter;
+                return nameMatch && stageMatch && paymentMatch;
+            });
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Training</th>
+                            <th>Stage</th>
+                            <th>Payment</th>
+                            <th>Days in Stage</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(participant => {
+                            const training = trainingsData.find(t => t.id === participant.training_id);
+                            const daysInStage = Math.floor((new Date() - new Date(participant.updated_at)) / (1000 * 60 * 60 * 24));
+                            const stageLabel = (participant.pipeline_stage || participant.app_status || 'lead').replace(/_/g, ' ').toUpperCase();
+
+                            return `
+                                <tr>
+                                    <td><strong>${participant.name}</strong></td>
+                                    <td>${participant.email}</td>
+                                    <td>${training?.name || 'N/A'}</td>
+                                    <td><span class="badge badge-primary">${stageLabel}</span></td>
+                                    <td><span class="badge ${participant.payment_status === 'Paid in Full' ? 'badge-success' : 'badge-warning'}">${participant.payment_status || 'Unpaid'}</span></td>
+                                    <td>${daysInStage}d</td>
+                                    <td>
+                                        <button class="btn btn-small btn-secondary" onclick="openParticipantPanel('${participant.id}')">View</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('participantsList').innerHTML = html;
+        }
+
+        // ==================== SHIPPING ====================
+        function renderShipping() {
+            const statusFilter = document.getElementById('shippingStatusFilter')?.value || '';
+            const filtered = applicantsData.filter(a => a.shipping_tracking_number && (!statusFilter || a.shipping_status === statusFilter));
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Training</th>
+                            <th>Address</th>
+                            <th>Carrier</th>
+                            <th>Tracking #</th>
+                            <th>Status</th>
+                            <th>Date Shipped</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(participant => {
+                            const training = trainingsData.find(t => t.id === participant.training_id);
+                            return `
+                                <tr>
+                                    <td>${participant.name}</td>
+                                    <td>${training?.name || 'N/A'}</td>
+                                    <td>${participant.address || 'N/A'}</td>
+                                    <td>${participant.shipping_carrier || 'N/A'}</td>
+                                    <td><code>${participant.shipping_tracking_number || 'N/A'}</code></td>
+                                    <td><span class="badge ${participant.shipping_status === 'delivered' ? 'badge-success' : 'badge-warning'}">${participant.shipping_status || 'not_shipped'}</span></td>
+                                    <td>${participant.shipping_date ? formatDate(participant.shipping_date) : 'N/A'}</td>
+                                    <td>
+                                        ${participant.shipping_tracking_number ? `<button class="btn btn-small btn-secondary" onclick="trackPackage('${participant.shipping_carrier}', '${participant.shipping_tracking_number}')">Track</button>` : ''}
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('shippingList').innerHTML = html;
+
+            // Shipping stats
+            const stats = {};
+            ['not_shipped', 'label_created', 'in_transit', 'delivered'].forEach(status => {
+                stats[status] = applicantsData.filter(a => a.shipping_status === status).length;
+            });
+
+            const statsHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Count</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(stats).map(([status, count]) => {
+                            const total = applicantsData.filter(a => a.shipping_tracking_number).length;
+                            const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+                            return `
+                                <tr>
+                                    <td>${status.replace(/_/g, ' ').toUpperCase()}</td>
+                                    <td>${count}</td>
+                                    <td>${percent}%</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('shippingStats').innerHTML = statsHtml;
+        }
+
+        // ==================== PARTICIPANT PANEL ====================
+        function openParticipantPanel(participantId) {
+            const participant = applicantsData.find(p => p.id === participantId);
+            if (!participant) return;
+
+            const training = trainingsData.find(t => t.id === participant.training_id);
+            const daysInStage = Math.floor((new Date() - new Date(participant.updated_at)) / (1000 * 60 * 60 * 24));
+            const stageIndex = STAGE_ORDER.indexOf(participant.pipeline_stage || 'lead');
+
+            const content = `
+                <div class="panel-section">
+                    <div class="panel-section-title">Contact Information</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Name</div>
+                            <div class="panel-editable" onclick="makeEditable(this, 'name', '${participantId}')">
+                                <div class="panel-value">${participant.name}</div>
+                            </div>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Training</div>
+                            <div class="panel-value">${training?.name || 'N/A'}</div>
                         </div>
                     </div>
-                `;
-            }).join('');
-
-            container.innerHTML = columns;
-
-            // Setup training filter
-            const filterSelect = document.getElementById('pipeline-filter');
-            filterSelect.innerHTML = '<option value="">All Trainings</option>' +
-                state.trainings.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-            filterSelect.addEventListener('change', renderPipelineTab);
-        }
-
-        function renderShippingTab() {
-            const shippingApplicants = state.applicants.filter(a => a.pipeline_stage === 'onboarding' || a.pipeline_stage === 'complete');
-
-            const notShipped = shippingApplicants.filter(a => !a.shipping_status || a.shipping_status === 'not_shipped').length;
-            const inTransit = shippingApplicants.filter(a => a.shipping_status === 'in_transit').length;
-            const delivered = shippingApplicants.filter(a => a.shipping_status === 'delivered').length;
-
-            document.getElementById('shipping-not-shipped').textContent = notShipped;
-            document.getElementById('shipping-in-transit').textContent = inTransit;
-            document.getElementById('shipping-delivered').textContent = delivered;
-
-            const tableBody = document.getElementById('shipping-table-body');
-            tableBody.innerHTML = shippingApplicants.map(applicant => {
-                const training = state.trainings.find(t => t.id === applicant.training_id);
-                return `
-                    <tr>
-                        <td><input type="checkbox" class="shipping-checkbox" value="${applicant.id}"></td>
-                        <td>${applicant.name}</td>
-                        <td>${training?.name || 'Unknown'}</td>
-                        <td>${applicant.shipping_tracking_number || '-'}</td>
-                        <td>${applicant.shipping_carrier || '-'}</td>
-                        <td>
-                            <span class="shipping-status ${applicant.shipping_status || 'not-shipped'}">
-                                ${applicant.shipping_status || 'Not Shipped'}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="flex gap-1">
-                                <button class="btn btn-small btn-secondary" onclick="openShippingForm('${applicant.id}')">Add Tracking</button>
-                                ${applicant.shipping_tracking_number ? `
-                                    <button class="btn btn-small btn-secondary" onclick="trackPackage('${applicant.shipping_carrier}', '${applicant.shipping_tracking_number}')">Track</button>
-                                ` : ''}
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Email</div>
+                            <div class="panel-editable" onclick="makeEditable(this, 'email', '${participantId}')">
+                                <div class="panel-value">${participant.email}</div>
                             </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function openShippingForm(applicantId) {
-            const applicant = state.applicants.find(a => a.id === applicantId);
-            const modal = document.getElementById('training-modal');
-            modal.innerHTML = `
-                <div class="modal">
-                    <div class="modal-header">
-                        <h2 class="modal-title">Add Tracking Information</h2>
-                        <button class="modal-close" onclick="document.getElementById('training-modal').classList.remove('active')">✕</button>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Phone</div>
+                            <div class="panel-editable" onclick="makeEditable(this, 'phone', '${participantId}')">
+                                <div class="panel-value">${participant.phone || 'N/A'}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="form-group">
-                            <label class="form-label">Carrier</label>
-                            <select id="shipping-carrier" class="form-select">
-                                <option value="">Select Carrier</option>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Address</div>
+                        <div class="panel-editable" onclick="makeEditable(this, 'address', '${participantId}')">
+                            <div class="panel-value">${participant.address || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Pipeline Progress</div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>${(participant.pipeline_stage || 'lead').replace(/_/g, ' ').toUpperCase()}</strong> - ${daysInStage} days
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto;">
+                        ${STAGE_ORDER.map((stage, idx) => `
+                            <div class="stage-dot ${idx === stageIndex ? 'active' : idx < stageIndex ? 'completed' : ''}">${idx + 1}</div>
+                            ${idx < STAGE_ORDER.length - 1 ? `<div class="stage-connector ${idx < stageIndex ? 'active' : ''}"></div>` : ''}
+                        `).join('')}
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-small btn-primary" onclick="advanceStage('${participantId}')">Advance Stage</button>
+                        <select class="form-select" style="flex: 1; font-size: 0.85rem;" onchange="moveToStage('${participantId}', this.value)">
+                            <option value="">Jump to stage...</option>
+                            ${STAGE_ORDER.map(stage => `<option value="${stage}">${stage.replace(/_/g, ' ')}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Payment</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Status</div>
+                            <select class="form-select" value="${participant.payment_status}" onchange="updateField('${participantId}', 'payment_status', this.value)">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Deposit">Deposit</option>
+                                <option value="Paid in Full">Paid in Full</option>
+                            </select>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Amount</div>
+                            <input type="number" class="form-input" value="${participant.payment_amount_cents ? participant.payment_amount_cents / 100 : ''}" onchange="updatePaymentAmount('${participantId}', this.value)">
+                        </div>
+                    </div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Payment Date</div>
+                            <input type="date" class="form-input" value="${participant.payment_date ? participant.payment_date.split('T')[0] : ''}" onchange="updateField('${participantId}', 'payment_date', this.value)">
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Deposit Received</div>
+                            <input type="checkbox" class="checkbox" ${participant.deposit_received ? 'checked' : ''} onchange="updateField('${participantId}', 'deposit_received', this.checked)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Chemistry Call</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Date</div>
+                            <input type="datetime-local" class="form-input" value="${participant.chemistry_call_date ? formatDateTime(participant.chemistry_call_date) : ''}" onchange="updateField('${participantId}', 'chemistry_call_date', this.value)">
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Status</div>
+                            <select class="form-select" value="${participant.chemistry_call_status || ''}" onchange="updateField('${participantId}', 'chemistry_call_status', this.value)">
+                                <option value="">Not scheduled</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Completed">Completed</option>
+                                <option value="No Show">No Show</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Notes</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'chemistry_call_notes', this.value)" style="min-height: 60px;">${participant.chemistry_call_notes || ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Interview</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Date</div>
+                            <input type="datetime-local" class="form-input" value="${participant.interview_date ? formatDateTime(participant.interview_date) : ''}" onchange="updateField('${participantId}', 'interview_date', this.value)">
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Status</div>
+                            <select class="form-select" value="${participant.interview_status || ''}" onchange="updateField('${participantId}', 'interview_status', this.value)">
+                                <option value="">Not scheduled</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Completed">Completed</option>
+                                <option value="No Show">No Show</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Notes</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'interview_notes_detail', this.value)" style="min-height: 60px;">${participant.interview_notes_detail || ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Onboarding</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Accommodation</div>
+                            <select class="form-select" value="${participant.accommodation_choice || ''}" onchange="updateField('${participantId}', 'accommodation_choice', this.value)">
+                                <option value="">Select...</option>
+                                <option value="Single">Single</option>
+                                <option value="Shared">Shared</option>
+                                <option value="None">None</option>
+                            </select>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Confirmed</div>
+                            <input type="checkbox" class="checkbox" ${participant.accommodation_confirmed ? 'checked' : ''} onchange="updateField('${participantId}', 'accommodation_confirmed', this.checked)">
+                        </div>
+                    </div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Online Course Access</div>
+                            <input type="checkbox" class="checkbox" ${participant.online_course_access ? 'checked' : ''} onchange="updateField('${participantId}', 'online_course_access', this.checked)">
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Course Progress %</div>
+                            <input type="number" class="form-input" value="${participant.online_course_progress || 0}" onchange="updateField('${participantId}', 'online_course_progress', this.value)">
+                        </div>
+                    </div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Signed Waiver</div>
+                            <input type="checkbox" class="checkbox" ${participant.signed_waiver ? 'checked' : ''} onchange="updateField('${participantId}', 'signed_waiver', this.checked)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Shipping</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Tracking #</div>
+                            <input type="text" class="form-input" value="${participant.shipping_tracking_number || ''}" onchange="updateField('${participantId}', 'shipping_tracking_number', this.value)">
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Carrier</div>
+                            <select class="form-select" value="${participant.shipping_carrier || ''}" onchange="updateField('${participantId}', 'shipping_carrier', this.value)">
+                                <option value="">Select...</option>
                                 <option value="usps">USPS</option>
                                 <option value="ups">UPS</option>
                                 <option value="fedex">FedEx</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Tracking Number</label>
-                            <input type="text" id="shipping-tracking" class="form-input" placeholder="Enter tracking number">
+                    </div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Status</div>
+                            <select class="form-select" value="${participant.shipping_status || ''}" onchange="updateField('${participantId}', 'shipping_status', this.value)">
+                                <option value="">Select...</option>
+                                <option value="not_shipped">Not Shipped</option>
+                                <option value="label_created">Label Created</option>
+                                <option value="in_transit">In Transit</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Date Shipped</div>
+                            <input type="date" class="form-input" value="${participant.shipping_date ? participant.shipping_date.split('T')[0] : ''}" onchange="updateField('${participantId}', 'shipping_date', this.value)">
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" onclick="document.getElementById('training-modal').classList.remove('active')">Cancel</button>
-                        <button class="btn btn-primary" onclick="saveShippingInfo('${applicantId}')">Save</button>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Health & Dietary</div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Dietary Preferences</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'dietary_preferences', this.value)" style="min-height: 60px;">${participant.dietary_preferences || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Allergies</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'allergies', this.value)" style="min-height: 60px;">${participant.allergies || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Physical Health Notes</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'physical_health', this.value)" style="min-height: 60px;">${participant.physical_health || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Physical Medications</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'physical_medications', this.value)" style="min-height: 60px;">${participant.physical_medications || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Mental Health Diagnosis</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'mental_health_dx', this.value)" style="min-height: 60px;">${participant.mental_health_dx || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Current Mental Health</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'current_mental_health', this.value)" style="min-height: 60px;">${participant.current_mental_health || ''}</textarea>
+                    </div>
+                    <div class="panel-field" style="grid-column: 1/-1;">
+                        <div class="panel-label">Psych Medications</div>
+                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'psych_medications', this.value)" style="min-height: 60px;">${participant.psych_medications || ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">General Notes</div>
+                    <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'notes', this.value)" style="min-height: 80px;">${participant.notes || ''}</textarea>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Metadata</div>
+                    <div class="panel-row">
+                        <div class="panel-field">
+                            <div class="panel-label">Created</div>
+                            <div class="panel-value">${formatDate(participant.created_at)}</div>
+                        </div>
+                        <div class="panel-field">
+                            <div class="panel-label">Updated</div>
+                            <div class="panel-value">${formatDate(participant.updated_at)}</div>
+                        </div>
                     </div>
                 </div>
             `;
-            modal.classList.add('active');
+
+            document.getElementById('panelTitle').textContent = participant.name;
+            openSidePanel(content);
         }
 
-        async function saveShippingInfo(applicantId) {
-            const carrier = document.getElementById('shipping-carrier').value;
-            const tracking = document.getElementById('shipping-tracking').value;
+        // ==================== EDITING FUNCTIONS ====================
+        function makeEditable(element, field, participantId) {
+            const currentValue = element.querySelector('.panel-value').textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-input';
+            input.value = currentValue === 'N/A' ? '' : currentValue;
+            input.onblur = () => {
+                updateField(participantId, field, input.value);
+                openParticipantPanel(participantId);
+            };
+            input.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    updateField(participantId, field, input.value);
+                    openParticipantPanel(participantId);
+                }
+            };
+            element.innerHTML = '';
+            element.appendChild(input);
+            input.focus();
+        }
 
-            if (!carrier || !tracking) {
-                showToast('Please fill in all fields', 'error');
+        function updateField(participantId, field, value) {
+            const participant = applicantsData.find(p => p.id === participantId);
+            if (!participant) return;
+
+            participant[field] = value;
+            participant.updated_at = new Date().toISOString();
+
+            db.from('applicants').update(participant).eq('id', participantId).then(({ error }) => {
+                if (error) {
+                    showToast('Error updating participant: ' + error.message, 'error');
+                } else {
+                    showToast('Participant updated', 'success');
+                }
+            });
+        }
+
+        function debounceUpdate(participantId, field, value) {
+            clearTimeout(editDebounceTimer[field]);
+            editDebounceTimer[field] = setTimeout(() => {
+                updateField(participantId, field, value);
+            }, 300);
+        }
+
+        function updatePaymentAmount(participantId, dollars) {
+            const cents = Math.round(parseFloat(dollars) * 100) || 0;
+            updateField(participantId, 'payment_amount_cents', cents);
+        }
+
+        // ==================== STAGE ADVANCEMENT ====================
+        async function advanceStage(participantId) {
+            const participant = applicantsData.find(p => p.id === participantId);
+            if (!participant) return;
+
+            const currentStageIndex = STAGE_ORDER.indexOf(participant.pipeline_stage || 'lead');
+            if (currentStageIndex >= STAGE_ORDER.length - 1) {
+                showToast('Already at final stage', 'warning');
                 return;
             }
 
-            try {
-                const { error } = await db
-                    .from('applicants')
-                    .update({
-                        shipping_carrier: carrier,
-                        shipping_tracking_number: tracking,
-                        shipping_status: 'label_created',
-                        shipping_date: new Date().toISOString()
-                    })
-                    .eq('id', applicantId);
+            const nextStage = STAGE_ORDER[currentStageIndex + 1];
+            const note = prompt(`Add a note for advancing to ${nextStage}:`, '');
+            if (note === null) return;
 
-                if (error) throw error;
-                showToast('Shipping info saved', 'success');
-                document.getElementById('training-modal').classList.remove('active');
-                await fetchApplicants();
-                renderShippingTab();
-            } catch (error) {
-                showToast('Error saving shipping info: ' + error.message, 'error');
+            participant.pipeline_stage = nextStage;
+            participant.updated_at = new Date().toISOString();
+
+            const { error } = await db.from('applicants').update(participant).eq('id', participantId);
+            if (error) {
+                showToast('Error advancing stage: ' + error.message, 'error');
+            } else {
+                showToast(`Advanced to ${nextStage}`, 'success');
+                openParticipantPanel(participantId);
             }
         }
 
-        function trackPackage(carrier, tracking) {
-            let url;
-            switch (carrier.toLowerCase()) {
-                case 'usps':
-                    url = `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tracking}`;
-                    break;
-                case 'ups':
-                    url = `https://www.ups.com/track?tracknum=${tracking}`;
-                    break;
-                case 'fedex':
-                    url = `https://www.fedex.com/fedextrack/?trknbr=${tracking}`;
-                    break;
-                default:
-                    return;
-            }
-            window.open(url, '_blank');
-        }
+        function moveToStage(participantId, stage) {
+            if (!stage) return;
+            const participant = applicantsData.find(p => p.id === participantId);
+            if (!participant) return;
 
-        async function markSelectedAsShipped() {
-            const selected = Array.from(document.querySelectorAll('.shipping-checkbox:checked')).map(cb => cb.value);
-            if (selected.length === 0) {
-                showToast('Please select items to mark as shipped', 'error');
-                return;
-            }
+            participant.pipeline_stage = stage;
+            participant.updated_at = new Date().toISOString();
 
-            try {
-                for (const id of selected) {
-                    await db
-                        .from('applicants')
-                        .update({ shipping_status: 'delivered', manual_shipped: true })
-                        .eq('id', id);
+            db.from('applicants').update(participant).eq('id', participantId).then(({ error }) => {
+                if (error) {
+                    showToast('Error moving stage: ' + error.message, 'error');
+                } else {
+                    showToast(`Moved to ${stage}`, 'success');
+                    openParticipantPanel(participantId);
                 }
-                showToast(`Marked ${selected.length} items as shipped`, 'success');
-                await fetchApplicants();
-                renderShippingTab();
-            } catch (error) {
-                showToast('Error marking as shipped: ' + error.message, 'error');
-            }
+            });
         }
 
-        function openApplicantPanel(applicantId) {
-            state.currentApplicant = state.applicants.find(a => a.id === applicantId);
-            if (!state.currentApplicant) return;
+        // ==================== TRAINING CRUD ====================
+        function editTraining(trainingId) {
+            const training = trainingsData.find(t => t.id === trainingId);
+            if (!training) return;
 
-            const panel = document.getElementById('side-panel');
-            const training = state.trainings.find(t => t.id === state.currentApplicant.training_id);
+            document.getElementById('trainingId').value = trainingId;
+            document.getElementById('trainingName').value = training.name;
+            document.getElementById('trainingStartDate').value = training.start_date;
+            document.getElementById('trainingEndDate').value = training.end_date;
+            document.getElementById('trainingLocation').value = training.location;
+            document.getElementById('trainingCapacity').value = training.max_capacity || 12;
+            document.getElementById('trainingType').value = training.training_type || '';
+            document.getElementById('trainingLevel').value = training.training_level || 'Beginning';
+            document.getElementById('trainingStatus').value = training.status || 'Draft';
+            document.getElementById('trainingPrice').value = training.price_cents ? training.price_cents / 100 : '';
+            document.getElementById('trainingCohort').value = training.cohort_name || '';
+            document.getElementById('trainingDescription').value = training.description || '';
+            document.getElementById('trainingNotes').value = training.notes || '';
 
-            document.getElementById('side-panel-title').textContent = state.currentApplicant.name;
-            document.getElementById('panel-name').textContent = state.currentApplicant.name;
-            document.getElementById('panel-email').textContent = state.currentApplicant.email;
-            document.getElementById('panel-phone').textContent = state.currentApplicant.phone || 'N/A';
+            document.querySelector('#trainingModal .modal-title').textContent = 'Edit Training';
+            openModal('trainingModal');
+        }
 
-            document.getElementById('panel-email-btn').onclick = () => {
-                window.location.href = `mailto:${state.currentApplicant.email}`;
+        document.getElementById('newTrainingBtn')?.addEventListener('click', () => {
+            document.getElementById('trainingId').value = '';
+            document.getElementById('trainingForm').reset();
+            document.querySelector('#trainingModal .modal-title').textContent = 'New Training';
+            openModal('trainingModal');
+        });
+
+        document.getElementById('newTrainingBtn2')?.addEventListener('click', () => {
+            document.getElementById('trainingId').value = '';
+            document.getElementById('trainingForm').reset();
+            document.querySelector('#trainingModal .modal-title').textContent = 'New Training';
+            openModal('trainingModal');
+        });
+
+        document.getElementById('trainingForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const trainingId = document.getElementById('trainingId').value;
+            const trainingData = {
+                name: document.getElementById('trainingName').value,
+                start_date: document.getElementById('trainingStartDate').value,
+                end_date: document.getElementById('trainingEndDate').value,
+                location: document.getElementById('trainingLocation').value,
+                max_capacity: parseInt(document.getElementById('trainingCapacity').value),
+                training_type: document.getElementById('trainingType').value,
+                training_level: document.getElementById('trainingLevel').value,
+                status: document.getElementById('trainingStatus').value,
+                price_cents: Math.round(parseFloat(document.getElementById('trainingPrice').value) * 100) || 0,
+                cohort_name: document.getElementById('trainingCohort').value,
+                description: document.getElementById('trainingDescription').value,
+                notes: document.getElementById('trainingNotes').value,
+                show_on_apply: true,
+                created_at: new Date().toISOString()
             };
 
-            document.getElementById('panel-call-btn').onclick = () => {
-                window.location.href = `tel:${state.currentApplicant.phone}`;
+            let result;
+            if (trainingId) {
+                result = await db.from('trainings').update(trainingData).eq('id', trainingId);
+            } else {
+                result = await db.from('trainings').insert([trainingData]);
+            }
+
+            if (result.error) {
+                showToast('Error saving training: ' + result.error.message, 'error');
+            } else {
+                showToast(trainingId ? 'Training updated' : 'Training created', 'success');
+                closeModal('trainingModal');
+                fetchAllData();
+            }
+        });
+
+        // ==================== PARTICIPANT CRUD ====================
+        function showAddParticipantModal(trainingId = '') {
+            document.getElementById('participantId').value = '';
+            document.getElementById('participantForm').reset();
+            if (trainingId) {
+                document.getElementById('participantTraining').value = trainingId;
+            }
+            openModal('participantModal');
+        }
+
+        document.getElementById('addParticipantBtn')?.addEventListener('click', () => showAddParticipantModal());
+        document.getElementById('addParticipantBtn2')?.addEventListener('click', () => showAddParticipantModal());
+
+        // Populate training dropdown
+        function updateTrainingDropdown() {
+            const select = document.getElementById('participantTraining');
+            select.innerHTML = '<option value="">Select a training</option>';
+            trainingsData.forEach(t => {
+                const option = document.createElement('option');
+                option.value = t.id;
+                option.textContent = t.name;
+                select.appendChild(option);
+            });
+        }
+
+        document.getElementById('participantForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const participantData = {
+                training_id: document.getElementById('participantTraining').value,
+                name: document.getElementById('participantName').value,
+                email: document.getElementById('participantEmail').value,
+                phone: document.getElementById('participantPhone').value || null,
+                address: document.getElementById('participantAddress').value || null,
+                birth_date: document.getElementById('participantBirthDate').value || null,
+                application_date: new Date().toISOString(),
+                pipeline_stage: 'lead',
+                payment_status: 'Unpaid',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
             };
 
-            renderPipelineProgress();
-            renderStages();
-            renderPanelActivity();
+            const result = await db.from('applicants').insert([participantData]);
 
-            document.getElementById('panel-admin-notes').value = state.currentApplicant.notes || '';
-            document.getElementById('save-admin-notes').onclick = async () => {
-                try {
-                    const { error } = await db
-                        .from('applicants')
-                        .update({ notes: document.getElementById('panel-admin-notes').value })
-                        .eq('id', state.currentApplicant.id);
-                    if (error) throw error;
-                    showToast('Notes saved', 'success');
-                } catch (error) {
-                    showToast('Error saving notes: ' + error.message, 'error');
-                }
-            };
-
-            document.getElementById('side-panel-overlay').classList.add('active');
-            panel.classList.add('active');
-        }
-
-        function closeSidePanel() {
-            document.getElementById('side-panel').classList.remove('active');
-            document.getElementById('side-panel-overlay').classList.remove('active');
-            state.currentApplicant = null;
-        }
-
-        function renderPipelineProgress() {
-            const container = document.getElementById('panel-progress');
-            const currentStageIndex = stageNames.indexOf(state.currentApplicant.pipeline_stage || 'lead');
-
-            container.innerHTML = stageNames.map((stage, index) => {
-                let classes = 'stage-dot';
-                if (index === currentStageIndex) classes += ' current';
-                else if (index < currentStageIndex) classes += ' completed';
-
-                return `
-                    <div style="text-align: center;">
-                        <div class="${classes}" onclick="advanceToStage(${index})" title="${formatStageLabel(stage)}">
-                            ${index + 1}
-                        </div>
-                        <div class="stage-label">${stageLabels[index].substring(0, 3)}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function advanceToStage(stageIndex) {
-            const stageName = stageNames[stageIndex];
-            await updateApplicantStage(stageName);
-        }
-
-        async function updateApplicantStage(newStage) {
-            try {
-                const updateData = { pipeline_stage: newStage };
-
-                // Auto-set fields based on stage
-                if (newStage === 'application') {
-                    updateData.app_status = 'Received';
-                } else if (newStage === 'approval') {
-                    updateData.app_status = 'Accepted';
-                    updateData.approval_status = 'approved';
-                    updateData.approval_date = new Date().toISOString();
-                } else if (newStage === 'payment') {
-                    updateData.registration_status = 'Payment Pending';
-                } else if (newStage === 'onboarding') {
-                    updateData.online_course_access = true;
-                    updateData.registration_status = 'In Progress';
-                } else if (newStage === 'complete') {
-                    updateData.registration_status = 'Complete';
-                }
-
-                const { error } = await db
-                    .from('applicants')
-                    .update(updateData)
-                    .eq('id', state.currentApplicant.id);
-
-                if (error) throw error;
-                showToast(`Moved to ${formatStageLabel(newStage)}`, 'success');
-                await fetchApplicants();
-                state.currentApplicant = state.applicants.find(a => a.id === state.currentApplicant.id);
-                renderPipelineProgress();
-                renderStages();
-            } catch (error) {
-                showToast('Error updating stage: ' + error.message, 'error');
+            if (result.error) {
+                showToast('Error adding participant: ' + result.error.message, 'error');
+            } else {
+                showToast('Participant added', 'success');
+                closeModal('participantModal');
+                fetchAllData();
             }
-        }
+        });
 
-        function renderStages() {
-            const container = document.getElementById('stage-sections-container');
-            const currentStageIndex = stageNames.indexOf(state.currentApplicant.pipeline_stage || 'lead');
-
-            const sections = stageNames.map((stage, index) => {
-                const isCompleted = index < currentStageIndex;
-                const isCurrent = index === currentStageIndex;
-                let content = '';
-
-                switch (stage) {
-                    case 'chemistry_call':
-                        content = `
-                            <div class="form-group">
-                                <label class="form-label">Date</label>
-                                <input type="datetime-local" class="form-input" value="${state.currentApplicant.chemistry_call_date || ''}" onchange="updateApplicantField('chemistry_call_date', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" onchange="updateApplicantField('chemistry_call_status', this.value)">
-                                    <option value="">Select Status</option>
-                                    <option ${state.currentApplicant.chemistry_call_status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                                    <option ${state.currentApplicant.chemistry_call_status === 'completed' ? 'selected' : ''}>Completed</option>
-                                    <option ${state.currentApplicant.chemistry_call_status === 'no_show' ? 'selected' : ''}>No Show</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Notes</label>
-                                <textarea class="form-textarea" onchange="updateApplicantField('chemistry_call_notes', this.value)">${state.currentApplicant.chemistry_call_notes || ''}</textarea>
-                            </div>
-                        `;
-                        break;
-
-                    case 'application':
-                        content = `
-                            <div class="expandable">
-                                <div class="expandable-header">Personal Info ▸</div>
-                                <div class="expandable-content">
-                                    <div style="font-size: 0.9rem;"><strong>Address:</strong> ${state.currentApplicant.address || 'N/A'}</div>
-                                    <div style="font-size: 0.9rem;"><strong>Birth Date:</strong> ${state.currentApplicant.birth_date || 'N/A'}</div>
-                                </div>
-                            </div>
-                            <div class="expandable">
-                                <div class="expandable-header">Health Info ▸</div>
-                                <div class="expandable-content">
-                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Physical Health:</strong> ${state.currentApplicant.physical_health || 'N/A'}</div>
-                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Medications:</strong> ${state.currentApplicant.physical_medications || 'N/A'}</div>
-                                    <div style="font-size: 0.9rem;"><strong>Allergies:</strong> ${state.currentApplicant.allergies || 'N/A'}</div>
-                                </div>
-                            </div>
-                            <div class="expandable">
-                                <div class="expandable-header">Mental Health Info ▸</div>
-                                <div class="expandable-content">
-                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Diagnoses:</strong> ${state.currentApplicant.mental_health_dx || 'N/A'}</div>
-                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Current Status:</strong> ${state.currentApplicant.current_mental_health || 'N/A'}</div>
-                                    <div style="font-size: 0.9rem;"><strong>Medications:</strong> ${state.currentApplicant.psych_medications || 'N/A'}</div>
-                                </div>
-                            </div>
-                        `;
-                        break;
-
-                    case 'interview':
-                        content = `
-                            <div class="form-group">
-                                <label class="form-label">Date</label>
-                                <input type="datetime-local" class="form-input" value="${state.currentApplicant.interview_date || ''}" onchange="updateApplicantField('interview_date', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" onchange="updateApplicantField('interview_status', this.value)">
-                                    <option value="">Select Status</option>
-                                    <option ${state.currentApplicant.interview_status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                                    <option ${state.currentApplicant.interview_status === 'completed' ? 'selected' : ''}>Completed</option>
-                                    <option ${state.currentApplicant.interview_status === 'no_show' ? 'selected' : ''}>No Show</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Notes</label>
-                                <textarea class="form-textarea" onchange="updateApplicantField('interview_notes_detail', this.value)">${state.currentApplicant.interview_notes_detail || ''}</textarea>
-                            </div>
-                        `;
-                        break;
-
-                    case 'approval':
-                        content = `
-                            <div class="form-group">
-                                <label class="form-label">Status</label>
-                                <select class="form-select" onchange="updateApplicantField('approval_status', this.value)">
-                                    <option ${state.currentApplicant.approval_status === 'approved' ? 'selected' : ''}>Approved</option>
-                                    <option ${state.currentApplicant.approval_status === 'denied' ? 'selected' : ''}>Denied</option>
-                                    <option ${state.currentApplicant.approval_status === 'waitlist' ? 'selected' : ''}>Waitlist</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Approval Date</label>
-                                <input type="date" class="form-input" value="${state.currentApplicant.approval_date ? state.currentApplicant.approval_date.split('T')[0] : ''}" readonly>
-                            </div>
-                        `;
-                        break;
-
-                    case 'payment':
-                        content = `
-                            <div class="form-group">
-                                <label class="form-label">Amount (cents)</label>
-                                <input type="number" class="form-input" value="${state.currentApplicant.payment_amount_cents || ''}" onchange="updateApplicantField('payment_amount_cents', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Stripe Payment ID</label>
-                                <input type="text" class="form-input" value="${state.currentApplicant.stripe_payment_id || ''}" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Payment Status</label>
-                                <select class="form-select" onchange="updateApplicantField('payment_status', this.value)">
-                                    <option ${state.currentApplicant.payment_status === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
-                                    <option ${state.currentApplicant.payment_status === 'Paid in Full' ? 'selected' : ''}>Paid in Full</option>
-                                    <option ${state.currentApplicant.payment_status === 'Partial' ? 'selected' : ''}>Partial</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="flex align-center gap-1">
-                                    <input type="checkbox" ${state.currentApplicant.deposit_received ? 'checked' : ''} onchange="updateApplicantField('deposit_received', this.checked)">
-                                    <span class="form-label" style="margin: 0;">Deposit Received</span>
-                                </label>
-                            </div>
-                        `;
-                        break;
-
-                    case 'onboarding':
-                        content = `
-                            <div class="form-group">
-                                <label class="form-label">Accommodation</label>
-                                <input type="text" class="form-input" value="${state.currentApplicant.accommodation_choice || ''}" onchange="updateApplicantField('accommodation_choice', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="flex align-center gap-1">
-                                    <input type="checkbox" ${state.currentApplicant.accommodation_confirmed ? 'checked' : ''} onchange="updateApplicantField('accommodation_confirmed', this.checked)">
-                                    <span class="form-label" style="margin: 0;">Accommodation Confirmed</span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label class="flex align-center gap-1">
-                                    <input type="checkbox" ${state.currentApplicant.online_course_access ? 'checked' : ''} onchange="updateApplicantField('online_course_access', this.checked)">
-                                    <span class="form-label" style="margin: 0;">Online Course Access</span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Course Progress (0-29)</label>
-                                <input type="number" class="form-input" min="0" max="29" value="${state.currentApplicant.online_course_progress || 0}" onchange="updateApplicantField('online_course_progress', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Tracking Number</label>
-                                <input type="text" class="form-input" value="${state.currentApplicant.shipping_tracking_number || ''}" onchange="updateApplicantField('shipping_tracking_number', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Carrier</label>
-                                <select class="form-select" onchange="updateApplicantField('shipping_carrier', this.value)">
-                                    <option value="">Select Carrier</option>
-                                    <option ${state.currentApplicant.shipping_carrier === 'usps' ? 'selected' : ''}>USPS</option>
-                                    <option ${state.currentApplicant.shipping_carrier === 'ups' ? 'selected' : ''}>UPS</option>
-                                    <option ${state.currentApplicant.shipping_carrier === 'fedex' ? 'selected' : ''}>FedEx</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Shipping Status</label>
-                                <select class="form-select" onchange="updateApplicantField('shipping_status', this.value)">
-                                    <option ${state.currentApplicant.shipping_status === 'not_shipped' ? 'selected' : ''}>Not Shipped</option>
-                                    <option ${state.currentApplicant.shipping_status === 'label_created' ? 'selected' : ''}>Label Created</option>
-                                    <option ${state.currentApplicant.shipping_status === 'in_transit' ? 'selected' : ''}>In Transit</option>
-                                    <option ${state.currentApplicant.shipping_status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                                </select>
-                            </div>
-                        `;
-                        break;
-
-                    case 'complete':
-                        content = `
-                            <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                                <div style="color: #10B981; font-weight: 600;">Participant has completed the program</div>
-                                <div style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 0.5rem;">Registration Status: ${state.currentApplicant.registration_status || 'Complete'}</div>
-                            </div>
-                        `;
-                        break;
-                }
-
-                return `
-                    <div class="stage-section ${isCurrent ? 'open' : ''}">
-                        <div class="stage-section-header">
-                            <span>${formatStageLabel(stage)}</span>
-                            <span class="stage-section-toggle ${isCurrent ? 'open' : ''}">▸</span>
-                        </div>
-                        <div class="stage-section-content">
-                            ${content || '<div style="color: var(--color-text-tertiary);">No details for this stage</div>'}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            container.innerHTML = sections;
-        }
-
-        function renderPanelActivity() {
-            const container = document.getElementById('panel-activity');
-            container.innerHTML = `<div style="color: var(--color-text-tertiary); font-size: 0.85rem;">Created: ${formatDate(state.currentApplicant.created_at)}<br>Updated: ${formatDate(state.currentApplicant.updated_at)}</div>`;
-        }
-
-        async function updateApplicantField(field, value) {
-            try {
-                const updateData = { [field]: value };
-                const { error } = await db
-                    .from('applicants')
-                    .update(updateData)
-                    .eq('id', state.currentApplicant.id);
-
-                if (error) throw error;
-                state.currentApplicant[field] = value;
-                showToast('Updated successfully', 'success');
-            } catch (error) {
-                showToast('Error updating: ' + error.message, 'error');
-            }
-        }
-
-        // Settings
-        async function saveSettings() {
-            const defaultPrice = parseInt(document.getElementById('default-price').value);
-            const defaultLocation = document.getElementById('default-location').value;
-
-            state.settings = { defaultPrice, defaultLocation };
-            state.defaultPrice = defaultPrice;
-            state.defaultLocation = defaultLocation;
-
-            localStorage.setItem('stepwise-settings', JSON.stringify(state.settings));
-            showToast('Settings saved', 'success');
-        }
-
-        function exportCSV() {
-            const headers = ['Name', 'Email', 'Phone', 'Training', 'Status', 'Pipeline Stage', 'Payment Status', 'Created'];
-            const rows = state.applicants.map(a => {
-                const training = state.trainings.find(t => t.id === a.training_id);
+        // ==================== EXPORT & UTILITIES ====================
+        function exportToCSV() {
+            const headers = ['Name', 'Email', 'Training', 'Stage', 'Payment Status', 'Amount', 'Date'];
+            const rows = applicantsData.map(p => {
+                const training = trainingsData.find(t => t.id === p.training_id);
                 return [
-                    a.name,
-                    a.email,
-                    a.phone || '',
+                    p.name,
+                    p.email,
                     training?.name || '',
-                    a.app_status || '',
-                    a.pipeline_stage || '',
-                    a.payment_status || '',
-                    formatDate(a.created_at)
+                    p.pipeline_stage || '',
+                    p.payment_status || '',
+                    p.payment_amount_cents ? (p.payment_amount_cents / 100).toFixed(2) : '',
+                    formatDate(p.created_at)
                 ];
             });
 
-            const csv = [
-                headers.map(h => `"${h}"`).join(','),
-                ...rows.map(r => r.map(v => `"${v}"`).join(','))
-            ].join('\n');
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `stepwise-applicants-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = 'stepwise-export.csv';
             a.click();
             window.URL.revokeObjectURL(url);
-
-            showToast('CSV exported', 'success');
         }
 
-        async function toggleShowOnApply(trainingId, value) {
-            try {
-                const { error } = await db
-                    .from('trainings')
-                    .update({ show_on_apply: value })
-                    .eq('id', trainingId);
-
-                if (error) throw error;
-                const training = state.trainings.find(t => t.id === trainingId);
-                if (training) training.show_on_apply = value;
-                showToast(value ? 'Added to apply page' : 'Removed from apply page', 'success');
-            } catch (error) {
-                showToast('Error updating: ' + error.message, 'error');
+        function trackPackage(carrier, tracking) {
+            const urls = {
+                usps: `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tracking}`,
+                ups: `https://www.ups.com/track?tracknum=${tracking}`,
+                fedex: `https://tracking.fedex.com/en/tracking?tracknumbers=${tracking}`
+            };
+            if (urls[carrier]) {
+                window.open(urls[carrier], '_blank');
             }
         }
 
-        // Utility Functions
         function formatDate(dateStr) {
             if (!dateStr) return 'N/A';
-            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
-
-        function formatRelativeTime(dateStr) {
-            if (!dateStr) return 'N/A';
             const date = new Date(dateStr);
-            const now = new Date();
-            const diff = now - date;
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-
-            if (minutes < 1) return 'Just now';
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            if (days < 7) return `${days}d ago`;
-            return formatDate(dateStr);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
-        function formatStageLabel(stage) {
-            const labels = {
-                'lead': 'Lead',
-                'chemistry_call': 'Chemistry Call',
-                'application': 'Application',
-                'interview': 'Interview',
-                'approval': 'Approval',
-                'payment': 'Payment',
-                'onboarding': 'Onboarding',
-                'complete': 'Complete'
-            };
-            return labels[stage] || stage;
+        function formatDateTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toISOString().slice(0, 16);
         }
 
-        function calculateDaysInStage(applicant, stage) {
-            let dateField;
-            switch (stage) {
-                case 'chemistry_call': dateField = 'chemistry_call_date'; break;
-                case 'interview': dateField = 'interview_date'; break;
-                case 'approval': dateField = 'approval_date'; break;
-                case 'payment': dateField = 'payment_date'; break;
-                default: dateField = 'created_at';
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('refreshBtn')?.addEventListener('click', () => {
+            fetchAllData();
+            showToast('Data refreshed', 'success');
+        });
+
+        document.getElementById('globalSearch')?.addEventListener('input', () => renderParticipants());
+        document.getElementById('stageFilter')?.addEventListener('change', () => renderParticipants());
+        document.getElementById('paymentFilter')?.addEventListener('change', () => renderParticipants());
+        document.getElementById('shippingStatusFilter')?.addEventListener('change', () => renderShipping());
+        document.getElementById('trainingSearch')?.addEventListener('input', () => renderTrainings());
+
+        document.getElementById('exportAllBtn')?.addEventListener('click', exportToCSV);
+        document.getElementById('exportCsvBtn')?.addEventListener('click', exportToCSV);
+
+        document.getElementById('syncDataBtn')?.addEventListener('click', () => {
+            fetchAllData();
+            showToast('Data synced', 'success');
+        });
+
+        // Hash routing
+        window.addEventListener('hashchange', () => {
+            const page = window.location.hash.slice(1) || 'dashboard';
+            if (['dashboard', 'trainings', 'participants', 'shipping', 'settings'].includes(page)) {
+                navigateToPage(page);
             }
+        });
 
-            const date = applicant[dateField] ? new Date(applicant[dateField]) : new Date(applicant.created_at);
-            const now = new Date();
-            const diff = now - date;
-            return Math.floor(diff / 86400000);
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `
-                <div>${message}</div>
-            `;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease-in forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function refreshCurrentTab() {
-            if (state.currentTab === 'dashboard') {
-                renderDashboard();
-            } else if (state.currentTab === 'trainings') {
-                renderTrainingsTab();
-            } else if (state.currentTab === 'pipeline') {
-                renderPipelineTab();
-            } else if (state.currentTab === 'shipping') {
-                renderShippingTab();
+        // Close modals on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                closeSidePanel();
             }
-        }
+        });
 
-        // Initialize
-        initApp();
+        // ==================== INITIALIZATION ====================
+        fetchAllData();
+        updateTrainingDropdown();
+        setInterval(() => {
+            if (currentPage === 'dashboard') updateDashboard();
+        }, 60000);
     </script>
-
-    <style>
-        @keyframes slideOut {
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-    </style>
 </body>
 </html>
