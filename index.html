@@ -3,1601 +3,2472 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StepWise — Admin Dashboard</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>StepWise Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-/* ===== Glassmorphism Design System ===== */
-:root {
-    --bg-gradient-start: #0f0c29;
-    --bg-gradient-mid: #302b63;
-    --bg-gradient-end: #24243e;
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --accent-purple: #8b5cf6;
-    --accent-blue: #667eea;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
-    min-height: 100vh;
-    color: var(--text-primary);
-    overflow-x: hidden;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(56, 189, 248, 0.15) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* ===== Layout ===== */
-.app-container { max-width: 1600px; margin: 0 auto; padding: 1rem; }
-
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    border-radius: 1rem;
-}
-
-.header-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.header-brand h1 {
-    font-size: 1.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #667eea, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.header-brand .subtitle {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    font-weight: 400;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-/* ===== Glass Components ===== */
-.glass-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 1rem;
-    padding: 1.5rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 0.5s ease-out;
-}
-
-.glass-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.glass-btn {
-    padding: 0.6rem 1.25rem;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.glass-btn:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-}
-
-.glass-btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: none;
-}
-
-.glass-btn-primary:hover {
-    background: linear-gradient(135deg, #7c8ff4, #8a5db5);
-    box-shadow: 0 10px 40px rgba(118, 75, 162, 0.4);
-}
-
-.glass-btn-sm {
-    padding: 0.4rem 0.85rem;
-    font-size: 0.75rem;
-    border-radius: 0.5rem;
-}
-
-.glass-btn-success {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.3));
-    border: 1px solid rgba(16, 185, 129, 0.4);
-}
-
-.glass-btn-danger {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.glass-input {
-    width: 100%;
-    padding: 0.6rem 1rem;
-    border-radius: 0.75rem;
-    outline: none;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    font-family: inherit;
-    font-size: 0.85rem;
-}
-
-.glass-input:focus {
-    border-color: rgba(102, 126, 234, 0.5);
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
-}
-
-.glass-input::placeholder { color: rgba(255, 255, 255, 0.4); }
-
-select.glass-input {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    padding-right: 2rem;
-}
-
-select.glass-input option { background: #1e1b4b; color: white; }
-
-/* ===== KPI Grid ===== */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.kpi-card {
-    position: relative;
-    padding: 1.25rem;
-    border-radius: 1rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    animation: fadeIn 0.5s ease-out;
-    overflow: hidden;
-}
-
-.kpi-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.kpi-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
-.kpi-value { font-size: 2rem; font-weight: 800; line-height: 1.2; }
-.kpi-sub { font-size: 0.75rem; color: #6ee7b7; margin-top: 0.25rem; }
-.kpi-icon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    font-size: 1.2rem;
-}
-
-/* ===== Tabs ===== */
-.tab-bar {
-    display: flex;
-    gap: 0.25rem;
-    margin-bottom: 1.5rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 0.75rem;
-    padding: 0.25rem;
-    border: 1px solid var(--glass-border);
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 0.5rem;
-    background: transparent;
-    color: var(--text-secondary);
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: inherit;
-}
-
-.tab-btn.active {
-    background: var(--accent-gradient);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.tab-btn:hover:not(.active) { color: white; background: rgba(255, 255, 255, 0.05); }
-
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-
-/* ===== Pipeline Kanban ===== */
-.pipeline-container {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding-bottom: 1rem;
-    scroll-behavior: smooth;
-}
-
-.pipeline-column {
-    flex-shrink: 0;
-    width: 260px;
-    min-height: 300px;
-}
-
-.pipeline-col-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 0.75rem;
-    margin-bottom: 0.75rem;
-    border-bottom: 2px solid;
-}
-
-.pipeline-col-header h3 { font-size: 0.9rem; font-weight: 700; }
-
-.pipeline-col-count {
-    padding: 0.15rem 0.6rem;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.1);
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.pipeline-cards { display: flex; flex-direction: column; gap: 0.6rem; }
-
-.participant-card {
-    padding: 0.85rem;
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.participant-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.participant-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
-.participant-email { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
-.participant-meta { font-size: 0.7rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; }
-
-/* Pipeline column border colors */
-.col-lead { border-color: #64748b; }
-.col-initial_call { border-color: #3b82f6; }
-.col-application { border-color: #f59e0b; }
-.col-interview { border-color: #a855f7; }
-.col-approved { border-color: #10b981; }
-.col-paid { border-color: #22d3ee; }
-.col-confirmed { border-color: #22c55e; }
-
-/* ===== Table View ===== */
-.table-wrapper { overflow-x: auto; }
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-
-thead th {
-    text-align: left;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--glass-border);
-    white-space: nowrap;
-}
-
-tbody td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    vertical-align: middle;
-}
-
-tbody tr { transition: background 0.2s; cursor: pointer; }
-tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
-
-/* Status Badges */
-.status-badge {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    letter-spacing: 0.02em;
-}
-
-.badge-lead { background: rgba(100, 116, 139, 0.3); color: #cbd5e1; }
-.badge-initial_call, .badge-call { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
-.badge-application, .badge-submitted, .badge-received { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
-.badge-under_review { background: rgba(251, 191, 36, 0.3); color: #fde68a; }
-.badge-interview, .badge-interview_scheduled, .badge-interview_complete { background: rgba(168, 85, 247, 0.3); color: #c4b5fd; }
-.badge-approved, .badge-accepted { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
-.badge-paid, .badge-paid_in_full, .badge-deposit_paid { background: rgba(34, 211, 238, 0.3); color: #67e8f9; }
-.badge-confirmed, .badge-complete { background: rgba(34, 197, 94, 0.3); color: #86efac; }
-.badge-waitlisted { background: rgba(251, 146, 60, 0.3); color: #fdba74; }
-.badge-declined, .badge-withdrawn, .badge-cancelled { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
-.badge-pending { background: rgba(148, 163, 184, 0.3); color: #cbd5e1; }
-
-/* ===== Modal ===== */
-.modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    opacity: 0;
-    transition: opacity 0.3s;
-    display: none;
-}
-
-.modal-backdrop.open { display: flex; align-items: center; justify-content: center; opacity: 1; }
-
-.modal {
-    width: 90%;
-    max-width: 900px;
-    max-height: 90vh;
-    overflow-y: auto;
-    background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(45, 40, 95, 0.98));
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(102, 126, 234, 0.15);
-    transform: scale(0.95);
-    transition: transform 0.3s;
-}
-
-.modal-backdrop.open .modal { transform: scale(1); }
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-header-info { display: flex; align-items: center; gap: 1rem; }
-
-.modal-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #a855f7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    font-weight: 700;
-}
-
-.modal-name { font-size: 1.2rem; font-weight: 700; }
-.modal-email { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem; }
-
-.modal-close {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    border: none;
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: background 0.2s;
-}
-
-.modal-close:hover { background: rgba(255, 255, 255, 0.1); }
-
-.modal-body { padding: 1.5rem; }
-
-.modal-section {
-    margin-bottom: 1.5rem;
-}
-
-.modal-section h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.detail-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem;
-}
-
-.detail-item label {
-    display: block;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.2rem;
-}
-
-.detail-item span {
-    font-size: 0.85rem;
-    color: var(--text-primary);
-}
-
-/* Journey stages in modal */
-.journey-stages { display: flex; flex-direction: column; gap: 0; }
-
-.journey-stage {
-    display: flex;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-left: 3px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s;
-}
-
-.journey-stage.stage-completed {
-    border-left-color: rgba(16, 185, 129, 0.5);
-}
-
-.journey-stage.stage-current {
-    background: rgba(139, 92, 246, 0.1);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    border-left: 3px solid rgba(139, 92, 246, 0.8);
-    box-shadow: 0 0 25px rgba(139, 92, 246, 0.1);
-}
-
-.journey-stage.stage-upcoming { opacity: 0.45; }
-
-.stage-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-}
-
-.stage-icon.completed { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
-.stage-icon.current { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
-.stage-icon.upcoming { background: rgba(255, 255, 255, 0.05); color: #64748b; }
-
-.stage-name { font-weight: 600; font-size: 0.85rem; }
-.stage-desc { font-size: 0.75rem; color: var(--text-secondary); }
-
-.stage-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-}
-
-.journey-connector {
-    margin-left: 1.5rem;
-    border-left: 2px dashed rgba(255, 255, 255, 0.1);
-    height: 1.25rem;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.15);
-}
-
-.modal-footer-left { display: flex; gap: 0.5rem; }
-.modal-footer-right { display: flex; gap: 0.5rem; }
-
-/* ===== Loading ===== */
-.loading-spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem;
-    color: var(--text-secondary);
-    gap: 0.75rem;
-}
-
-.spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: var(--accent-purple);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-/* ===== Notification Toast ===== */
-.toast-container {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.toast {
-    padding: 0.75rem 1.25rem;
-    border-radius: 0.75rem;
-    background: rgba(30, 27, 75, 0.95);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    font-size: 0.85rem;
-    animation: slideIn 0.3s ease-out;
-    max-width: 350px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-}
-
-.toast.success { border-left: 3px solid #10b981; }
-.toast.error { border-left: 3px solid #ef4444; }
-.toast.info { border-left: 3px solid #3b82f6; }
-
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-/* ===== Empty State ===== */
-.empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-secondary);
-}
-
-.empty-state .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
-.empty-state p { font-size: 0.9rem; }
-
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-    .header { flex-direction: column; gap: 0.75rem; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .pipeline-column { width: 220px; }
-    .detail-grid { grid-template-columns: 1fr; }
-    .modal { width: 95%; }
-    .modal-footer { flex-direction: column; }
-    .modal-footer-left, .modal-footer-right { width: 100%; }
-}
-
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 10px; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
-
-/* ===== Search highlight ===== */
-.search-bar { position: relative; }
-.search-bar input { padding-left: 2.25rem; }
-.search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
-
-/* ===== Protonmail Section ===== */
-.email-compose {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0.75rem;
-    padding: 1rem;
-}
-
-.email-compose textarea {
-    width: 100%;
-    min-height: 100px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0.5rem;
-    color: white;
-    padding: 0.75rem;
-    font-family: inherit;
-    font-size: 0.85rem;
-    resize: vertical;
-    outline: none;
-}
-
-.email-compose textarea:focus {
-    border-color: rgba(102, 126, 234, 0.4);
-}
-
-/* Notes section */
-.notes-area {
-    width: 100%;
-    min-height: 80px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0.5rem;
-    color: white;
-    padding: 0.75rem;
-    font-family: inherit;
-    font-size: 0.85rem;
-    resize: vertical;
-    outline: none;
-}
-
-.notes-area:focus { border-color: rgba(102, 126, 234, 0.4); }
-
-/* Source indicator */
-.source-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 0.3rem;
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.source-jotform { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
-.source-website { background: rgba(102, 126, 234, 0.2); color: #93c5fd; }
-.source-manual { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg-dark: #0a0a1a;
+            --color-bg-medium: #1a1a3e;
+            --color-accent-orange: #F59E0B;
+            --color-accent-red: #EF4444;
+            --color-accent-purple: #8B5CF6;
+            --color-accent-blue: #3B82F6;
+            --color-glass-bg: rgba(255, 255, 255, 0.05);
+            --color-glass-border: rgba(255, 255, 255, 0.08);
+            --color-text-primary: #ffffff;
+            --color-text-secondary: rgba(255, 255, 255, 0.7);
+            --color-text-tertiary: rgba(255, 255, 255, 0.5);
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-medium) 100%);
+            color: var(--color-text-primary);
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-glass-border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            flex: 1;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            color: var(--color-text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--color-text-primary);
+            border-bottom-color: var(--color-accent-purple);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* General Components */
+        .card {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-speed);
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all var(--transition-speed);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-accent-purple), var(--color-accent-blue));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--color-glass-bg);
+            border: 1px solid var(--color-glass-border);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-beginning {
+            background: var(--color-accent-orange);
+            color: #000;
+        }
+
+        .badge-intermediate {
+            background: var(--color-accent-red);
+            color: #fff;
+        }
+
+        .badge-advanced {
+            background: var(--color-accent-purple);
+            color: #fff;
+        }
+
+        .badge-open {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .badge-closed {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9CA3AF;
+            border: 1px solid rgba(107, 114, 128, 0.5);
+        }
+
+        .badge-draft {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FECACA;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .badge-stage {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-text-primary);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            color: var(--color-text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all var(--transition-speed);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-accent-purple);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-slider {
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            position: relative;
+            transition: all var(--transition-speed);
+            border: 1px solid var(--color-glass-border);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--color-accent-purple);
+            border-color: var(--color-accent-purple);
+        }
+
+        .toggle-slider::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all var(--transition-speed);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::after {
+            left: 22px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, rgba(26, 26, 62, 0.95), rgba(10, 10, 26, 0.95));
+            border: 1px solid var(--color-glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .modal-close:hover {
+            color: var(--color-text-primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-glass-border);
+        }
+
+        /* Side Panel */
+        .side-panel-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+
+        .side-panel-overlay.active {
+            display: block;
+        }
+
+        .side-panel {
+            position: fixed;
+            right: -450px;
+            top: 0;
+            bottom: 0;
+            width: 450px;
+            background: linear-gradient(135deg, rgba(26, 26, 62, 0.98), rgba(10, 10, 26, 0.98));
+            border-left: 1px solid var(--color-glass-border);
+            overflow-y: auto;
+            z-index: 1001;
+            transition: right var(--transition-speed);
+            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .side-panel.active {
+            right: 0;
+        }
+
+        .side-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--color-glass-border);
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 26, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .side-panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .side-panel-close {
+            background: none;
+            border: none;
+            color: var(--color-text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .side-panel-close:hover {
+            color: var(--color-text-primary);
+        }
+
+        .side-panel-content {
+            padding: 1.5rem;
+        }
+
+        .side-panel-section {
+            margin-bottom: 2rem;
+        }
+
+        .side-panel-section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .side-panel-section-content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        /* Training Grid */
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .training-card {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-speed);
+            cursor: pointer;
+        }
+
+        .training-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.15);
+        }
+
+        .training-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .training-card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .training-card-toggle {
+            margin-left: 1rem;
+        }
+
+        .training-card-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .training-card-date {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .training-card-location {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0.75rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-accent-purple), var(--color-accent-blue));
+            transition: width var(--transition-speed);
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-text-secondary);
+            border-bottom: 1px solid var(--color-glass-border);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-glass-border);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Pipeline */
+        .pipeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pipeline-column {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 600px;
+        }
+
+        .pipeline-column-header {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--color-glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pipeline-column-count {
+            background: var(--color-glass-bg);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .pipeline-card {
+            background: var(--color-glass-bg);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .pipeline-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-card-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .pipeline-card-training {
+            font-size: 0.8rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pipeline-card-days {
+            font-size: 0.75rem;
+            color: var(--color-text-tertiary);
+        }
+
+        /* Stage Progress */
+        .stage-progress {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .stage-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--color-glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            color: var(--color-text-tertiary);
+        }
+
+        .stage-dot:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .stage-dot.current {
+            background: var(--color-accent-purple);
+            border-color: var(--color-accent-purple);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .stage-dot.completed {
+            background: #10B981;
+            border-color: #10B981;
+            color: white;
+            font-weight: 700;
+        }
+
+        .stage-label {
+            font-size: 0.7rem;
+            text-align: center;
+            color: var(--color-text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        .stage-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stage-section-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            padding-bottom: 0.75rem;
+            color: var(--color-text-primary);
+        }
+
+        .stage-section-toggle {
+            transition: transform var(--transition-speed);
+        }
+
+        .stage-section-toggle.open {
+            transform: rotate(90deg);
+        }
+
+        .stage-section-content {
+            display: none;
+            padding-top: 1rem;
+            border-top: 1px solid var(--color-glass-border);
+        }
+
+        .stage-section.open .stage-section-content {
+            display: block;
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: var(--color-glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10B981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #EF4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3B82F6;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--color-accent-purple);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .side-panel {
+                width: 350px;
+                right: -350px;
+            }
+
+            .modal {
+                max-width: 90%;
+            }
+
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .nav-tabs {
+                gap: 0.5rem;
+            }
+
+            .side-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .main-content {
+                padding: 0;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .pipeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                max-width: 95%;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: var(--color-glass-bg);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-glass-border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .activity-timestamp {
+            font-size: 0.75rem;
+            color: var(--color-text-tertiary);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Expandable Sections */
+        .expandable {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-glass-border);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .expandable-header {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .expandable-toggle {
+            transition: transform var(--transition-speed);
+        }
+
+        .expandable.open .expandable-toggle {
+            transform: rotate(90deg);
+        }
+
+        .expandable-content {
+            display: none;
+            padding: 0 1rem 1rem 1rem;
+            border-top: 1px solid var(--color-glass-border);
+        }
+
+        .expandable.open .expandable-content {
+            display: block;
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .gap-1 {
+            gap: 0.5rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .opacity-75 {
+            opacity: 0.75;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        /* Shipping Status Badges */
+        .shipping-status {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .shipping-status.not-shipped {
+            background: rgba(107, 114, 128, 0.2);
+            color: #D1D5DB;
+        }
+
+        .shipping-status.label-created {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93C5FD;
+        }
+
+        .shipping-status.in-transit {
+            background: rgba(245, 158, 11, 0.2);
+            color: #FCD34D;
+        }
+
+        .shipping-status.delivered {
+            background: rgba(16, 185, 129, 0.2);
+            color: #86EFAC;
+        }
     </style>
 </head>
 <body>
-    <div class="app-container" id="app">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-brand">
-                <div>
-                    <h1>StepWise</h1>
-                    <div class="subtitle">Operations Dashboard</div>
-                </div>
-            </div>
-            <div class="header-actions">
-                <div class="search-bar">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="glass-input" id="searchInput" placeholder="Search participants..." style="width: 250px; padding-left: 2.25rem;">
-                </div>
-                <select class="glass-input" id="trainingFilter" style="width: auto;">
-                    <option value="all">All Trainings</option>
-                </select>
-                <button class="glass-btn glass-btn-primary" onclick="refreshData()">↻ Refresh</button>
-            </div>
-        </header>
-
-        <!-- KPI Grid -->
-        <div class="kpi-grid" id="kpiGrid">
-            <div class="kpi-card">
-                <div class="kpi-label">Total Applicants</div>
-                <div class="kpi-value" id="kpiTotal">—</div>
-                <div class="kpi-sub" id="kpiTotalSub">Loading...</div>
-                <div class="kpi-icon">👥</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Active Pipeline</div>
-                <div class="kpi-value" id="kpiActive">—</div>
-                <div class="kpi-sub" id="kpiActiveSub">In progress</div>
-                <div class="kpi-icon">📊</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Confirmed</div>
-                <div class="kpi-value" id="kpiConfirmed">—</div>
-                <div class="kpi-sub" id="kpiConfirmedSub">Ready</div>
-                <div class="kpi-icon">✅</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Paid</div>
-                <div class="kpi-value" id="kpiPaid">—</div>
-                <div class="kpi-sub" id="kpiPaidSub">Revenue collected</div>
-                <div class="kpi-icon">💳</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">New This Week</div>
-                <div class="kpi-value" id="kpiNew">—</div>
-                <div class="kpi-sub" id="kpiNewSub">Last 7 days</div>
-                <div class="kpi-icon">🆕</div>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">🧠 StepWise</div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">📊 Dashboard</button>
+                <button class="nav-tab" data-tab="trainings">📋 Trainings</button>
+                <button class="nav-tab" data-tab="pipeline">🔀 Pipeline</button>
+                <button class="nav-tab" data-tab="shipping">🚚 Shipping</button>
+                <button class="nav-tab" data-tab="settings">⚙️ Settings</button>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tab-bar">
-            <button class="tab-btn active" data-tab="pipeline" onclick="switchTab('pipeline')">Pipeline Board</button>
-            <button class="tab-btn" data-tab="table" onclick="switchTab('table')">Table View</button>
-            <button class="tab-btn" data-tab="applications" onclick="switchTab('applications')">Full Applications</button>
-        </div>
+        <div class="main-content">
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="kpi-grid" id="kpi-container">
+                    <!-- KPIs populated by JS -->
+                </div>
 
-        <!-- Pipeline View -->
-        <div class="tab-content active" id="tab-pipeline">
-            <div class="glass-card">
-                <div class="pipeline-container" id="pipelineContainer">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                        <span>Loading pipeline...</span>
+                <div class="flex gap-1 mb-2" style="margin-bottom: 2rem;">
+                    <h2 style="flex: 1;">Active Trainings</h2>
+                </div>
+
+                <div class="training-grid" id="dashboard-trainings">
+                    <!-- Training overview cards -->
+                </div>
+
+                <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Recent Activity</h2>
+                <div class="activity-feed" id="activity-feed">
+                    <!-- Activity populated by JS -->
+                </div>
+            </div>
+
+            <!-- Trainings Tab -->
+            <div class="tab-content" id="trainings-tab">
+                <div class="flex justify-between align-center mb-2">
+                    <h2>Manage Trainings</h2>
+                    <button class="btn btn-primary" id="create-training-btn">+ Create Training</button>
+                </div>
+
+                <div class="training-grid" id="trainings-grid">
+                    <!-- Training cards populated by JS -->
+                </div>
+            </div>
+
+            <!-- Pipeline Tab -->
+            <div class="tab-content" id="pipeline-tab">
+                <div class="flex justify-between align-center mb-2">
+                    <h2>Participant Pipeline</h2>
+                    <select id="pipeline-filter" class="form-select" style="max-width: 200px;">
+                        <option value="">All Trainings</option>
+                    </select>
+                </div>
+
+                <div class="pipeline-grid" id="pipeline-container">
+                    <!-- Pipeline columns populated by JS -->
+                </div>
+            </div>
+
+            <!-- Shipping Tab -->
+            <div class="tab-content" id="shipping-tab">
+                <div class="flex justify-between align-center mb-2">
+                    <h2>Shipping Dashboard</h2>
+                    <button class="btn btn-primary" id="bulk-mark-shipped">Mark Selected as Shipped</button>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Not Shipped</div>
+                        <div class="kpi-value" id="shipping-not-shipped">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">In Transit</div>
+                        <div class="kpi-value" id="shipping-in-transit">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Delivered</div>
+                        <div class="kpi-value" id="shipping-delivered">0</div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Table View -->
-        <div class="tab-content" id="tab-table">
-            <div class="glass-card">
-                <div class="table-wrapper" id="tableContainer">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                        <span>Loading data...</span>
-                    </div>
+                <div class="table-container" style="margin-top: 2rem;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-shipping"></th>
+                                <th>Name</th>
+                                <th>Training</th>
+                                <th>Tracking #</th>
+                                <th>Carrier</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="shipping-table-body">
+                            <!-- Shipping rows populated by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
 
-        <!-- Full Applications View -->
-        <div class="tab-content" id="tab-applications">
-            <div class="glass-card">
-                <div id="applicationsContainer">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                        <span>Loading applications...</span>
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings-tab">
+                <h2 style="margin-bottom: 2rem;">Settings</h2>
+
+                <div class="card" style="max-width: 500px; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;">Training Defaults</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Default Price (cents)</label>
+                        <input type="number" id="default-price" class="form-input" placeholder="50000">
                     </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Default Location</label>
+                        <input type="text" id="default-location" class="form-input" placeholder="Online">
+                    </div>
+
+                    <button class="btn btn-primary" id="save-settings">Save Settings</button>
+                </div>
+
+                <div class="card" style="max-width: 500px;">
+                    <h3 style="margin-bottom: 1.5rem;">Export Data</h3>
+                    <button class="btn btn-secondary" id="export-csv">📥 Export All Applicants (CSV)</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Participant Detail Modal -->
-    <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
-        <div class="modal" onclick="event.stopPropagation()">
-            <div class="modal-header" id="modalHeader"></div>
-            <div class="modal-body" id="modalBody"></div>
-            <div class="modal-footer" id="modalFooter"></div>
+    <!-- Modal for Create/Edit Training -->
+    <div class="modal-overlay" id="training-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="training-modal-title">Create Training</h2>
+                <button class="modal-close" id="training-modal-close">✕</button>
+            </div>
+            <form id="training-form">
+                <div class="form-group">
+                    <label class="form-label">Training Name</label>
+                    <input type="text" id="training-name" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cohort Name</label>
+                    <input type="text" id="training-cohort" class="form-input">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <select id="training-level" class="form-select" required>
+                            <option value="">Select Level</option>
+                            <option value="beginning">Beginning</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="training-status" class="form-select" required>
+                            <option value="Draft">Draft</option>
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" id="training-start" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">End Date</label>
+                        <input type="date" id="training-end" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" id="training-location" class="form-input" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Max Capacity</label>
+                        <input type="number" id="training-capacity" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Price (cents)</label>
+                        <input type="number" id="training-price" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Stripe Price ID</label>
+                    <input type="text" id="training-stripe" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="training-description" class="form-textarea"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea id="training-notes" class="form-textarea"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="flex align-center gap-1">
+                        <input type="checkbox" id="training-show-apply">
+                        <span class="form-label" style="margin: 0;">Show on Apply Page</span>
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="training-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Training</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Side Panel for Participant Details -->
+    <div class="side-panel-overlay" id="side-panel-overlay"></div>
+    <div class="side-panel" id="side-panel">
+        <div class="side-panel-header">
+            <h2 class="side-panel-title" id="side-panel-title">Participant Details</h2>
+            <button class="side-panel-close" id="side-panel-close">✕</button>
+        </div>
+
+        <div class="side-panel-content">
+            <!-- Contact Info -->
+            <div class="side-panel-section">
+                <div class="side-panel-section-title">Contact Information</div>
+                <div class="side-panel-section-content">
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Name</div>
+                        <div id="panel-name" style="font-weight: 600;"></div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Email</div>
+                        <div id="panel-email" style="font-weight: 600;"></div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.8rem; color: var(--color-text-tertiary); margin-bottom: 0.25rem;">Phone</div>
+                        <div id="panel-phone" style="font-weight: 600;"></div>
+                    </div>
+                    <div class="flex gap-1" style="margin-top: 1rem;">
+                        <button class="btn btn-small btn-secondary" id="panel-email-btn">📧 Email</button>
+                        <button class="btn btn-small btn-secondary" id="panel-call-btn">📞 Call</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Progress -->
+            <div class="side-panel-section">
+                <div class="side-panel-section-title">Pipeline Progress</div>
+                <div id="panel-progress" class="stage-progress">
+                    <!-- Stages populated by JS -->
+                </div>
+            </div>
+
+            <!-- Stages -->
+            <div id="stage-sections-container">
+                <!-- Stage sections populated by JS -->
+            </div>
+
+            <!-- Admin Notes -->
+            <div class="side-panel-section">
+                <div class="side-panel-section-title">Admin Notes</div>
+                <div class="side-panel-section-content">
+                    <textarea id="panel-admin-notes" class="form-textarea" placeholder="Add notes..."></textarea>
+                    <button class="btn btn-small btn-primary" id="save-admin-notes" style="margin-top: 0.75rem;">Save Notes</button>
+                </div>
+            </div>
+
+            <!-- Activity Log -->
+            <div class="side-panel-section">
+                <div class="side-panel-section-title">Activity Log</div>
+                <div id="panel-activity" style="font-size: 0.85rem;">
+                    <!-- Activity populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
 
     <script>
-// ===== Configuration =====
-const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
-const PROTON_EMAIL = 'stepwisetraining@proton.me';
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
+        const { createClient } = window.supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Global State
+        const state = {
+            trainings: [],
+            applicants: [],
+            currentTab: 'dashboard',
+            currentApplicant: null,
+            selectedApplicants: new Set(),
+            defaultPrice: 50000,
+            defaultLocation: 'Online',
+            settings: {}
+        };
 
-// ===== Pipeline Stage Definitions =====
-const PIPELINE_STAGES = [
-    { id: 'lead', name: 'Leads', icon: '👤', color: '#64748b', borderClass: 'col-lead' },
-    { id: 'initial_call', name: 'Initial Call', icon: '📞', color: '#3b82f6', borderClass: 'col-initial_call' },
-    { id: 'application', name: 'Application', icon: '📋', color: '#f59e0b', borderClass: 'col-application' },
-    { id: 'interview', name: 'Interview', icon: '🎙️', color: '#a855f7', borderClass: 'col-interview' },
-    { id: 'approved', name: 'Approved', icon: '✅', color: '#10b981', borderClass: 'col-approved' },
-    { id: 'paid', name: 'Paid', icon: '💳', color: '#22d3ee', borderClass: 'col-paid' },
-    { id: 'confirmed', name: 'Confirmed', icon: '🎉', color: '#22c55e', borderClass: 'col-confirmed' },
-];
+        const stageNames = ['lead', 'chemistry_call', 'application', 'interview', 'approval', 'payment', 'onboarding', 'complete'];
+        const stageLabels = ['Lead', 'Chemistry Call', 'Application', 'Interview', 'Approval', 'Payment', 'Onboarding', 'Complete'];
 
-const STAGE_ORDER = PIPELINE_STAGES.map(s => s.id);
+        // Initialize App
+        async function initApp() {
+            await loadSettings();
+            await fetchTrainings();
+            await fetchApplicants();
+            setupEventListeners();
+            setupRealTimeSubscriptions();
+            renderDashboard();
+        }
 
-// Journey stage actions
-const STAGE_ACTIONS = {
-    lead: [{ id: 'mark_contacted', label: 'Mark Contacted', primary: true }],
-    initial_call: [
-        { id: 'schedule_call', label: 'Schedule Call' },
-        { id: 'complete_call', label: 'Mark Complete', primary: true }
-    ],
-    application: [
-        { id: 'view_application', label: 'View Application' },
-        { id: 'complete_review', label: 'Complete Review', primary: true }
-    ],
-    interview: [
-        { id: 'schedule_interview', label: 'Schedule Interview' },
-        { id: 'complete_interview', label: 'Complete', primary: true }
-    ],
-    approved: [{ id: 'approve', label: 'Confirm Approval', primary: true }],
-    paid: [
-        { id: 'send_stripe_link', label: 'Send Stripe Link', primary: true },
-        { id: 'mark_paid', label: 'Mark as Paid' }
-    ],
-    confirmed: [{ id: 'send_course_link', label: 'Send Course Link', primary: true }],
-};
+        // Load Settings
+        async function loadSettings() {
+            const saved = localStorage.getItem('stepwise-settings');
+            if (saved) {
+                state.settings = JSON.parse(saved);
+                state.defaultPrice = state.settings.defaultPrice || 50000;
+                state.defaultLocation = state.settings.defaultLocation || 'Online';
+                document.getElementById('default-price').value = state.defaultPrice;
+                document.getElementById('default-location').value = state.defaultLocation;
+            }
+        }
 
-// ===== State =====
-let allApplicants = [];      // from applicants table
-let allApplications = [];    // from applications table
-let mergedParticipants = [];  // combined & normalized
-let trainings = [];
-let currentFilter = 'all';
-let searchQuery = '';
+        // Fetch Trainings
+        async function fetchTrainings() {
+            try {
+                const { data, error } = await supabase
+                    .from('trainings')
+                    .select('*')
+                    .order('start_date', { ascending: false });
 
-// ===== Status Mapping =====
-// Map various status strings to pipeline stages
-function mapToPipelineStage(participant) {
-    const appStatus = (participant.app_status || '').toLowerCase().replace(/\s+/g, '_');
-    const acceptance = (participant.acceptance || '').toLowerCase();
-    const paymentStatus = (participant.payment_status || '').toLowerCase().replace(/\s+/g, '_');
-    const regStatus = (participant.registration_status || '').toLowerCase();
-    const formStatus = (participant.form_status || '').toLowerCase();
+                if (error) throw error;
+                state.trainings = data || [];
+            } catch (error) {
+                showToast('Error fetching trainings', 'error');
+                console.error(error);
+            }
+        }
 
-    // Check payment/registration first (most advanced)
-    if (regStatus === 'complete' || regStatus === 'confirmed') return 'confirmed';
-    if (paymentStatus === 'paid_in_full' || paymentStatus === 'paid') return 'paid';
-    if (paymentStatus === 'deposit_paid') return 'paid';
+        // Fetch Applicants
+        async function fetchApplicants() {
+            try {
+                const { data, error } = await supabase
+                    .from('applicants')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-    // Check acceptance
-    if (acceptance === 'accepted' || appStatus === 'accepted') return 'approved';
+                if (error) throw error;
+                state.applicants = data || [];
+            } catch (error) {
+                showToast('Error fetching applicants', 'error');
+                console.error(error);
+            }
+        }
 
-    // Check interview stages
-    if (appStatus === 'interview_complete') return 'approved';
-    if (appStatus === 'interview_scheduled' || appStatus === 'interview') return 'interview';
+        // Real-time Subscriptions
+        function setupRealTimeSubscriptions() {
+            supabase
+                .channel('trainings')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'trainings' }, (payload) => {
+                    if (payload.eventType === 'INSERT') {
+                        state.trainings.push(payload.new);
+                    } else if (payload.eventType === 'UPDATE') {
+                        const idx = state.trainings.findIndex(t => t.id === payload.new.id);
+                        if (idx >= 0) state.trainings[idx] = payload.new;
+                    } else if (payload.eventType === 'DELETE') {
+                        state.trainings = state.trainings.filter(t => t.id !== payload.old.id);
+                    }
+                    refreshCurrentTab();
+                })
+                .subscribe();
 
-    // Check application stages
-    if (appStatus === 'under_review') return 'application';
-    if (appStatus === 'received' || formStatus === 'submitted') return 'application';
+            supabase
+                .channel('applicants')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' }, (payload) => {
+                    if (payload.eventType === 'INSERT') {
+                        state.applicants.push(payload.new);
+                    } else if (payload.eventType === 'UPDATE') {
+                        const idx = state.applicants.findIndex(a => a.id === payload.new.id);
+                        if (idx >= 0) state.applicants[idx] = payload.new;
+                    } else if (payload.eventType === 'DELETE') {
+                        state.applicants = state.applicants.filter(a => a.id !== payload.old.id);
+                    }
+                    refreshCurrentTab();
+                })
+                .subscribe();
+        }
 
-    // For applications table entries with a status
-    if (formStatus === 'submitted' || formStatus === 'received') return 'application';
+        // Event Listeners
+        function setupEventListeners() {
+            // Tab Navigation
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const tab = e.target.dataset.tab;
+                    state.currentTab = tab;
+                    document.getElementById(`${tab}-tab`).classList.add('active');
+                    refreshCurrentTab();
+                });
+            });
 
-    // Default: if they have an application record but no explicit status
-    if (participant._source === 'applications') return 'application';
+            // Training Modal
+            document.getElementById('create-training-btn').addEventListener('click', () => {
+                openTrainingModal();
+            });
 
-    return 'lead';
-}
+            document.getElementById('training-modal-close').addEventListener('click', () => {
+                closeTrainingModal();
+            });
 
-// ===== Data Loading =====
-async function loadTrainings() {
-    const { data, error } = await sb
-        .from('trainings')
-        .select('id, name, start_date, end_date, location, status, price')
-        .order('start_date', { ascending: false });
+            document.getElementById('training-cancel').addEventListener('click', () => {
+                closeTrainingModal();
+            });
 
-    if (error) {
-        console.error('Error loading trainings:', error);
-        return;
-    }
+            document.getElementById('training-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'training-modal') {
+                    closeTrainingModal();
+                }
+            });
 
-    trainings = data || [];
-    const select = document.getElementById('trainingFilter');
-    select.innerHTML = '<option value="all">All Trainings</option>';
-    trainings.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = t.name || `Training ${t.id.slice(0, 8)}`;
-        select.appendChild(opt);
-    });
-}
+            document.getElementById('training-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await saveTraining();
+            });
 
-async function loadApplicants() {
-    const { data, error } = await sb
-        .from('applicants')
-        .select('*')
-        .order('created_at', { ascending: false });
+            // Side Panel
+            document.getElementById('side-panel-close').addEventListener('click', closeSidePanel);
+            document.getElementById('side-panel-overlay').addEventListener('click', closeSidePanel);
 
-    if (error) {
-        console.error('Error loading applicants:', error);
-        return [];
-    }
-    return (data || []).map(a => ({
-        ...a,
-        _source: 'applicants',
-        _source_label: 'Admin',
-        first_name: a.name ? a.name.split(' ')[0] : '',
-        last_name: a.name ? a.name.split(' ').slice(1).join(' ') : '',
-        full_name: a.name || 'Unknown',
-    }));
-}
+            // Settings
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+            document.getElementById('export-csv').addEventListener('click', exportCSV);
 
-async function loadApplications() {
-    const { data, error } = await sb
-        .from('applications')
-        .select('*')
-        .order('created_at', { ascending: false });
+            // Shipping
+            document.getElementById('select-all-shipping').addEventListener('change', (e) => {
+                document.querySelectorAll('.shipping-checkbox').forEach(cb => {
+                    cb.checked = e.target.checked;
+                });
+            });
 
-    if (error) {
-        console.error('Error loading applications:', error);
-        return [];
-    }
-    return (data || []).map(a => ({
-        ...a,
-        _source: 'applications',
-        _source_label: a.created_at && new Date(a.created_at) > new Date('2025-01-01') ? 'Website' : 'JotForm',
-        full_name: [a.first_name, a.last_name].filter(Boolean).join(' ') || 'Unknown',
-        form_status: a.status || '',
-    }));
-}
+            document.getElementById('bulk-mark-shipped').addEventListener('click', markSelectedAsShipped);
 
-// Merge applicants + applications by email, keeping the richest record
-function mergeParticipants(applicants, applications) {
-    const byEmail = {};
+            // Panel Actions
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('stage-section-header')) {
+                    const section = e.target.closest('.stage-section');
+                    section.classList.toggle('open');
+                }
+            });
+        }
 
-    // First, add all applicants
-    applicants.forEach(a => {
-        const email = (a.email || '').toLowerCase();
-        if (email) byEmail[email] = { ...a };
-    });
+        // Training Modal Functions
+        function openTrainingModal(training = null) {
+            const modal = document.getElementById('training-modal');
+            const form = document.getElementById('training-form');
+            form.reset();
 
-    // Then, merge applications (richer data wins)
-    applications.forEach(a => {
-        const email = (a.email || '').toLowerCase();
-        if (!email) return;
+            if (training) {
+                document.getElementById('training-modal-title').textContent = 'Edit Training';
+                document.getElementById('training-name').value = training.name;
+                document.getElementById('training-cohort').value = training.cohort_name || '';
+                document.getElementById('training-level').value = training.training_level || '';
+                document.getElementById('training-status').value = training.status || 'Draft';
+                document.getElementById('training-start').value = training.start_date || '';
+                document.getElementById('training-end').value = training.end_date || '';
+                document.getElementById('training-location').value = training.location || '';
+                document.getElementById('training-capacity').value = training.max_capacity || '';
+                document.getElementById('training-price').value = training.price_cents || state.defaultPrice;
+                document.getElementById('training-stripe').value = training.stripe_price_id || '';
+                document.getElementById('training-description').value = training.description || '';
+                document.getElementById('training-notes').value = training.notes || '';
+                document.getElementById('training-show-apply').checked = training.show_on_apply || false;
+                form.dataset.trainingId = training.id;
+            } else {
+                document.getElementById('training-modal-title').textContent = 'Create Training';
+                document.getElementById('training-price').value = state.defaultPrice;
+                document.getElementById('training-location').value = state.defaultLocation;
+                delete form.dataset.trainingId;
+            }
 
-        if (byEmail[email]) {
-            // Merge: keep applicants admin fields, add applications detail fields
-            byEmail[email] = {
-                ...byEmail[email],
-                ...a,
-                // Preserve admin statuses if they exist
-                app_status: byEmail[email].app_status || a.status || '',
-                acceptance: byEmail[email].acceptance || '',
-                payment_status: byEmail[email].payment_status || '',
-                registration_status: byEmail[email].registration_status || '',
-                admin_notes: byEmail[email].notes || a.admin_notes || '',
-                training_id: byEmail[email].training_id || a.retreat_id || '',
-                _source: 'merged',
-                _source_label: 'Both',
-                full_name: byEmail[email].full_name || a.full_name,
+            modal.classList.add('active');
+        }
+
+        function closeTrainingModal() {
+            document.getElementById('training-modal').classList.remove('active');
+        }
+
+        async function saveTraining() {
+            const form = document.getElementById('training-form');
+            const trainingId = form.dataset.trainingId;
+
+            const trainingData = {
+                name: document.getElementById('training-name').value,
+                cohort_name: document.getElementById('training-cohort').value,
+                training_level: document.getElementById('training-level').value,
+                status: document.getElementById('training-status').value,
+                start_date: document.getElementById('training-start').value,
+                end_date: document.getElementById('training-end').value,
+                location: document.getElementById('training-location').value,
+                max_capacity: parseInt(document.getElementById('training-capacity').value),
+                price_cents: parseInt(document.getElementById('training-price').value),
+                stripe_price_id: document.getElementById('training-stripe').value || null,
+                description: document.getElementById('training-description').value,
+                notes: document.getElementById('training-notes').value,
+                show_on_apply: document.getElementById('training-show-apply').checked
             };
-        } else {
-            byEmail[email] = { ...a };
+
+            try {
+                if (trainingId) {
+                    const { error } = await supabase
+                        .from('trainings')
+                        .update(trainingData)
+                        .eq('id', trainingId);
+                    if (error) throw error;
+                    showToast('Training updated successfully', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('trainings')
+                        .insert([trainingData]);
+                    if (error) throw error;
+                    showToast('Training created successfully', 'success');
+                }
+                closeTrainingModal();
+                await fetchTrainings();
+                refreshCurrentTab();
+            } catch (error) {
+                showToast('Error saving training: ' + error.message, 'error');
+                console.error(error);
+            }
         }
-    });
 
-    const result = Object.values(byEmail);
-
-    // Assign pipeline stage
-    result.forEach(p => {
-        p.pipeline_stage = mapToPipelineStage(p);
-    });
-
-    return result;
-}
-
-async function refreshData() {
-    showToast('Refreshing data...', 'info');
-
-    try {
-        await loadTrainings();
-        const [applicants, applications] = await Promise.all([
-            loadApplicants(),
-            loadApplications()
-        ]);
-
-        allApplicants = applicants;
-        allApplications = applications;
-        mergedParticipants = mergeParticipants(applicants, applications);
-
-        applyFilters();
-        showToast(`Loaded ${mergedParticipants.length} participants`, 'success');
-    } catch (err) {
-        console.error('Error refreshing data:', err);
-        showToast('Error loading data', 'error');
-    }
-}
-
-// ===== Filtering =====
-function applyFilters() {
-    let filtered = [...mergedParticipants];
-
-    // Training filter
-    if (currentFilter !== 'all') {
-        filtered = filtered.filter(p =>
-            p.training_id === currentFilter || p.retreat_id === currentFilter
-        );
-    }
-
-    // Search filter
-    if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        filtered = filtered.filter(p =>
-            (p.full_name || '').toLowerCase().includes(q) ||
-            (p.email || '').toLowerCase().includes(q) ||
-            (p.phone || '').toLowerCase().includes(q)
-        );
-    }
-
-    renderKPIs(filtered);
-    renderPipeline(filtered);
-    renderTable(filtered);
-    renderApplications(filtered);
-}
-
-// ===== Rendering: KPIs =====
-function renderKPIs(participants) {
-    const total = participants.length;
-    const active = participants.filter(p => !['confirmed', 'lead'].includes(p.pipeline_stage)).length;
-    const confirmed = participants.filter(p => p.pipeline_stage === 'confirmed').length;
-    const paid = participants.filter(p => ['paid', 'confirmed'].includes(p.pipeline_stage)).length;
-
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const newThisWeek = participants.filter(p => p.created_at && new Date(p.created_at) > oneWeekAgo).length;
-
-    document.getElementById('kpiTotal').textContent = total;
-    document.getElementById('kpiTotalSub').textContent = `Across ${trainings.length} trainings`;
-    document.getElementById('kpiActive').textContent = active;
-    document.getElementById('kpiActiveSub').textContent = `In pipeline`;
-    document.getElementById('kpiConfirmed').textContent = confirmed;
-    document.getElementById('kpiConfirmedSub').textContent = 'Fully confirmed';
-    document.getElementById('kpiPaid').textContent = paid;
-    document.getElementById('kpiPaidSub').textContent = 'Payment received';
-    document.getElementById('kpiNew').textContent = newThisWeek;
-    document.getElementById('kpiNewSub').textContent = 'Last 7 days';
-}
-
-// ===== Rendering: Pipeline =====
-function renderPipeline(participants) {
-    const container = document.getElementById('pipelineContainer');
-
-    const html = PIPELINE_STAGES.map(stage => {
-        const stageParticipants = participants.filter(p => p.pipeline_stage === stage.id);
-        const cards = stageParticipants.map(p => `
-            <div class="participant-card" onclick="openModal('${p.email}')">
-                <div class="participant-name">${escapeHtml(p.full_name)}</div>
-                <div class="participant-email">${escapeHtml(p.email || '')}</div>
-                <div class="participant-meta">
-                    ${p._source_label ? `<span class="source-tag ${p._source_label === 'JotForm' ? 'source-jotform' : p._source_label === 'Website' ? 'source-website' : 'source-manual'}">${p._source_label}</span>` : ''}
-                    ${p.created_at ? `<span>📅 ${new Date(p.created_at).toLocaleDateString()}</span>` : ''}
-                </div>
-            </div>
-        `).join('');
-
-        return `
-            <div class="pipeline-column">
-                <div class="pipeline-col-header ${stage.borderClass}">
-                    <h3>${stage.icon} ${stage.name}</h3>
-                    <span class="pipeline-col-count">${stageParticipants.length}</span>
-                </div>
-                <div class="pipeline-cards">
-                    ${cards || `<div class="empty-state" style="padding: 1rem;"><p style="font-size: 0.75rem; opacity: 0.5;">No participants</p></div>`}
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    container.innerHTML = html;
-}
-
-// ===== Rendering: Table =====
-function renderTable(participants) {
-    const container = document.getElementById('tableContainer');
-
-    if (participants.length === 0) {
-        container.innerHTML = `<div class="empty-state"><div class="emoji">📋</div><p>No participants found</p></div>`;
-        return;
-    }
-
-    const rows = participants.map(p => {
-        const stage = PIPELINE_STAGES.find(s => s.id === p.pipeline_stage) || PIPELINE_STAGES[0];
-        const sourceClass = p._source_label === 'JotForm' ? 'source-jotform' : p._source_label === 'Website' ? 'source-website' : 'source-manual';
-        return `
-            <tr onclick="openModal('${escapeHtml(p.email)}')">
-                <td><strong>${escapeHtml(p.full_name)}</strong></td>
-                <td>${escapeHtml(p.email || '')}</td>
-                <td>${escapeHtml(p.phone || '—')}</td>
-                <td><span class="status-badge badge-${p.pipeline_stage}">${stage.icon} ${stage.name}</span></td>
-                <td>${p.app_status ? `<span class="status-badge badge-${(p.app_status || '').toLowerCase().replace(/\s+/g, '_')}">${escapeHtml(p.app_status)}</span>` : '—'}</td>
-                <td><span class="source-tag ${sourceClass}">${p._source_label || '—'}</span></td>
-                <td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</td>
-                <td>
-                    <button class="glass-btn glass-btn-sm" onclick="event.stopPropagation(); emailParticipant('${escapeHtml(p.email)}', '${escapeHtml(p.full_name)}')">✉️</button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-
-    container.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Pipeline Stage</th>
-                    <th>App Status</th>
-                    <th>Source</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
-    `;
-}
-
-// ===== Rendering: Full Applications =====
-function renderApplications(participants) {
-    const container = document.getElementById('applicationsContainer');
-    const apps = participants.filter(p => p._source === 'applications' || p._source === 'merged');
-
-    if (apps.length === 0) {
-        container.innerHTML = `<div class="empty-state"><div class="emoji">📝</div><p>No full applications found.<br>New applications will appear here from <strong>stepwise.education/apply</strong></p></div>`;
-        return;
-    }
-
-    const rows = apps.map(p => `
-        <tr onclick="openModal('${escapeHtml(p.email)}')">
-            <td><strong>${escapeHtml(p.full_name)}</strong></td>
-            <td>${escapeHtml(p.email || '')}</td>
-            <td>${p.journey_work_experience ? '✅' : '—'}</td>
-            <td>${p.medicine_experience ? '✅' : '—'}</td>
-            <td>${p.physical_health_issues ? '✅' : '—'}</td>
-            <td>${p.mental_health_issues || p.dsm_diagnosis ? '✅' : '—'}</td>
-            <td><span class="status-badge badge-${(p.form_status || p.status || 'pending').toLowerCase()}">${escapeHtml(p.form_status || p.status || 'Submitted')}</span></td>
-            <td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</td>
-        </tr>
-    `).join('');
-
-    container.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Journey</th>
-                    <th>Medicine Exp</th>
-                    <th>Physical Health</th>
-                    <th>Mental Health</th>
-                    <th>Status</th>
-                    <th>Submitted</th>
-                </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-        </table>
-    `;
-}
-
-// ===== Modal =====
-function openModal(email) {
-    const p = mergedParticipants.find(x => x.email === email);
-    if (!p) return;
-
-    const initials = (p.full_name || '??').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-
-    // Header
-    document.getElementById('modalHeader').innerHTML = `
-        <div class="modal-header-info">
-            <div class="modal-avatar">${initials}</div>
-            <div>
-                <div class="modal-name">${escapeHtml(p.full_name)}</div>
-                <div class="modal-email">
-                    ${escapeHtml(p.email || '')}
-                    ${p.phone ? ` · ${escapeHtml(p.phone)}` : ''}
-                    ${p.signal_handle ? ` · Signal: ${escapeHtml(p.signal_handle)}` : ''}
-                </div>
-            </div>
-        </div>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-    `;
-
-    // Body
-    let bodyHtml = '';
-
-    // Pipeline Journey
-    bodyHtml += `<div class="modal-section"><h3>📍 Pipeline Journey</h3><div class="journey-stages">`;
-    const currentIdx = STAGE_ORDER.indexOf(p.pipeline_stage);
-    PIPELINE_STAGES.forEach((stage, idx) => {
-        let stateClass = 'stage-upcoming';
-        let iconClass = 'upcoming';
-        let iconSymbol = '○';
-        if (idx < currentIdx) { stateClass = 'stage-completed'; iconClass = 'completed'; iconSymbol = '✓'; }
-        else if (idx === currentIdx) { stateClass = 'stage-current'; iconClass = 'current'; iconSymbol = '◉'; }
-
-        const actions = (idx === currentIdx) ? (STAGE_ACTIONS[stage.id] || []) : [];
-        const actionButtons = actions.map(a =>
-            `<button class="glass-btn glass-btn-sm ${a.primary ? 'glass-btn-primary' : ''}" onclick="handleStageAction('${p.email}', '${a.id}')">${a.label}</button>`
-        ).join('');
-
-        bodyHtml += `
-            <div class="journey-stage ${stateClass}">
-                <div class="stage-icon ${iconClass}">${iconSymbol}</div>
-                <div>
-                    <div class="stage-name">${stage.icon} ${stage.name}</div>
-                    <div class="stage-desc">${getStageDescription(stage.id)}</div>
-                    ${actionButtons ? `<div class="stage-actions">${actionButtons}</div>` : ''}
-                </div>
-            </div>
-            ${idx < PIPELINE_STAGES.length - 1 ? '<div class="journey-connector"></div>' : ''}
-        `;
-    });
-    bodyHtml += '</div></div>';
-
-    // Contact Info
-    bodyHtml += `<div class="modal-section"><h3>📇 Contact Information</h3><div class="detail-grid">`;
-    const contactFields = [
-        ['Email', p.email],
-        ['Phone', p.phone],
-        ['Signal', p.signal_handle],
-        ['Address', [p.street_address, p.city, p.state_province, p.postal_code, p.country].filter(Boolean).join(', ')],
-        ['Birth Date', p.birth_date],
-        ['Emergency Contact', [p.emergency_first_name, p.emergency_last_name].filter(Boolean).join(' ')],
-        ['Emergency Phone', p.emergency_contact_phone || p.emergency_phone],
-    ];
-    contactFields.forEach(([label, value]) => {
-        if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
-    });
-    bodyHtml += '</div></div>';
-
-    // Admin Status
-    bodyHtml += `<div class="modal-section"><h3>🏷️ Status & Classification</h3><div class="detail-grid">`;
-    const statusFields = [
-        ['Pipeline Stage', p.pipeline_stage ? PIPELINE_STAGES.find(s => s.id === p.pipeline_stage)?.name : '—'],
-        ['App Status', p.app_status],
-        ['Acceptance', p.acceptance],
-        ['Payment Status', p.payment_status],
-        ['Registration', p.registration_status],
-        ['Source', p._source_label],
-    ];
-    statusFields.forEach(([label, value]) => {
-        if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
-    });
-    bodyHtml += '</div></div>';
-
-    // Application Details (if from applications table)
-    if (p._source === 'applications' || p._source === 'merged') {
-        bodyHtml += `<div class="modal-section"><h3>📝 Application Details</h3><div class="detail-grid">`;
-        const appFields = [
-            ['Journey/Work Experience', p.journey_work_experience],
-            ['Medicine Experience', p.medicine_experience],
-            ['Serving Experience', p.serving_experience],
-            ['Life Circumstances', p.life_circumstances],
-            ['Integration Support', p.integration_support],
-            ['Physical Health Issues', p.physical_health_issues],
-            ['Medications (Physical)', p.physical_medications],
-            ['Supplements', p.supplements],
-            ['Allergies', p.allergies],
-            ['Dietary Preferences', Array.isArray(p.dietary_preferences) ? p.dietary_preferences.join(', ') : p.dietary_preferences],
-            ['DSM Diagnosis', p.dsm_diagnosis],
-            ['Mental Health Issues', p.mental_health_issues],
-            ['Psych Medications', p.psych_medications],
-            ['Recreational Drug Use', p.recreational_drug_use],
-            ['Stress Level', p.stress_level ? `${p.stress_level}/10` : null],
-            ['Training Goals', p.training_goals],
-            ['Strengths & Hobbies', p.strengths_hobbies],
-        ];
-        appFields.forEach(([label, value]) => {
-            if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
-        });
-        bodyHtml += '</div></div>';
-    }
-
-    // Notes
-    bodyHtml += `
-        <div class="modal-section">
-            <h3>📝 Admin Notes</h3>
-            <textarea class="notes-area" id="modalNotes" placeholder="Add notes about this participant...">${escapeHtml(p.admin_notes || p.notes || '')}</textarea>
-            <button class="glass-btn glass-btn-sm" style="margin-top: 0.5rem;" onclick="saveNotes('${p.email}')">Save Notes</button>
-        </div>
-    `;
-
-    // Protonmail Quick Email
-    bodyHtml += `
-        <div class="modal-section">
-            <h3>✉️ Send Email (via Protonmail)</h3>
-            <div class="email-compose">
-                <input class="glass-input" id="emailSubject" placeholder="Subject..." style="margin-bottom: 0.5rem;">
-                <textarea id="emailBody" placeholder="Write your message...">${getEmailTemplate(p)}</textarea>
-                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                    <button class="glass-btn glass-btn-primary glass-btn-sm" onclick="sendEmail('${escapeHtml(p.email)}')">Open in Protonmail</button>
-                    <button class="glass-btn glass-btn-sm" onclick="copyEmail('${escapeHtml(p.email)}')">Copy Email</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.getElementById('modalBody').innerHTML = bodyHtml;
-
-    // Footer
-    document.getElementById('modalFooter').innerHTML = `
-        <div class="modal-footer-left">
-            <button class="glass-btn glass-btn-sm" onclick="emailParticipant('${escapeHtml(p.email)}', '${escapeHtml(p.full_name)}')">✉️ Email</button>
-            ${p.phone ? `<button class="glass-btn glass-btn-sm" onclick="window.open('tel:${escapeHtml(p.phone)}')">📞 Call</button>` : ''}
-        </div>
-        <div class="modal-footer-right">
-            <button class="glass-btn glass-btn-sm" onclick="closeModal()">Close</button>
-            <button class="glass-btn glass-btn-sm glass-btn-primary" onclick="advanceStage('${p.email}')">Advance Stage ➡️</button>
-        </div>
-    `;
-
-    document.getElementById('modalBackdrop').classList.add('open');
-}
-
-function closeModal(event) {
-    if (event && event.target !== event.currentTarget) return;
-    document.getElementById('modalBackdrop').classList.remove('open');
-}
-
-// ===== Stage Management =====
-function getStageDescription(stageId) {
-    const descs = {
-        lead: 'Initial contact logged in the system',
-        initial_call: 'Schedule and complete discovery call',
-        application: 'Review submitted application materials',
-        interview: 'Conduct interview with the participant',
-        approved: 'Participant approved for the retreat',
-        paid: 'Send payment link and process payment',
-        confirmed: 'Send course materials and finalize enrollment',
-    };
-    return descs[stageId] || '';
-}
-
-async function handleStageAction(email, actionId) {
-    const p = mergedParticipants.find(x => x.email === email);
-    if (!p) return;
-
-    switch (actionId) {
-        case 'send_stripe_link':
-            // Open Protonmail compose with payment link
-            const paySubject = encodeURIComponent('StepWise Training — Payment Link');
-            const payBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nThank you for your application to StepWise Training! You have been approved.\n\nPlease use the following link to complete your payment:\n[Payment Link will be inserted here]\n\nIf you have any questions, please don't hesitate to reach out.\n\nWarm regards,\nStepWise Training Team`);
-            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${paySubject}&body=${payBody}`, '_blank');
-            showToast('Opening Protonmail to send payment link...', 'info');
-            break;
-
-        case 'send_course_link':
-            const courseSubject = encodeURIComponent('StepWise Training — Course Access');
-            const courseBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nCongratulations! You are confirmed for your StepWise Training retreat.\n\nHere is your link to access the pre-training course materials:\nhttps://stepwise.education/portal/course\n\nPlease complete the online modules before your retreat start date.\n\nWarm regards,\nStepWise Training Team`);
-            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${courseSubject}&body=${courseBody}`, '_blank');
-            showToast('Opening Protonmail to send course link...', 'info');
-            break;
-
-        case 'mark_contacted':
-        case 'complete_call':
-        case 'complete_review':
-        case 'complete_interview':
-        case 'approve':
-        case 'mark_paid':
-            await advanceStage(email);
-            break;
-
-        case 'schedule_call':
-        case 'schedule_interview':
-            const schedSubject = encodeURIComponent(`StepWise Training — ${actionId === 'schedule_call' ? 'Discovery Call' : 'Interview'} Scheduling`);
-            const schedBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nThank you for your interest in StepWise Training.\n\nI'd like to schedule a ${actionId === 'schedule_call' ? 'discovery call' : 'interview'} with you. Would any of the following times work?\n\n- \n- \n- \n\nPlease let me know what works best for you.\n\nWarm regards,\nStepWise Training Team`);
-            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${schedSubject}&body=${schedBody}`, '_blank');
-            showToast('Opening Protonmail for scheduling...', 'info');
-            break;
-
-        case 'view_application':
-            // Already in the modal, just scroll to application details
-            const appSection = document.querySelector('.modal-section:nth-child(4)');
-            if (appSection) appSection.scrollIntoView({ behavior: 'smooth' });
-            break;
-    }
-}
-
-async function advanceStage(email) {
-    const p = mergedParticipants.find(x => x.email === email);
-    if (!p) return;
-
-    const currentIdx = STAGE_ORDER.indexOf(p.pipeline_stage);
-    if (currentIdx >= STAGE_ORDER.length - 1) {
-        showToast('Already at final stage', 'info');
-        return;
-    }
-
-    const nextStage = STAGE_ORDER[currentIdx + 1];
-    const nextStageName = PIPELINE_STAGES[currentIdx + 1]?.name;
-
-    // Map pipeline stages back to applicants table status values
-    const statusMap = {
-        initial_call: { app_status: 'Under Review' },
-        application: { app_status: 'Received' },
-        interview: { app_status: 'Interview Scheduled' },
-        approved: { app_status: 'Accepted', acceptance: 'Accepted' },
-        paid: { payment_status: 'Paid in Full' },
-        confirmed: { registration_status: 'Complete' },
-    };
-
-    const updates = statusMap[nextStage] || {};
-
-    // Try to update the applicants table
-    if (p.training_id || p._source === 'applicants' || p._source === 'merged') {
-        const { error } = await sb
-            .from('applicants')
-            .update(updates)
-            .eq('email', email);
-
-        if (error) {
-            console.warn('Could not update applicants table:', error.message);
+        // Render Functions
+        function renderDashboard() {
+            renderKPIs();
+            renderDashboardTrainings();
+            renderActivityFeed();
         }
-    }
 
-    // Update local state
-    p.pipeline_stage = nextStage;
-    Object.assign(p, updates);
+        function renderKPIs() {
+            const totalParticipants = state.applicants.length;
+            const activePipeline = state.applicants.filter(a => a.pipeline_stage && a.pipeline_stage !== 'complete').length;
+            const paidApplicants = state.applicants.filter(a => a.payment_status === 'Paid in Full');
+            const totalRevenue = paidApplicants.reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
+            const revenueDisplay = (totalRevenue / 100).toFixed(2);
+            const upcomingTrainings = state.trainings.filter(t => new Date(t.start_date) > new Date()).length;
+            const thisWeekSignups = state.applicants.filter(a => {
+                const date = new Date(a.created_at);
+                const now = new Date();
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                return date > weekAgo;
+            }).length;
 
-    showToast(`${p.full_name} advanced to ${nextStageName}`, 'success');
-    applyFilters();
-    openModal(email); // Refresh modal
-}
-
-// ===== Email Functions =====
-function getEmailTemplate(participant) {
-    return `Hi ${participant.first_name || participant.full_name},\n\nThank you for your interest in StepWise Training.\n\n\n\nWarm regards,\nStepWise Training Team`;
-}
-
-function emailParticipant(email, name) {
-    const subject = encodeURIComponent('StepWise Training — Follow Up');
-    const body = encodeURIComponent(`Hi ${name ? name.split(' ')[0] : ''},\n\nThank you for your interest in StepWise Training.\n\n\n\nWarm regards,\nStepWise Training Team`);
-    window.open(`https://mail.proton.me/u/0/compose?to=${email}&subject=${subject}&body=${body}`, '_blank');
-}
-
-function sendEmail(email) {
-    const subject = encodeURIComponent(document.getElementById('emailSubject')?.value || 'StepWise Training');
-    const body = encodeURIComponent(document.getElementById('emailBody')?.value || '');
-    window.open(`https://mail.proton.me/u/0/compose?to=${email}&subject=${subject}&body=${body}`, '_blank');
-}
-
-function copyEmail(email) {
-    navigator.clipboard.writeText(email).then(() => {
-        showToast('Email copied to clipboard', 'success');
-    });
-}
-
-// ===== Notes =====
-async function saveNotes(email) {
-    const notes = document.getElementById('modalNotes')?.value || '';
-
-    // Try updating applicants table
-    const { error } = await sb
-        .from('applicants')
-        .update({ notes: notes })
-        .eq('email', email);
-
-    if (error) {
-        // Try applications table
-        const { error: err2 } = await sb
-            .from('applications')
-            .update({ admin_notes: notes })
-            .eq('email', email);
-
-        if (err2) {
-            showToast('Could not save notes (check RLS policies)', 'error');
-            return;
+            const kpiContainer = document.getElementById('kpi-container');
+            kpiContainer.innerHTML = `
+                <div class="kpi-card">
+                    <div class="kpi-label">Total Participants</div>
+                    <div class="kpi-value">${totalParticipants}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Active Pipeline</div>
+                    <div class="kpi-value">${activePipeline}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Revenue (Paid)</div>
+                    <div class="kpi-value">$${revenueDisplay}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Upcoming Trainings</div>
+                    <div class="kpi-value">${upcomingTrainings}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">This Week's Signups</div>
+                    <div class="kpi-value">${thisWeekSignups}</div>
+                </div>
+            `;
         }
-    }
 
-    // Update local state
-    const p = mergedParticipants.find(x => x.email === email);
-    if (p) {
-        p.admin_notes = notes;
-        p.notes = notes;
-    }
+        function renderDashboardTrainings() {
+            const container = document.getElementById('dashboard-trainings');
+            const upcomingTrainings = state.trainings
+                .filter(t => new Date(t.start_date) > new Date())
+                .slice(0, 6);
 
-    showToast('Notes saved', 'success');
-}
+            container.innerHTML = upcomingTrainings.map(training => {
+                const participants = state.applicants.filter(a => a.training_id === training.id).length;
+                const enrolled = participants;
+                const capacity = training.max_capacity || 10;
+                const percentage = (enrolled / capacity) * 100;
 
-// ===== Tab Navigation =====
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
-    document.getElementById(`tab-${tabId}`)?.classList.add('active');
-}
+                return `
+                    <div class="training-card" onclick="openTrainingDetail('${training.id}')">
+                        <div class="training-card-header">
+                            <div class="training-card-title">${training.name}</div>
+                            <span class="badge badge-${training.training_level}">${training.training_level}</span>
+                        </div>
+                        <div class="training-card-meta">
+                            <span class="training-card-date">📅 ${formatDate(training.start_date)}</span>
+                            <span class="training-card-location">📍 ${training.location}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div class="progress-text">${enrolled}/${capacity} participants</div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-// ===== Toast Notifications =====
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3500);
-}
+        function renderActivityFeed() {
+            const container = document.getElementById('activity-feed');
+            const recentChanges = state.applicants
+                .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+                .slice(0, 10);
 
-// ===== Utilities =====
-function escapeHtml(str) {
-    if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-}
+            if (recentChanges.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--color-text-secondary);">No recent activity</div>';
+                return;
+            }
 
-// ===== Event Listeners =====
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    searchQuery = e.target.value;
-    applyFilters();
-});
+            container.innerHTML = recentChanges.map(applicant => {
+                const training = state.trainings.find(t => t.id === applicant.training_id);
+                const trainingName = training ? training.name : 'Unknown Training';
+                const stage = applicant.pipeline_stage || 'unknown';
+                const updateTime = formatRelativeTime(applicant.updated_at);
 
-document.getElementById('trainingFilter').addEventListener('change', (e) => {
-    currentFilter = e.target.value;
-    applyFilters();
-});
+                return `
+                    <div class="activity-item">
+                        <div class="activity-timestamp">${updateTime}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${applicant.name}</div>
+                            <div class="activity-description">
+                                ${trainingName} · Stage: ${formatStageLabel(stage)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-// Keyboard shortcut: Escape to close modal
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-});
+        function renderTrainingsTab() {
+            const container = document.getElementById('trainings-grid');
+            container.innerHTML = state.trainings.map(training => {
+                const participants = state.applicants.filter(a => a.training_id === training.id).length;
+                const enrolled = participants;
+                const capacity = training.max_capacity || 10;
+                const percentage = (enrolled / capacity) * 100;
+                const revenue = state.applicants
+                    .filter(a => a.training_id === training.id && a.payment_status === 'Paid in Full')
+                    .reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
+                const revenueDisplay = (revenue / 100).toFixed(0);
 
-// ===== Real-time Subscription =====
-function setupRealtime() {
-    sb
-        .channel('applications-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, (payload) => {
-            console.log('Applications change:', payload);
-            showToast('New application data received!', 'info');
-            refreshData();
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' }, (payload) => {
-            console.log('Applicants change:', payload);
-            showToast('Applicant data updated!', 'info');
-            refreshData();
-        })
-        .subscribe();
-}
+                return `
+                    <div class="training-card">
+                        <div class="training-card-header">
+                            <div>
+                                <div class="training-card-title" style="cursor: pointer; margin-bottom: 0.5rem;" onclick="openTrainingDetail('${training.id}')">${training.name}</div>
+                                <div class="training-card-meta">
+                                    <span class="training-card-date">📅 ${formatDate(training.start_date)} - ${formatDate(training.end_date)}</span>
+                                </div>
+                                <div class="training-card-meta">
+                                    <span class="badge badge-${training.training_level}">${training.training_level}</span>
+                                    <span class="badge badge-${training.status.toLowerCase()}">${training.status}</span>
+                                </div>
+                            </div>
+                            <div class="training-card-toggle">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" ${training.show_on_apply ? 'checked' : ''} onchange="toggleShowOnApply('${training.id}', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="margin: 1rem 0;">
+                            <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">Enrollment</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div class="progress-text">${enrolled}/${capacity} • Revenue: $${revenueDisplay}</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn btn-small btn-secondary" onclick="openTrainingModal(${JSON.stringify(training).replace(/'/g, '&quot;')})">Edit</button>
+                            <button class="btn btn-small btn-secondary" onclick="openTrainingDetail('${training.id}')">View</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-// ===== Initialize =====
-async function init() {
-    await refreshData();
-    setupRealtime();
-}
+        function openTrainingDetail(trainingId) {
+            // For simplicity, we'll show participants in a modal-like view
+            const training = state.trainings.find(t => t.id === trainingId);
+            const participants = state.applicants.filter(a => a.training_id === trainingId);
 
-init();
+            // Switch to trainings tab and filter to show detail
+            const modal = document.getElementById('training-modal');
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">${training.name} - Participants</h2>
+                        <button class="modal-close" onclick="document.getElementById('training-modal').classList.remove('active')">✕</button>
+                    </div>
+                    <div style="max-height: 60vh; overflow-y: auto;">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Stage</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${participants.map(p => `
+                                        <tr>
+                                            <td>${p.name}</td>
+                                            <td>${p.email}</td>
+                                            <td>${formatStageLabel(p.pipeline_stage || 'lead')}</td>
+                                            <td>${p.app_status || 'N/A'}</td>
+                                            <td><button class="btn btn-small btn-secondary" onclick="openApplicantPanel('${p.id}')">View</button></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="document.getElementById('training-modal').classList.remove('active')">Close</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function renderPipelineTab() {
+            const container = document.getElementById('pipeline-container');
+            const filterValue = document.getElementById('pipeline-filter').value;
+
+            const applicantsToShow = filterValue
+                ? state.applicants.filter(a => a.training_id === filterValue)
+                : state.applicants;
+
+            const columns = stageNames.map(stageName => {
+                const stageApplicants = applicantsToShow.filter(a => (a.pipeline_stage || 'lead') === stageName);
+
+                return `
+                    <div class="pipeline-column" data-stage="${stageName}">
+                        <div class="pipeline-column-header">
+                            <div>${formatStageLabel(stageName)}</div>
+                            <div class="pipeline-column-count">${stageApplicants.length}</div>
+                        </div>
+                        <div>
+                            ${stageApplicants.map(applicant => {
+                                const training = state.trainings.find(t => t.id === applicant.training_id);
+                                const daysInStage = calculateDaysInStage(applicant, stageName);
+                                return `
+                                    <div class="pipeline-card" onclick="openApplicantPanel('${applicant.id}')">
+                                        <div class="pipeline-card-name">${applicant.name}</div>
+                                        <div class="pipeline-card-training">${training?.name || 'Unknown'}</div>
+                                        <div class="pipeline-card-days">${daysInStage} days in stage</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = columns;
+
+            // Setup training filter
+            const filterSelect = document.getElementById('pipeline-filter');
+            filterSelect.innerHTML = '<option value="">All Trainings</option>' +
+                state.trainings.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            filterSelect.addEventListener('change', renderPipelineTab);
+        }
+
+        function renderShippingTab() {
+            const shippingApplicants = state.applicants.filter(a => a.pipeline_stage === 'onboarding' || a.pipeline_stage === 'complete');
+
+            const notShipped = shippingApplicants.filter(a => !a.shipping_status || a.shipping_status === 'not_shipped').length;
+            const inTransit = shippingApplicants.filter(a => a.shipping_status === 'in_transit').length;
+            const delivered = shippingApplicants.filter(a => a.shipping_status === 'delivered').length;
+
+            document.getElementById('shipping-not-shipped').textContent = notShipped;
+            document.getElementById('shipping-in-transit').textContent = inTransit;
+            document.getElementById('shipping-delivered').textContent = delivered;
+
+            const tableBody = document.getElementById('shipping-table-body');
+            tableBody.innerHTML = shippingApplicants.map(applicant => {
+                const training = state.trainings.find(t => t.id === applicant.training_id);
+                return `
+                    <tr>
+                        <td><input type="checkbox" class="shipping-checkbox" value="${applicant.id}"></td>
+                        <td>${applicant.name}</td>
+                        <td>${training?.name || 'Unknown'}</td>
+                        <td>${applicant.shipping_tracking_number || '-'}</td>
+                        <td>${applicant.shipping_carrier || '-'}</td>
+                        <td>
+                            <span class="shipping-status ${applicant.shipping_status || 'not-shipped'}">
+                                ${applicant.shipping_status || 'Not Shipped'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button class="btn btn-small btn-secondary" onclick="openShippingForm('${applicant.id}')">Add Tracking</button>
+                                ${applicant.shipping_tracking_number ? `
+                                    <button class="btn btn-small btn-secondary" onclick="trackPackage('${applicant.shipping_carrier}', '${applicant.shipping_tracking_number}')">Track</button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openShippingForm(applicantId) {
+            const applicant = state.applicants.find(a => a.id === applicantId);
+            const modal = document.getElementById('training-modal');
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Add Tracking Information</h2>
+                        <button class="modal-close" onclick="document.getElementById('training-modal').classList.remove('active')">✕</button>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Carrier</label>
+                            <select id="shipping-carrier" class="form-select">
+                                <option value="">Select Carrier</option>
+                                <option value="usps">USPS</option>
+                                <option value="ups">UPS</option>
+                                <option value="fedex">FedEx</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tracking Number</label>
+                            <input type="text" id="shipping-tracking" class="form-input" placeholder="Enter tracking number">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="document.getElementById('training-modal').classList.remove('active')">Cancel</button>
+                        <button class="btn btn-primary" onclick="saveShippingInfo('${applicantId}')">Save</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        async function saveShippingInfo(applicantId) {
+            const carrier = document.getElementById('shipping-carrier').value;
+            const tracking = document.getElementById('shipping-tracking').value;
+
+            if (!carrier || !tracking) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('applicants')
+                    .update({
+                        shipping_carrier: carrier,
+                        shipping_tracking_number: tracking,
+                        shipping_status: 'label_created',
+                        shipping_date: new Date().toISOString()
+                    })
+                    .eq('id', applicantId);
+
+                if (error) throw error;
+                showToast('Shipping info saved', 'success');
+                document.getElementById('training-modal').classList.remove('active');
+                await fetchApplicants();
+                renderShippingTab();
+            } catch (error) {
+                showToast('Error saving shipping info: ' + error.message, 'error');
+            }
+        }
+
+        function trackPackage(carrier, tracking) {
+            let url;
+            switch (carrier.toLowerCase()) {
+                case 'usps':
+                    url = `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tracking}`;
+                    break;
+                case 'ups':
+                    url = `https://www.ups.com/track?tracknum=${tracking}`;
+                    break;
+                case 'fedex':
+                    url = `https://www.fedex.com/fedextrack/?trknbr=${tracking}`;
+                    break;
+                default:
+                    return;
+            }
+            window.open(url, '_blank');
+        }
+
+        async function markSelectedAsShipped() {
+            const selected = Array.from(document.querySelectorAll('.shipping-checkbox:checked')).map(cb => cb.value);
+            if (selected.length === 0) {
+                showToast('Please select items to mark as shipped', 'error');
+                return;
+            }
+
+            try {
+                for (const id of selected) {
+                    await supabase
+                        .from('applicants')
+                        .update({ shipping_status: 'delivered', manual_shipped: true })
+                        .eq('id', id);
+                }
+                showToast(`Marked ${selected.length} items as shipped`, 'success');
+                await fetchApplicants();
+                renderShippingTab();
+            } catch (error) {
+                showToast('Error marking as shipped: ' + error.message, 'error');
+            }
+        }
+
+        function openApplicantPanel(applicantId) {
+            state.currentApplicant = state.applicants.find(a => a.id === applicantId);
+            if (!state.currentApplicant) return;
+
+            const panel = document.getElementById('side-panel');
+            const training = state.trainings.find(t => t.id === state.currentApplicant.training_id);
+
+            document.getElementById('side-panel-title').textContent = state.currentApplicant.name;
+            document.getElementById('panel-name').textContent = state.currentApplicant.name;
+            document.getElementById('panel-email').textContent = state.currentApplicant.email;
+            document.getElementById('panel-phone').textContent = state.currentApplicant.phone || 'N/A';
+
+            document.getElementById('panel-email-btn').onclick = () => {
+                window.location.href = `mailto:${state.currentApplicant.email}`;
+            };
+
+            document.getElementById('panel-call-btn').onclick = () => {
+                window.location.href = `tel:${state.currentApplicant.phone}`;
+            };
+
+            renderPipelineProgress();
+            renderStages();
+            renderPanelActivity();
+
+            document.getElementById('panel-admin-notes').value = state.currentApplicant.notes || '';
+            document.getElementById('save-admin-notes').onclick = async () => {
+                try {
+                    const { error } = await supabase
+                        .from('applicants')
+                        .update({ notes: document.getElementById('panel-admin-notes').value })
+                        .eq('id', state.currentApplicant.id);
+                    if (error) throw error;
+                    showToast('Notes saved', 'success');
+                } catch (error) {
+                    showToast('Error saving notes: ' + error.message, 'error');
+                }
+            };
+
+            document.getElementById('side-panel-overlay').classList.add('active');
+            panel.classList.add('active');
+        }
+
+        function closeSidePanel() {
+            document.getElementById('side-panel').classList.remove('active');
+            document.getElementById('side-panel-overlay').classList.remove('active');
+            state.currentApplicant = null;
+        }
+
+        function renderPipelineProgress() {
+            const container = document.getElementById('panel-progress');
+            const currentStageIndex = stageNames.indexOf(state.currentApplicant.pipeline_stage || 'lead');
+
+            container.innerHTML = stageNames.map((stage, index) => {
+                let classes = 'stage-dot';
+                if (index === currentStageIndex) classes += ' current';
+                else if (index < currentStageIndex) classes += ' completed';
+
+                return `
+                    <div style="text-align: center;">
+                        <div class="${classes}" onclick="advanceToStage(${index})" title="${formatStageLabel(stage)}">
+                            ${index + 1}
+                        </div>
+                        <div class="stage-label">${stageLabels[index].substring(0, 3)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function advanceToStage(stageIndex) {
+            const stageName = stageNames[stageIndex];
+            await updateApplicantStage(stageName);
+        }
+
+        async function updateApplicantStage(newStage) {
+            try {
+                const updateData = { pipeline_stage: newStage };
+
+                // Auto-set fields based on stage
+                if (newStage === 'application') {
+                    updateData.app_status = 'Received';
+                } else if (newStage === 'approval') {
+                    updateData.app_status = 'Accepted';
+                    updateData.approval_status = 'approved';
+                    updateData.approval_date = new Date().toISOString();
+                } else if (newStage === 'payment') {
+                    updateData.registration_status = 'Payment Pending';
+                } else if (newStage === 'onboarding') {
+                    updateData.online_course_access = true;
+                    updateData.registration_status = 'In Progress';
+                } else if (newStage === 'complete') {
+                    updateData.registration_status = 'Complete';
+                }
+
+                const { error } = await supabase
+                    .from('applicants')
+                    .update(updateData)
+                    .eq('id', state.currentApplicant.id);
+
+                if (error) throw error;
+                showToast(`Moved to ${formatStageLabel(newStage)}`, 'success');
+                await fetchApplicants();
+                state.currentApplicant = state.applicants.find(a => a.id === state.currentApplicant.id);
+                renderPipelineProgress();
+                renderStages();
+            } catch (error) {
+                showToast('Error updating stage: ' + error.message, 'error');
+            }
+        }
+
+        function renderStages() {
+            const container = document.getElementById('stage-sections-container');
+            const currentStageIndex = stageNames.indexOf(state.currentApplicant.pipeline_stage || 'lead');
+
+            const sections = stageNames.map((stage, index) => {
+                const isCompleted = index < currentStageIndex;
+                const isCurrent = index === currentStageIndex;
+                let content = '';
+
+                switch (stage) {
+                    case 'chemistry_call':
+                        content = `
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="datetime-local" class="form-input" value="${state.currentApplicant.chemistry_call_date || ''}" onchange="updateApplicantField('chemistry_call_date', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" onchange="updateApplicantField('chemistry_call_status', this.value)">
+                                    <option value="">Select Status</option>
+                                    <option ${state.currentApplicant.chemistry_call_status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+                                    <option ${state.currentApplicant.chemistry_call_status === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option ${state.currentApplicant.chemistry_call_status === 'no_show' ? 'selected' : ''}>No Show</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-textarea" onchange="updateApplicantField('chemistry_call_notes', this.value)">${state.currentApplicant.chemistry_call_notes || ''}</textarea>
+                            </div>
+                        `;
+                        break;
+
+                    case 'application':
+                        content = `
+                            <div class="expandable">
+                                <div class="expandable-header">Personal Info ▸</div>
+                                <div class="expandable-content">
+                                    <div style="font-size: 0.9rem;"><strong>Address:</strong> ${state.currentApplicant.address || 'N/A'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>Birth Date:</strong> ${state.currentApplicant.birth_date || 'N/A'}</div>
+                                </div>
+                            </div>
+                            <div class="expandable">
+                                <div class="expandable-header">Health Info ▸</div>
+                                <div class="expandable-content">
+                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Physical Health:</strong> ${state.currentApplicant.physical_health || 'N/A'}</div>
+                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Medications:</strong> ${state.currentApplicant.physical_medications || 'N/A'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>Allergies:</strong> ${state.currentApplicant.allergies || 'N/A'}</div>
+                                </div>
+                            </div>
+                            <div class="expandable">
+                                <div class="expandable-header">Mental Health Info ▸</div>
+                                <div class="expandable-content">
+                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Diagnoses:</strong> ${state.currentApplicant.mental_health_dx || 'N/A'}</div>
+                                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Current Status:</strong> ${state.currentApplicant.current_mental_health || 'N/A'}</div>
+                                    <div style="font-size: 0.9rem;"><strong>Medications:</strong> ${state.currentApplicant.psych_medications || 'N/A'}</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+                    case 'interview':
+                        content = `
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="datetime-local" class="form-input" value="${state.currentApplicant.interview_date || ''}" onchange="updateApplicantField('interview_date', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" onchange="updateApplicantField('interview_status', this.value)">
+                                    <option value="">Select Status</option>
+                                    <option ${state.currentApplicant.interview_status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
+                                    <option ${state.currentApplicant.interview_status === 'completed' ? 'selected' : ''}>Completed</option>
+                                    <option ${state.currentApplicant.interview_status === 'no_show' ? 'selected' : ''}>No Show</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-textarea" onchange="updateApplicantField('interview_notes_detail', this.value)">${state.currentApplicant.interview_notes_detail || ''}</textarea>
+                            </div>
+                        `;
+                        break;
+
+                    case 'approval':
+                        content = `
+                            <div class="form-group">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" onchange="updateApplicantField('approval_status', this.value)">
+                                    <option ${state.currentApplicant.approval_status === 'approved' ? 'selected' : ''}>Approved</option>
+                                    <option ${state.currentApplicant.approval_status === 'denied' ? 'selected' : ''}>Denied</option>
+                                    <option ${state.currentApplicant.approval_status === 'waitlist' ? 'selected' : ''}>Waitlist</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Approval Date</label>
+                                <input type="date" class="form-input" value="${state.currentApplicant.approval_date ? state.currentApplicant.approval_date.split('T')[0] : ''}" readonly>
+                            </div>
+                        `;
+                        break;
+
+                    case 'payment':
+                        content = `
+                            <div class="form-group">
+                                <label class="form-label">Amount (cents)</label>
+                                <input type="number" class="form-input" value="${state.currentApplicant.payment_amount_cents || ''}" onchange="updateApplicantField('payment_amount_cents', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Stripe Payment ID</label>
+                                <input type="text" class="form-input" value="${state.currentApplicant.stripe_payment_id || ''}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Payment Status</label>
+                                <select class="form-select" onchange="updateApplicantField('payment_status', this.value)">
+                                    <option ${state.currentApplicant.payment_status === 'Unpaid' ? 'selected' : ''}>Unpaid</option>
+                                    <option ${state.currentApplicant.payment_status === 'Paid in Full' ? 'selected' : ''}>Paid in Full</option>
+                                    <option ${state.currentApplicant.payment_status === 'Partial' ? 'selected' : ''}>Partial</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="flex align-center gap-1">
+                                    <input type="checkbox" ${state.currentApplicant.deposit_received ? 'checked' : ''} onchange="updateApplicantField('deposit_received', this.checked)">
+                                    <span class="form-label" style="margin: 0;">Deposit Received</span>
+                                </label>
+                            </div>
+                        `;
+                        break;
+
+                    case 'onboarding':
+                        content = `
+                            <div class="form-group">
+                                <label class="form-label">Accommodation</label>
+                                <input type="text" class="form-input" value="${state.currentApplicant.accommodation_choice || ''}" onchange="updateApplicantField('accommodation_choice', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="flex align-center gap-1">
+                                    <input type="checkbox" ${state.currentApplicant.accommodation_confirmed ? 'checked' : ''} onchange="updateApplicantField('accommodation_confirmed', this.checked)">
+                                    <span class="form-label" style="margin: 0;">Accommodation Confirmed</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="flex align-center gap-1">
+                                    <input type="checkbox" ${state.currentApplicant.online_course_access ? 'checked' : ''} onchange="updateApplicantField('online_course_access', this.checked)">
+                                    <span class="form-label" style="margin: 0;">Online Course Access</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Course Progress (0-29)</label>
+                                <input type="number" class="form-input" min="0" max="29" value="${state.currentApplicant.online_course_progress || 0}" onchange="updateApplicantField('online_course_progress', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tracking Number</label>
+                                <input type="text" class="form-input" value="${state.currentApplicant.shipping_tracking_number || ''}" onchange="updateApplicantField('shipping_tracking_number', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Carrier</label>
+                                <select class="form-select" onchange="updateApplicantField('shipping_carrier', this.value)">
+                                    <option value="">Select Carrier</option>
+                                    <option ${state.currentApplicant.shipping_carrier === 'usps' ? 'selected' : ''}>USPS</option>
+                                    <option ${state.currentApplicant.shipping_carrier === 'ups' ? 'selected' : ''}>UPS</option>
+                                    <option ${state.currentApplicant.shipping_carrier === 'fedex' ? 'selected' : ''}>FedEx</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Shipping Status</label>
+                                <select class="form-select" onchange="updateApplicantField('shipping_status', this.value)">
+                                    <option ${state.currentApplicant.shipping_status === 'not_shipped' ? 'selected' : ''}>Not Shipped</option>
+                                    <option ${state.currentApplicant.shipping_status === 'label_created' ? 'selected' : ''}>Label Created</option>
+                                    <option ${state.currentApplicant.shipping_status === 'in_transit' ? 'selected' : ''}>In Transit</option>
+                                    <option ${state.currentApplicant.shipping_status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                </select>
+                            </div>
+                        `;
+                        break;
+
+                    case 'complete':
+                        content = `
+                            <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                                <div style="color: #10B981; font-weight: 600;">Participant has completed the program</div>
+                                <div style="font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 0.5rem;">Registration Status: ${state.currentApplicant.registration_status || 'Complete'}</div>
+                            </div>
+                        `;
+                        break;
+                }
+
+                return `
+                    <div class="stage-section ${isCurrent ? 'open' : ''}">
+                        <div class="stage-section-header">
+                            <span>${formatStageLabel(stage)}</span>
+                            <span class="stage-section-toggle ${isCurrent ? 'open' : ''}">▸</span>
+                        </div>
+                        <div class="stage-section-content">
+                            ${content || '<div style="color: var(--color-text-tertiary);">No details for this stage</div>'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = sections;
+        }
+
+        function renderPanelActivity() {
+            const container = document.getElementById('panel-activity');
+            container.innerHTML = `<div style="color: var(--color-text-tertiary); font-size: 0.85rem;">Created: ${formatDate(state.currentApplicant.created_at)}<br>Updated: ${formatDate(state.currentApplicant.updated_at)}</div>`;
+        }
+
+        async function updateApplicantField(field, value) {
+            try {
+                const updateData = { [field]: value };
+                const { error } = await supabase
+                    .from('applicants')
+                    .update(updateData)
+                    .eq('id', state.currentApplicant.id);
+
+                if (error) throw error;
+                state.currentApplicant[field] = value;
+                showToast('Updated successfully', 'success');
+            } catch (error) {
+                showToast('Error updating: ' + error.message, 'error');
+            }
+        }
+
+        // Settings
+        async function saveSettings() {
+            const defaultPrice = parseInt(document.getElementById('default-price').value);
+            const defaultLocation = document.getElementById('default-location').value;
+
+            state.settings = { defaultPrice, defaultLocation };
+            state.defaultPrice = defaultPrice;
+            state.defaultLocation = defaultLocation;
+
+            localStorage.setItem('stepwise-settings', JSON.stringify(state.settings));
+            showToast('Settings saved', 'success');
+        }
+
+        function exportCSV() {
+            const headers = ['Name', 'Email', 'Phone', 'Training', 'Status', 'Pipeline Stage', 'Payment Status', 'Created'];
+            const rows = state.applicants.map(a => {
+                const training = state.trainings.find(t => t.id === a.training_id);
+                return [
+                    a.name,
+                    a.email,
+                    a.phone || '',
+                    training?.name || '',
+                    a.app_status || '',
+                    a.pipeline_stage || '',
+                    a.payment_status || '',
+                    formatDate(a.created_at)
+                ];
+            });
+
+            const csv = [
+                headers.map(h => `"${h}"`).join(','),
+                ...rows.map(r => r.map(v => `"${v}"`).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `stepwise-applicants-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+
+            showToast('CSV exported', 'success');
+        }
+
+        async function toggleShowOnApply(trainingId, value) {
+            try {
+                const { error } = await supabase
+                    .from('trainings')
+                    .update({ show_on_apply: value })
+                    .eq('id', trainingId);
+
+                if (error) throw error;
+                const training = state.trainings.find(t => t.id === trainingId);
+                if (training) training.show_on_apply = value;
+                showToast(value ? 'Added to apply page' : 'Removed from apply page', 'success');
+            } catch (error) {
+                showToast('Error updating: ' + error.message, 'error');
+            }
+        }
+
+        // Utility Functions
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function formatRelativeTime(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return formatDate(dateStr);
+        }
+
+        function formatStageLabel(stage) {
+            const labels = {
+                'lead': 'Lead',
+                'chemistry_call': 'Chemistry Call',
+                'application': 'Application',
+                'interview': 'Interview',
+                'approval': 'Approval',
+                'payment': 'Payment',
+                'onboarding': 'Onboarding',
+                'complete': 'Complete'
+            };
+            return labels[stage] || stage;
+        }
+
+        function calculateDaysInStage(applicant, stage) {
+            let dateField;
+            switch (stage) {
+                case 'chemistry_call': dateField = 'chemistry_call_date'; break;
+                case 'interview': dateField = 'interview_date'; break;
+                case 'approval': dateField = 'approval_date'; break;
+                case 'payment': dateField = 'payment_date'; break;
+                default: dateField = 'created_at';
+            }
+
+            const date = applicant[dateField] ? new Date(applicant[dateField]) : new Date(applicant.created_at);
+            const now = new Date();
+            const diff = now - date;
+            return Math.floor(diff / 86400000);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div>${message}</div>
+            `;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-in forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function refreshCurrentTab() {
+            if (state.currentTab === 'dashboard') {
+                renderDashboard();
+            } else if (state.currentTab === 'trainings') {
+                renderTrainingsTab();
+            } else if (state.currentTab === 'pipeline') {
+                renderPipelineTab();
+            } else if (state.currentTab === 'shipping') {
+                renderShippingTab();
+            }
+        }
+
+        // Initialize
+        initApp();
     </script>
+
+    <style>
+        @keyframes slideOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>
