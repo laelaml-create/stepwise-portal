@@ -727,8 +727,7 @@
         }
 
         .stage-label {
-            font-size: 0.7rem;
-            text-align: center;
+            font-size: 0.7rem;text-align: center;
             color: var(--color-text-tertiary);
             margin-top: 0.25rem;
         }
@@ -1110,10 +1109,7 @@
 
                 <div class="pipeline-grid" id="pipeline-container">
                     <!-- Pipeline columns populated by JS -->
-                </div>
-            </div>
-
-            <!-- Shipping Tab -->
+                </div>            <!-- Shipping Tab -->
             <div class="tab-content" id="shipping-tab">
                 <div class="flex justify-between align-center mb-2">
                     <h2>Shipping Dashboard</h2>
@@ -1352,7 +1348,7 @@
         const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
         const { createClient } = window.supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Global State
         const state = {
@@ -1394,7 +1390,7 @@
         // Fetch Trainings
         async function fetchTrainings() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('trainings')
                     .select('*')
                     .order('start_date', { ascending: false });
@@ -1410,7 +1406,7 @@
         // Fetch Applicants
         async function fetchApplicants() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await db
                     .from('applicants')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -1425,7 +1421,7 @@
 
         // Real-time Subscriptions
         function setupRealTimeSubscriptions() {
-            supabase
+            db
                 .channel('trainings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'trainings' }, (payload) => {
                     if (payload.eventType === 'INSERT') {
@@ -1440,7 +1436,7 @@
                 })
                 .subscribe();
 
-            supabase
+            db
                 .channel('applicants')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' }, (payload) => {
                     if (payload.eventType === 'INSERT') {
@@ -1579,14 +1575,14 @@
 
             try {
                 if (trainingId) {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('trainings')
                         .update(trainingData)
                         .eq('id', trainingId);
                     if (error) throw error;
                     showToast('Training updated successfully', 'success');
                 } else {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('trainings')
                         .insert([trainingData]);
                     if (error) throw error;
@@ -1666,7 +1662,7 @@
                             <span class="badge badge-${training.training_level}">${training.training_level}</span>
                         </div>
                         <div class="training-card-meta">
-                            <span class="training-card-date">📅 ${formatDate(training.start_date)}</span>
+                            <span class="training-card-date">📋 ${formatDate(training.start_date)}</span>
                             <span class="training-card-location">📍 ${training.location}</span>
                         </div>
                         <div class="progress-bar">
@@ -1727,7 +1723,7 @@
                             <div>
                                 <div class="training-card-title" style="cursor: pointer; margin-bottom: 0.5rem;" onclick="openTrainingDetail('${training.id}')">${training.name}</div>
                                 <div class="training-card-meta">
-                                    <span class="training-card-date">📅 ${formatDate(training.start_date)} - ${formatDate(training.end_date)}</span>
+                                    <span class="training-card-date">📋 ${formatDate(training.start_date)} - ${formatDate(training.end_date)}</span>
                                 </div>
                                 <div class="training-card-meta">
                                     <span class="badge badge-${training.training_level}">${training.training_level}</span>
@@ -1929,7 +1925,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await db
                     .from('applicants')
                     .update({
                         shipping_carrier: carrier,
@@ -1976,7 +1972,7 @@
 
             try {
                 for (const id of selected) {
-                    await supabase
+                    await db
                         .from('applicants')
                         .update({ shipping_status: 'delivered', manual_shipped: true })
                         .eq('id', id);
@@ -2016,7 +2012,7 @@
             document.getElementById('panel-admin-notes').value = state.currentApplicant.notes || '';
             document.getElementById('save-admin-notes').onclick = async () => {
                 try {
-                    const { error } = await supabase
+                    const { error } = await db
                         .from('applicants')
                         .update({ notes: document.getElementById('panel-admin-notes').value })
                         .eq('id', state.currentApplicant.id);
@@ -2082,7 +2078,7 @@
                     updateData.registration_status = 'Complete';
                 }
 
-                const { error } = await supabase
+                const { error } = await db
                     .from('applicants')
                     .update(updateData)
                     .eq('id', state.currentApplicant.id);
@@ -2305,7 +2301,7 @@
         async function updateApplicantField(field, value) {
             try {
                 const updateData = { [field]: value };
-                const { error } = await supabase
+                const { error } = await db
                     .from('applicants')
                     .update(updateData)
                     .eq('id', state.currentApplicant.id);
@@ -2365,7 +2361,7 @@
 
         async function toggleShowOnApply(trainingId, value) {
             try {
-                const { error } = await supabase
+                const { error } = await db
                     .from('trainings')
                     .update({ show_on_apply: value })
                     .eq('id', trainingId);
