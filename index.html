@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StepWise Admin Dashboard v4</title>
+    <title>StepWise Admin Dashboard v5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -248,6 +248,48 @@
             flex: 1;
             overflow-y: auto;
             padding: 1.25rem;
+            position: relative;
+        }
+        .content::before {
+            content: \'\';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M.5 40V.5H40\' fill=\'none\' stroke=\'%23e5e1dc\' stroke-width=\'0.5\'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        .content > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .training-expanded-panel {
+            margin-top: 0.5rem;
+        }
+
+        .participant-detail-panel {
+            padding: 0;
+        }
+
+        .nav-icon-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--bg-cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active .nav-icon-circle {
+            background: rgba(231,76,60,0.15);
+            color: var(--brand-orange);
+        }
         }
 
         .content-section {
@@ -955,55 +997,34 @@
     <div class="container">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="sidebar-logo">
-                <span style="font-size: 0.95rem;">SW</span>
-                <div class="logo-dots">
-                    <span style="color: var(--brand-yellow);">â</span>
-                    <span style="color: var(--brand-orange);">â</span>
-                    <span style="color: var(--brand-purple);">â</span>
-                </div>
-            </div>
+            <div class="sidebar-logo"><svg version="1.1" viewBox="-21 -21 750 150" width="140" height="28"><path fill="#000000" d="m 10.268483,66.799548 h 13.75 a 0.88,0.88 0 0 1 0.83,0.58 q 3.8,10.38 14.81,10.88 4.66,0.21 7.93,-0.64 c 3.95,-1.03 7.67,-4.19 7.48,-8.53 -0.69,-16.1 -42.17,-5.97 -43.23,-32.83 q -0.59,-15.07 13.68,-20.82 c 14.46,-5.8399996 36.4,-2.44 41.38,15.1 q 0.62,2.18 0.46,4.25 a 0.72,0.71 2.1 0 1 -0.72,0.66 h -12.76 a 0.68,0.67 81.1 0 1 -0.64,-0.47 q -2.75,-8.65 -11.62,-10.39 c -6.37,-1.26 -15.72,1.22 -15.54,9.32 0.14,6.04 5.78,8.59 10.89,9.83 q 7.4,1.8 15.98,4.27 c 4.84,1.39 11.57,4.83 14.16,9.42 q 2.19,3.88 2.64,8.53 c 0.97,10.15 -4.82,17.91 -14.04,21.26 q -15.48,5.63 -30.87,-0.12 c -8.24,-3.08 -15.4200004,-10.55 -15.1700004,-19.72 a 0.6,0.6 0 0 1 0.6000004,-0.58 z"/><rect fill="#000000" x="323.56158" y="-0.35476288" transform="rotate(2.5)" width="16.4" height="15.26" rx="6.98"/><path fill="#000000" d="m 250.54848,68.879548 15.43,-53.26 a 0.83,0.82 7.8 0 1 0.8,-0.6 h 9.28 a 1.82,1.82 0 0 1 1.75,1.33 l 14.69,51.98 a 0.41,0.42 44.4 0 0 0.8,-0.01 l 14.21,-52.83 a 1.3,1.29 7.6 0 1 1.25,-0.95 h 10.8 a 0.82,0.82 0 0 1 0.79,1.03 l -19.16,71.23 a 1.03,1.03 0 0 1 -1,0.77 h -13.51 a 0.91,0.9 81.9 0 1 -0.87,-0.66 l -14.08,-49.79 a 0.27,0.26 45.7 0 0 -0.51,-0.01 l -14.54,50.18 a 0.73,0.72 7.9 0 1 -0.7,0.52 h -12.92 a 1.4,1.4 0 0 1 -1.35,-1.02 l -20.3,-71.81 a 0.56,0.56 0 0 1 0.54,-0.72 h 12.42 a 0.74,0.74 0 0 1 0.71,0.54 l 15.29,54.08 a 0.09,0.09 0 0 0 0.18,0 z"/><path fill="#000000" d="m 105.37848,78.719548 v 9.49 a 0.67,0.67 0 0 1 -0.62,0.67 c -10.419997,0.85 -22.519997,1.49 -24.299997,-11.82 q -0.88,-6.59 -0.91,-12.2 -0.09,-17.61 -0.02,-18.88 a 0.65,0.66 1.3 0 0 -0.65,-0.69 h -7.29 a 0.96,0.96 0 0 1 -0.96,-0.96 v -7.78 a 0.76,0.76 0 0 1 0.76,-0.76 h 8.03 a 0.5,0.5 0 0 0 0.5,-0.46 l 1.16,-13.12 a 0.82,0.83 2.7 0 1 0.82,-0.75 h 9.88 a 0.31,0.32 0 0 1 0.31,0.32 v 13.44 a 0.58,0.57 0 0 0 0.58,0.57 h 12.259997 a 0.28,0.28 0 0 1 0.28,0.28 v 9.15 a 0.26,0.26 0 0 1 -0.26,0.26 H 92.708483 a 0.58,0.58 0 0 0 -0.58,0.58 q -0.17,19.05 0.16,25.29 0.09,1.82 1.43,4.4 c 1.74,3.34 6.869997,2.33 10.999997,2.3 a 0.66,0.67 0 0 1 0.66,0.67 z"/><path fill="#000000" d="m 122.86848,65.779548 q 0.85,9.43 8.82,12.37 c 5.7,2.11 11.53,0.19 15.14,-4.59 a 1.52,1.5 18.2 0 1 1.21,-0.6 h 10.78 a 0.42,0.42 0 0 1 0.4,0.54 q -3.38,11.81 -14.82,15.16 -9.05,2.66 -17.31,0.02 c -14.94,-4.77 -19.62,-17.63 -17.72,-32.19 q 0.78,-5.91 4.34,-11.24 9.47,-14.12 28.41,-10.64 c 14.26,2.62 18.45,17.48 17.58,29.89 a 0.63,0.64 1.9 0 1 -0.63,0.6 h -35.57 a 0.63,0.63 0 0 0 -0.63,0.68 z m 1.04,-9.69 22.58,0.04 a 0.16,0.16 0 0 0 0.16,-0.16 v -0.12 a 11.3,10.94 0.1 0 0 -11.28,-10.96 h -0.3 a 11.3,10.94 0.1 0 0 -11.32,10.92 v 0.12 a 0.16,0.16 0 0 0 0.16,0.16 z"/><path fill="#000000" d="m 407.13848,65.179548 a 0.62,0.63 87.3 0 0 -0.62,0.68 q 0.88,9.4 8.83,12.31 c 5.7,2.08 11.51,0.15 15.09,-4.63 a 1.52,1.49 18 0 1 1.21,-0.6 l 10.75,-0.03 a 0.42,0.42 0 0 1 0.4,0.53 q -3.33,11.79 -14.74,15.17 -9.01,2.68 -17.26,0.08 c -14.92,-4.72 -19.63,-17.53 -17.78,-32.06 q 0.76,-5.89 4.3,-11.22 9.4,-14.12 28.3,-10.7 c 14.23,2.56 18.46,17.37 17.63,29.75 a 0.63,0.64 1.8 0 1 -0.63,0.61 z m 0.38,-9.05 22.44,-0.08 a 0.17,0.17 0 0 0 0.17,-0.17 v -0.13 a 10.96,11.28 89.8 0 0 -11.32,-10.92 h -0.22 a 10.96,11.28 89.8 0 0 -11.24,11 v 0.13 a 0.17,0.17 0 0 0 0.17,0.17 z"/><path fill="#000000" d="m 180.81848,41.689548 a 0.19,0.19 0 0 0 0.33,0.12 q 4.76,-5.82 11.71,-6.88 12.7,-1.95 20.76,5.8 c 7.51,7.23 9.48,17.13 8.25,27.44 -1.38,11.47 -8.91,19.85 -20.49,21.43 -6.99,0.96 -16.16,-2.13 -20.19,-8.12 a 0.21,0.21 0 0 0 -0.39,0.12 v 26.940002 a 0.56,0.56 0 0 1 -0.56,0.56 l -12.33,0.01 a 0.66,0.65 1.2 0 1 -0.66,-0.68 q 0.01,-0.24 0.01,-67.810002 0,-3.59 -0.42,-4.78 a 0.45,0.45 0 0 1 0.42,-0.6 h 12.94 a 0.62,0.62 0 0 1 0.62,0.62 z m 27.3012,16.5542 a 12.74,12.74 0 0 0 -12.9822,-12.4931 l -2.2796,0.0438 a 12.74,12.74 0 0 0 -12.4931,12.9822 l 0.1325,6.8987 a 12.74,12.74 0 0 0 12.9822,12.4931 l 2.2796,-0.0438 a 12.74,12.74 0 0 0 12.4931,-12.9822 z"/><path fill="#000000" d="m 386.91848,51.219548 h -10.66 a 1.22,1.22 0 0 1 -1.12,-0.73 q -3.34,-7.74 -12.55,-5.56 c -3.79,0.89 -6.63,5.31 -2.9,8.11 q 2.12,1.58 5.87,2.37 8.29,1.74 11.46,2.55 13.25,3.37 11.95,17.69 -0.34,3.71 -2.05,6.04 c -5.01,6.82 -13.71,7.92 -22.28,7.54 -11.15,-0.49 -18.75,-5.52 -20.47,-17.23 a 0.41,0.4 86.3 0 1 0.4,-0.46 h 11.7 a 1.29,1.29 0 0 1 1.19,0.79 q 3.98,9.63 15.27,5.94 c 3.35,-1.09 6.39,-5.96 2.39,-8.49 q -1.87,-1.18 -3.46,-1.5 c -6.64,-1.36 -15.28,-2.6 -20.92,-6.87 -7.06,-5.35 -6.77,-18.51 0.83,-23.33 q 4.96,-3.15 9.13,-3.33 c 7.68,-0.33 13.94,-0.92 20.35,3.17 q 6.24,4 7.1,11.93 a 1.24,1.24 0 0 1 -1.23,1.37 z"/><path fill="#000000" d="m 324.54848,35.809548 a 0.63,0.63 0 0 1 0.6,-0.83 h 12.71 a 0.49,0.49 0 0 1 0.49,0.49 v 51.8 a 0.54,0.55 0 0 1 -0.54,0.55 h -12.41 a 0.33,0.34 0 0 1 -0.33,-0.34 q 0.08,-31.51 -0.06,-49.06 -0.01,-1.29 -0.46,-2.61 z"/><ellipse fill="#ff3518" cx="590.24054" cy="61.517521" rx="33.450001" ry="33.099998"/><ellipse fill="#ff8b00" cx="511.14053" cy="61.507526" rx="33.700001" ry="33.029999"/><ellipse fill="#9c067a" cx="669.52057" cy="61.577534" rx="33.68" ry="33.029999"/></svg></div>
 
             <!-- MAIN -->
             <div class="nav-group">
                 <div class="nav-group-title">Main</div>
-                <div class="nav-item active" data-page="dashboard">
-                    <span class="nav-item-icon">ð</span>
-                    <span>Dashboard</span>
+                <div class="nav-item active" data-page="dashboard"><div class="nav-icon-circle">D</div><span>Dashboard</span>
                 </div>
-                <div class="nav-item" data-page="trainings">
-                    <span class="nav-item-icon">ð</span>
-                    <span>Trainings</span>
+                <div class="nav-item" data-page="trainings"><div class="nav-icon-circle">T</div><span>Trainings</span>
                 </div>
-                <div class="nav-item" data-page="participants">
-                    <span class="nav-item-icon">ð¥</span>
-                    <span>Participants</span>
+                <div class="nav-item" data-page="participants"><div class="nav-icon-circle">P</div><span>Participants</span>
                 </div>
-                <div class="nav-item" data-page="courses">
-                    <span class="nav-item-icon">ð</span>
-                    <span>Courses</span>
+                <div class="nav-item" data-page="courses"><div class="nav-icon-circle">C</div><span>Courses</span>
                 </div>
             </div>
 
             <!-- OPERATIONS -->
             <div class="nav-group">
                 <div class="nav-group-title">Ops</div>
-                <div class="nav-item" data-page="shipping">
-                    <span class="nav-item-icon">ð¦</span>
-                    <span>Shipping</span>
+                <div class="nav-item" data-page="shipping"><div class="nav-icon-circle">S</div><span>Shipping</span>
                 </div>
-                <div class="nav-item" data-page="communications">
-                    <span class="nav-item-icon">âï¸</span>
-                    <span>Communications</span>
+                <div class="nav-item" data-page="communications"><div class="nav-icon-circle">M</div><span>Communications</span>
                 </div>
             </div>
 
             <!-- ADMIN -->
             <div class="nav-group">
                 <div class="nav-group-title">Admin</div>
-                <div class="nav-item" data-page="settings">
-                    <span class="nav-item-icon">âï¸</span>
-                    <span>Settings</span>
+                <div class="nav-item" data-page="settings"><div class="nav-icon-circle">â</div><span>Settings</span>
                 </div>
             </div>
         </div>
@@ -1018,8 +1039,8 @@
                     </div>
                 </div>
                 <div class="navbar-right">
-                    <button class="btn-icon" title="Notifications">ð</button>
-                    <button class="btn-icon" title="User">ð¤</button>
+                    <button class="btn-icon" title="Notifications">Bell</button>
+                    <button class="btn-icon" title="User">User</button>
                 </div>
             </div>
 
@@ -1650,8 +1671,11 @@
         function renderTrainings() {
             const container = document.getElementById('trainingsContainer');
             container.innerHTML = trainings.map(t => {
-                const enrolled = applicants.filter(a => a.training_id === t.id).length;
-                const percent = enrolled > 0 ? Math.min(100, (enrolled / 20) * 100) : 0;
+                const enrolled = applicants.filter(a => a.training_id === t.id);
+                const maxCap = 6;
+                const percent = Math.min(100, Math.round((enrolled.length / maxCap) * 100));
+                const spotsLeft = Math.max(0, maxCap - enrolled.length);
+                
                 return `
                     <div class="training-card" onclick="toggleTrainingExpand('${t.id}')">
                         <div class="training-card-header">
@@ -1659,23 +1683,67 @@
                             <span class="badge badge-primary">${t.training_level || 'Standard'}</span>
                         </div>
                         <div class="training-card-meta">
-                            <span class="training-card-meta-item">ð ${formatDate(t.start_date)} - ${formatDate(t.end_date)}</span>
-                            <span class="training-card-meta-item">ð ${t.location || 'TBA'}</span>
+                            <span class="training-card-meta-item">Date: ${formatDate(t.start_date)} - ${formatDate(t.end_date)}</span>
+                            <span class="training-card-meta-item">Location: ${t.location || 'TBA'}</span>
                         </div>
                         <div class="training-card-progress">
-                            <span>${enrolled} enrolled</span>
+                            <span>${enrolled.length}/${maxCap} enrolled${spotsLeft > 0 ? ' &middot; ' + spotsLeft + ' spots left' : ' &middot; FULL'}</span>
                             <div class="progress-bar">
-                                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+                                <div class="progress-bar-fill" style="width: ${percent}%; ${percent >= 100 ? 'background: var(--success);' : ''}"></div>
                             </div>
                         </div>
-                        <div id="expanded-${t.id}" style="display: none;">
+                        <div id="expanded-${t.id}" class="training-expanded-panel" style="display: none;" onclick="event.stopPropagation();">
                             <div class="training-expanded">
-                                <div class="training-expanded-section">
-                                    <div class="training-expanded-label">Description</div>
-                                    <div>${t.description || 'No description'}</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <div class="training-expanded-label">Description</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary);">${t.description || 'No description provided'}</div>
+                                    </div>
+                                    <div>
+                                        <div class="training-expanded-label">Details</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                            Level: ${t.training_level || 'N/A'}<br>
+                                            Status: ${t.status || 'Active'}<br>
+                                            Cohort: ${t.cohort_name || 'N/A'}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="training-expanded-section">
-                                    <button class="btn btn-secondary btn-small" onclick="openModal('trainingModal'); prefillTrainingForm(${t.id})">Edit</button>
+                                
+                                <div class="training-expanded-label" style="margin-bottom: 0.5rem;">
+                                    Enrolled Participants (${enrolled.length}/${maxCap})
+                                </div>
+                                ${enrolled.length > 0 ? `
+                                <table style="width: 100%; font-size: 0.78rem; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: rgba(0,0,0,0.02);">
+                                            <th style="padding: 0.35rem 0.5rem; text-align: left; font-size: 0.7rem; border-bottom: 1px solid var(--border);">Name</th>
+                                            <th style="padding: 0.35rem 0.5rem; text-align: left; font-size: 0.7rem; border-bottom: 1px solid var(--border);">Stage</th>
+                                            <th style="padding: 0.35rem 0.5rem; text-align: left; font-size: 0.7rem; border-bottom: 1px solid var(--border);">Applied</th>
+                                            <th style="padding: 0.35rem 0.5rem; text-align: left; font-size: 0.7rem; border-bottom: 1px solid var(--border);">Progress</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${enrolled.map(p => {
+                                            const si = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
+                                            const sp = ((si + 1) / STAGE_ORDER.length) * 100;
+                                            return `
+                                            <tr style="cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.03);" onclick="event.stopPropagation(); switchSection('participants'); setTimeout(() => toggleParticipantExpand('${p.id}'), 100);">
+                                                <td style="padding: 0.35rem 0.5rem;"><strong>${p.name}</strong></td>
+                                                <td style="padding: 0.35rem 0.5rem;"><span class="badge badge-secondary" style="font-size: 0.65rem;">${(p.pipeline_stage || 'lead').replace(/_/g, ' ')}</span></td>
+                                                <td style="padding: 0.35rem 0.5rem;">${formatDate(p.application_date || p.created_at)}</td>
+                                                <td style="padding: 0.35rem 0.5rem;">
+                                                    <div class="progress-bar" style="width: 60px; display: inline-block;">
+                                                        <div class="progress-bar-fill" style="width: ${sp}%"></div>
+                                                    </div>
+                                                </td>
+                                            </tr>`;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                                ` : '<div style="color: var(--text-secondary); font-size: 0.8rem; padding: 0.5rem 0;">No participants enrolled yet.</div>'}
+                                
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                                    <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); openModal('trainingModal'); prefillTrainingForm('${t.id}')">Edit Training</button>
                                 </div>
                             </div>
                         </div>
@@ -1687,6 +1755,12 @@
         function toggleTrainingExpand(trainingId) {
             const expandedEl = document.getElementById(`expanded-${trainingId}`);
             if (expandedEl) {
+                // Close other expanded panels
+                document.querySelectorAll('[id^="expanded-"]').forEach(el => {
+                    if (el.id !== `expanded-${trainingId}`) {
+                        el.style.display = 'none';
+                    }
+                });
                 expandedEl.style.display = expandedEl.style.display === 'none' ? 'block' : 'none';
             }
         }
@@ -1713,7 +1787,7 @@
                 start_date: document.getElementById('trainingStartDate').value,
                 end_date: document.getElementById('trainingEndDate').value,
                 location: document.getElementById('trainingLocation').value,
-                level: document.getElementById('trainingLevel').value
+                training_level: document.getElementById('trainingLevel').value
             };
 
             try {
@@ -1742,14 +1816,21 @@
                 const stageIndex = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
                 const stagePercent = ((stageIndex + 1) / STAGE_ORDER.length) * 100;
                 return `
-                    <tr onclick="openParticipantPanel('${p.id}')" style="cursor:pointer;">
+                    <tr onclick="toggleParticipantExpand('${p.id}')" style="cursor:pointer;">
                         <td><strong>${p.name}</strong></td>
                         <td><small>${p.email}</small></td>
                         <td><span class="badge badge-secondary">${(p.pipeline_stage || 'lead').replace(/_/g, ' ')}</span></td>
                         <td><small>${training?.name || 'N/A'}</small></td>
                         <td>
-                            <div class="progress-bar" style="width: 100px; display: inline-block;">
+                            <div class="progress-bar" style="width: 80px; display: inline-block;">
                                 <div class="progress-bar-fill" style="width: ${stagePercent}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="participant-detail-${p.id}" style="display: none;">
+                        <td colspan="5" style="padding: 0; background: var(--bg-cream);">
+                            <div class="participant-detail-panel" style="padding: 1rem;">
+                                ${buildParticipantDetailHTML(p, training)}
                             </div>
                         </td>
                     </tr>
@@ -1757,58 +1838,181 @@
             }).join('');
         }
 
-        function openParticipantPanel(participantId) {
-            const p = applicants.find(x => x.id === participantId);
-            if (!p) return;
-
-            const training = trainings.find(t => t.id === p.training_id);
+        function buildParticipantDetailHTML(p, training) {
             const stageIndex = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
-            const stagePercent = ((stageIndex + 1) / STAGE_ORDER.length) * 100;
+            const nextStage = stageIndex < STAGE_ORDER.length - 1 ? STAGE_ORDER[stageIndex + 1] : null;
+            const prevStage = stageIndex > 0 ? STAGE_ORDER[stageIndex - 1] : null;
+            
+            // Build stage indicator
+            const stageIndicator = STAGE_ORDER.map((s, i) => {
+                const isActive = i <= stageIndex;
+                const isCurrent = i === stageIndex;
+                return `<div style="flex: 1; text-align: center;">
+                    <div style="height: 4px; background: ${isActive ? 'var(--brand-orange)' : 'var(--border)'}; border-radius: 2px; margin-bottom: 0.3rem;"></div>
+                    <div style="font-size: 0.6rem; color: ${isCurrent ? 'var(--brand-orange)' : 'var(--text-secondary)'}; font-weight: ${isCurrent ? '700' : '400'}; text-transform: capitalize;">${s.replace(/_/g, ' ')}</div>
+                </div>`;
+            }).join('');
 
-            document.getElementById('panelTitle').textContent = p.name;
-            document.getElementById('panelContent').innerHTML = `
-                <div class="panel-section">
-                    <div class="panel-section-header">Contact Information</div>
-                    <div class="panel-section-item">
-                        <span class="panel-section-label">Email</span>
-                        <span class="panel-section-value">${p.email}</span>
+            // Find the email template for current stage
+            const stageTemplate = emailTemplates.find(t => t.stage === (p.pipeline_stage || 'lead'));
+            const nextStageTemplate = nextStage ? emailTemplates.find(t => t.stage === nextStage) : null;
+
+            return `
+                <!-- Pipeline Progress -->
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Registration Pipeline</div>
+                    <div style="display: flex; gap: 3px; margin-bottom: 0.75rem;">
+                        ${stageIndicator}
                     </div>
-                    <div class="panel-section-item">
-                        <span class="panel-section-label">Phone</span>
-                        <span class="panel-section-value">${p.phone || 'N/A'}</span>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        ${prevStage ? `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); moveParticipantStage('${p.id}', '${prevStage}')">&#8592; Back to ${prevStage.replace(/_/g, ' ')}</button>` : ''}
+                        ${nextStage ? `<button class="btn btn-primary btn-small" onclick="event.stopPropagation(); moveParticipantStage('${p.id}', '${nextStage}')">Advance to ${nextStage.replace(/_/g, ' ')} &#8594;</button>` : '<span class="badge badge-success">Registration Complete</span>'}
                     </div>
                 </div>
 
-                <div class="panel-section">
-                    <div class="panel-section-header">Pipeline Progress</div>
-                    <div style="margin: 0.5rem 0;">
-                        <div class="progress-bar" style="margin-bottom: 0.5rem;">
-                            <div class="progress-bar-fill" style="width: ${stagePercent}%"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <!-- Contact Info -->
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Contact Information</div>
+                        <div style="font-size: 0.8rem; line-height: 1.8;">
+                            <div><strong>Email:</strong> ${p.email}</div>
+                            <div><strong>Phone:</strong> ${p.phone || 'N/A'}</div>
+                            <div><strong>Address:</strong> ${p.address || 'N/A'}</div>
+                            <div><strong>DOB:</strong> ${p.birth_date || 'N/A'}</div>
+                            <div><strong>Emergency:</strong> ${p.emergency_contact_name || 'N/A'} ${p.emergency_contact_phone ? '(' + p.emergency_contact_phone + ')' : ''}</div>
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-primary);">
-                            <strong>${(p.pipeline_stage || 'lead').replace(/_/g, ' ')}</strong>
+                    </div>
+
+                    <!-- Application Details -->
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Application Details</div>
+                        <div style="font-size: 0.8rem; line-height: 1.8;">
+                            <div><strong>Applied:</strong> ${formatDate(p.application_date || p.created_at)}</div>
+                            <div><strong>Status:</strong> ${p.app_status || 'N/A'}</div>
+                            <div><strong>Chemistry Call:</strong> ${p.chemistry_call_status ? p.chemistry_call_status.replace(/_/g, ' ') : 'N/A'}</div>
+                            <div><strong>Interview:</strong> ${p.interview_status ? p.interview_status.replace(/_/g, ' ') : 'N/A'}</div>
+                            <div><strong>Payment:</strong> ${p.payment_status || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Health & Preferences -->
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 0.5rem;">Health & Preferences</div>
+                        <div style="font-size: 0.8rem; line-height: 1.8;">
+                            <div><strong>Dietary:</strong> ${p.dietary_preferences || 'N/A'}</div>
+                            <div><strong>Allergies:</strong> ${p.allergies || 'None'}</div>
+                            <div><strong>Physical:</strong> ${p.physical_health || 'N/A'}</div>
+                            <div><strong>Mental Health:</strong> ${p.mental_health_dx || 'N/A'}</div>
+                            <div><strong>Accommodation:</strong> ${p.accommodation_choice || 'N/A'}</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel-section">
-                    <div class="panel-section-header">Training</div>
-                    <div class="panel-section-item">
-                        <span class="panel-section-label">Name</span>
-                        <span class="panel-section-value">${training?.name || 'Unassigned'}</span>
-                    </div>
-                </div>
+                ${p.notes ? `<div style="margin-top: 0.75rem; padding: 0.5rem; background: white; border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--border);"><strong>Notes:</strong> ${p.notes}</div>` : ''}
 
-                <div class="panel-section">
-                    <button class="btn btn-secondary" onclick="openModal('participantModal'); prefillParticipantForm(${p.id})" style="width: 100%;">Edit Participant</button>
-                    <button class="btn btn-primary" onclick="sendEmailToParticipant(${p.id})" style="width: 100%; margin-top: 0.5rem;">Send Email</button>
+                <!-- Actions -->
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border); flex-wrap: wrap;">
+                    <select class="form-select" style="width: auto; padding: 0.3rem 0.5rem; font-size: 0.75rem;" id="reassign-training-${p.id}" onchange="event.stopPropagation(); reassignTraining('${p.id}', this.value)">
+                        <option value="">Move to training...</option>
+                        ${trainings.map(t => `<option value="${t.id}" ${t.id === p.training_id ? 'selected disabled' : ''}>${t.name}</option>`).join('')}
+                    </select>
+                    ${stageTemplate ? `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); sendStageReminder('${p.id}', '${p.pipeline_stage || 'lead'}')">Send ${(p.pipeline_stage || 'lead').replace(/_/g, ' ')} Reminder</button>` : ''}
+                    ${nextStageTemplate ? `<button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); sendStageReminder('${p.id}', '${nextStage}')">Send ${nextStage.replace(/_/g, ' ')} Email</button>` : ''}
+                    <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); openModal('participantModal'); prefillParticipantForm('${p.id}')">Edit Details</button>
                 </div>
             `;
-
-            document.getElementById('sidePanelOverlay').classList.add('active');
-            document.getElementById('sidePanel').classList.add('active');
         }
 
+        function toggleParticipantExpand(participantId) {
+            const detailRow = document.getElementById('participant-detail-' + participantId);
+            if (!detailRow) return;
+            
+            // Close any other open panels
+            document.querySelectorAll('[id^="participant-detail-"]').forEach(row => {
+                if (row.id !== 'participant-detail-' + participantId) {
+                    row.style.display = 'none';
+                }
+            });
+            
+            detailRow.style.display = detailRow.style.display === 'none' ? 'table-row' : 'none';
+        }
+
+        async function moveParticipantStage(participantId, newStage) {
+            try {
+                const { error } = await db.from('applicants').update({ pipeline_stage: newStage }).eq('id', participantId);
+                if (error) throw error;
+                
+                // Update local data
+                const p = applicants.find(x => x.id === participantId);
+                if (p) p.pipeline_stage = newStage;
+                
+                renderParticipants();
+                showToast('Moved to ' + newStage.replace(/_/g, ' '), 'success');
+            } catch (error) {
+                console.error('Error updating stage:', error);
+                showToast('Error updating stage', 'error');
+            }
+        }
+
+        async function reassignTraining(participantId, newTrainingId) {
+            if (!newTrainingId) return;
+            try {
+                const { error } = await db.from('applicants').update({ training_id: newTrainingId }).eq('id', participantId);
+                if (error) throw error;
+                
+                const p = applicants.find(x => x.id === participantId);
+                if (p) p.training_id = newTrainingId;
+                
+                renderParticipants();
+                showToast('Training reassigned successfully', 'success');
+            } catch (error) {
+                console.error('Error reassigning:', error);
+                showToast('Error reassigning training', 'error');
+            }
+        }
+
+        async function sendStageReminder(participantId, stage) {
+            const p = applicants.find(x => x.id === participantId);
+            const template = emailTemplates.find(t => t.stage === stage);
+            if (!p || !template) {
+                showToast('No email template found for this stage', 'warning');
+                return;
+            }
+            
+            try {
+                // Log the email
+                const { error } = await db.from('email_log').insert([{
+                    applicant_id: participantId,
+                    template_id: template.id,
+                    to_email: p.email,
+                    subject: template.subject,
+                    body: template.body.replace(/\{name\}/g, p.name).replace(/\{email\}/g, p.email),
+                    stage: stage,
+                    status: 'sent',
+                    sent_at: new Date().toISOString()
+                }]);
+                if (error) throw error;
+                
+                // Update participant last_email_sent_at
+                await db.from('applicants').update({ 
+                    last_email_sent_at: new Date().toISOString(),
+                    email_count: (p.email_count || 0) + 1
+                }).eq('id', participantId);
+                
+                const idx = applicants.findIndex(x => x.id === participantId);
+                if (idx >= 0) {
+                    applicants[idx].last_email_sent_at = new Date().toISOString();
+                    applicants[idx].email_count = (applicants[idx].email_count || 0) + 1;
+                }
+                
+                showToast('Email reminder sent to ' + p.name, 'success');
+            } catch (error) {
+                console.error('Error sending reminder:', error);
+                showToast('Error sending reminder', 'error');
+            }
+        }
+
+        
         function prefillParticipantForm(participantId) {
             const p = applicants.find(x => x.id === participantId);
             if (p) {
@@ -1827,7 +2031,7 @@
                 name: document.getElementById('participantName').value,
                 email: document.getElementById('participantEmail').value,
                 training_id: document.getElementById('participantTraining').value,
-                stage: document.getElementById('participantStage').value
+                pipeline_stage: document.getElementById('participantStage').value
             };
 
             try {
@@ -1977,7 +2181,7 @@
             const tbody = document.getElementById('logTableBody');
             tbody.innerHTML = emailLogs.slice(0, 20).map(l => `
                 <tr>
-                    <td><small>${l.recipient_email}</small></td>
+                    <td><small>${l.to_email || l.recipient_email}</small></td>
                     <td><small>${l.subject}</small></td>
                     <td><span class="badge badge-secondary">${l.stage}</span></td>
                     <td>${formatDate(l.sent_at)}</td>
