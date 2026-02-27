@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StepWise Admin Dashboard</title>
+    <title>StepWise Admin Dashboard v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -319,6 +319,7 @@
             border-radius: 12px;
             overflow: hidden;
             backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
         }
 
         .table-header {
@@ -507,13 +508,7 @@
 
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            min-height: 120px;
         }
 
         /* SIDE PANEL */
@@ -525,7 +520,6 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
             z-index: 150;
         }
 
@@ -535,16 +529,16 @@
 
         .side-panel {
             position: fixed;
-            right: -500px;
+            right: -400px;
             top: 0;
-            width: 480px;
+            width: 400px;
             height: 100vh;
             background: var(--glass);
             border-left: 1px solid var(--border);
-            overflow-y: auto;
+            backdrop-filter: blur(10px);
             z-index: 160;
             transition: right 0.3s ease;
-            backdrop-filter: blur(10px);
+            overflow-y: auto;
         }
 
         .side-panel.active {
@@ -557,10 +551,6 @@
             align-items: center;
             padding: 1.5rem;
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background: var(--glass);
-            z-index: 10;
         }
 
         .panel-title {
@@ -574,129 +564,67 @@
 
         .panel-section {
             margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-section:last-child {
+            border-bottom: none;
         }
 
         .panel-section-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            font-weight: 600;
             color: var(--accent-primary);
-        }
-
-        .panel-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
             margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .panel-field {
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 1rem;
         }
 
-        .panel-label {
-            font-size: 0.8rem;
+        .panel-field-label {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.25rem;
         }
 
-        .panel-value {
+        .panel-field-value {
             font-size: 0.95rem;
-            color: var(--text);
-            padding: 0.5rem 0;
-            word-break: break-word;
+            word-break: break-all;
         }
 
-        .panel-editable {
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .panel-editable:hover {
-            background: var(--glass-light);
-        }
-
-        .panel-editable input,
-        .panel-editable textarea,
-        .panel-editable select {
-            width: 100%;
-            padding: 0.5rem;
-            background: var(--glass-light);
-            border: 1px solid var(--accent-primary);
-            border-radius: 6px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-        }
-
-        .save-indicator {
-            font-size: 0.75rem;
-            color: var(--success);
-            margin-top: 0.2rem;
-            display: none;
-        }
-
-        .save-indicator.show {
-            display: block;
-        }
-
-        /* INLINE EDITABLE */
-        .inline-editable {
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .inline-editable:hover {
-            background: rgba(124, 58, 237, 0.1);
-        }
-
-        .inline-edit-input {
-            padding: 0.25rem 0.5rem;
-            background: var(--glass-light);
-            border: 1px solid var(--accent-primary);
-            border-radius: 4px;
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-        }
-
-        /* TOAST */
+        /* TOAST NOTIFICATIONS */
         .toast-container {
             position: fixed;
-            top: 2rem;
+            bottom: 2rem;
             right: 2rem;
             z-index: 300;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            max-width: 400px;
         }
 
         .toast {
             background: var(--glass);
             border: 1px solid var(--border);
-            border-left: 4px solid var(--accent-primary);
             border-radius: 8px;
             padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
             backdrop-filter: blur(10px);
             animation: slideIn 0.3s ease;
-            min-width: 300px;
-        }
-
-        .toast.error {
-            border-left-color: var(--error);
         }
 
         .toast.success {
-            border-left-color: var(--success);
+            border-left: 3px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 3px solid var(--error);
+        }
+
+        .toast.warning {
+            border-left: 3px solid var(--warning);
         }
 
         @keyframes slideIn {
@@ -710,45 +638,11 @@
             }
         }
 
-        /* LOADING */
-        .loading {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         /* PROGRESS BAR */
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: var(--glass-light);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             overflow: hidden;
             margin: 0.5rem 0;
@@ -757,7 +651,6 @@
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 4px;
             transition: width 0.3s ease;
         }
 
@@ -766,124 +659,152 @@
             color: var(--text-muted);
         }
 
-        /* STAGE PROGRESS */
-        .stage-progress {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .stage-dot {
-            width: 32px;
-            height: 32px;
+        /* STATUS INDICATOR */
+        .status-indicator {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.connected {
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+
+        .status-indicator.disconnected {
+            background: var(--error);
+        }
+
+        /* EMAIL OUTREACH SECTION */
+        .email-box {
             background: var(--glass-light);
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .email-box-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .email-preview {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            max-height: 100px;
+            overflow-y: auto;
+            color: var(--text-muted);
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-list-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
+            gap: 0.5rem;
         }
 
-        .stage-dot.active {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-color: var(--accent-primary);
-            color: white;
-        }
-
-        .stage-dot.completed {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .stage-connector {
+        .checkbox-list-item label {
+            cursor: pointer;
             flex: 1;
-            height: 2px;
-            background: var(--border);
+            font-size: 0.9rem;
         }
 
-        .stage-connector.active {
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--text);
+        }
+
+        .tab-button.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .quick-action-card {
+            background: var(--glass-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .quick-action-description {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .email-count-badge {
+            display: inline-block;
             background: var(--accent-primary);
+            color: white;
+            border-radius: 20px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 240px;
-            }
-
-            .main {
-                margin-left: 240px;
-            }
-
-            .side-panel {
-                width: 400px;
-                right: -400px;
-            }
-
-            .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
+        .course-checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem 0;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-                padding: 1rem 0;
-            }
+        .course-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
 
-            .sidebar-logo,
-            .nav-group-title,
-            .nav-item-text {
-                display: none;
-            }
-
-            .nav-item {
-                padding: 1rem;
-                justify-content: center;
-            }
-
-            .main {
-                margin-left: 70px;
-            }
-
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .navbar-left {
-                width: 100%;
-            }
-
-            .search-bar {
-                max-width: 100%;
-            }
-
-            .side-panel {
-                width: 100%;
-                right: -100%;
-            }
-
-            .modal {
-                width: 95%;
-            }
-
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .content {
-                padding: 1rem;
-            }
+        .course-checkbox-item label {
+            cursor: pointer;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -891,37 +812,48 @@
     <div class="container">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="sidebar-logo">SW</div>
+            <div class="sidebar-logo">📊 StepWise</div>
 
+            <!-- MAIN SECTION -->
             <div class="nav-group">
                 <div class="nav-group-title">Main</div>
                 <div class="nav-item active" data-page="dashboard">
-                    <div class="nav-item-icon">📊</div>
-                    <span class="nav-item-text">Dashboard</span>
+                    <span class="nav-item-icon">📈</span>
+                    Dashboard
                 </div>
                 <div class="nav-item" data-page="trainings">
-                    <div class="nav-item-icon">🎓</div>
-                    <span class="nav-item-text">Trainings</span>
+                    <span class="nav-item-icon">🎓</span>
+                    Trainings
                 </div>
                 <div class="nav-item" data-page="participants">
-                    <div class="nav-item-icon">👥</div>
-                    <span class="nav-item-text">Participants</span>
+                    <span class="nav-item-icon">👥</span>
+                    Participants
+                </div>
+                <div class="nav-item" data-page="courses">
+                    <span class="nav-item-icon">📚</span>
+                    Courses
                 </div>
             </div>
 
+            <!-- OPERATIONS SECTION -->
             <div class="nav-group">
                 <div class="nav-group-title">Operations</div>
                 <div class="nav-item" data-page="shipping">
-                    <div class="nav-item-icon">📦</div>
-                    <span class="nav-item-text">Shipping</span>
+                    <span class="nav-item-icon">📦</span>
+                    Shipping
+                </div>
+                <div class="nav-item" data-page="communications">
+                    <span class="nav-item-icon">✉️</span>
+                    Communications
                 </div>
             </div>
 
+            <!-- ADMIN SECTION -->
             <div class="nav-group">
                 <div class="nav-group-title">Admin</div>
                 <div class="nav-item" data-page="settings">
-                    <div class="nav-item-icon">⚙️</div>
-                    <span class="nav-item-text">Settings</span>
+                    <span class="nav-item-icon">⚙️</span>
+                    Settings
                 </div>
             </div>
         </div>
@@ -936,85 +868,106 @@
                     </div>
                 </div>
                 <div class="navbar-right">
-                    <div class="btn-icon" id="refreshBtn" title="Refresh data">
-                        🔄
-                    </div>
-                    <div class="btn-icon" id="connectionStatus" title="Connection status">
-                        🟢
-                    </div>
+                    <span class="status-indicator connected" id="connectionStatus" title="Connected"></span>
+                    <button class="btn-icon" id="refreshBtn" title="Refresh data">🔄</button>
                 </div>
             </div>
 
             <!-- CONTENT -->
             <div class="content">
-                <!-- DASHBOARD TAB -->
-                <section class="content-section active" id="dashboard">
+                <!-- DASHBOARD -->
+                <div id="dashboard" class="content-section active">
                     <h1 class="page-title">Dashboard</h1>
 
-                    <!-- KPI CARDS -->
-                    <div class="kpi-grid" id="kpiGrid">
+                    <div class="kpi-grid">
                         <div class="kpi-card">
                             <div class="kpi-label">Total Participants</div>
                             <div class="kpi-value" id="kpiTotalParticipants">0</div>
-                            <div class="kpi-trend">↑ 12% from last month</div>
+                            <div class="kpi-trend">↗ All time</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">Active Pipeline</div>
                             <div class="kpi-value" id="kpiActivePipeline">0</div>
-                            <div class="kpi-trend">In progress</div>
+                            <div class="kpi-trend">↗ In progress</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-label">Revenue Collected</div>
+                            <div class="kpi-label">Revenue</div>
                             <div class="kpi-value" id="kpiRevenue">$0</div>
-                            <div class="kpi-trend">This period</div>
+                            <div class="kpi-trend">↗ Paid in full</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-label">Upcoming Trainings</div>
                             <div class="kpi-value" id="kpiUpcomingTrainings">0</div>
-                            <div class="kpi-trend">Next 90 days</div>
+                            <div class="kpi-trend">Next 30 days</div>
                         </div>
                         <div class="kpi-card">
-                            <div class="kpi-label">Needs Attention</div>
-                            <div class="kpi-value" id="kpiNeedsAttention">0</div>
-                            <div class="kpi-trend">Stuck > 7 days</div>
+                            <div class="kpi-label">Emails Sent</div>
+                            <div class="kpi-value" id="kpiEmailsSent">0</div>
+                            <div class="kpi-trend">This week</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Pending Actions</div>
+                            <div class="kpi-value" id="kpiPendingActions">0</div>
+                            <div class="kpi-trend">Need outreach</div>
                         </div>
                     </div>
 
-                    <!-- ACTION BAR -->
-                    <div class="action-bar">
-                        <button class="btn btn-primary" id="newTrainingBtn">+ New Training</button>
-                        <button class="btn btn-primary" id="addParticipantBtn">+ Add Participant</button>
-                        <button class="btn btn-secondary" id="exportAllBtn">Export All Data</button>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Training Overview</h2>
+                        </div>
+                        <div id="trainingOverviewCards"></div>
                     </div>
 
-                    <!-- TRAINING OVERVIEW -->
-                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Active Trainings</h2>
-                    <div id="trainingOverviewCards"></div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Pipeline Snapshot</h2>
+                        </div>
+                        <div id="pipelineSnapshot"></div>
+                    </div>
 
-                    <!-- PIPELINE SNAPSHOT -->
-                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Pipeline Snapshot</h2>
-                    <div id="pipelineSnapshot" class="table-container"></div>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Alerts & Issues</h2>
+                        </div>
+                        <div id="alertsSection"></div>
+                    </div>
+                </div>
 
-                    <!-- ALERTS -->
-                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Alerts & Action Items</h2>
-                    <div id="alertsSection" class="table-container"></div>
-                </section>
-
-                <!-- TRAININGS TAB -->
-                <section class="content-section" id="trainings">
+                <!-- TRAININGS -->
+                <div id="trainings" class="content-section">
                     <h1 class="page-title">Trainings</h1>
-                    <div class="action-bar">
-                        <button class="btn btn-primary" id="newTrainingBtn2">+ New Training</button>
-                        <input type="text" class="form-input" id="trainingSearch" placeholder="Search trainings..." style="max-width: 300px;">
-                    </div>
-                    <div id="trainingsList" class="table-container"></div>
-                </section>
 
-                <!-- PARTICIPANTS TAB -->
-                <section class="content-section" id="participants">
-                    <h1 class="page-title">Participants</h1>
                     <div class="action-bar">
-                        <button class="btn btn-primary" id="addParticipantBtn2">+ Add Participant</button>
+                        <input type="text" class="search-input" id="trainingSearch" placeholder="Search trainings..." style="max-width: 300px;">
+                        <button class="btn btn-primary" onclick="openModal('trainingModal')">+ New Training</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="trainingsList">
+                            <thead>
+                                <tr>
+                                    <th>Training Name</th>
+                                    <th>Dates</th>
+                                    <th>Location</th>
+                                    <th>Level</th>
+                                    <th>Status</th>
+                                    <th>Spots</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PARTICIPANTS -->
+                <div id="participants" class="content-section">
+                    <h1 class="page-title">Participants</h1>
+
+                    <div class="action-bar">
+                        <input type="text" class="search-input" id="globalSearch" placeholder="Search by name or email..." style="max-width: 300px;">
                         <select class="form-select" id="stageFilter" style="max-width: 200px;">
                             <option value="">All Stages</option>
                             <option value="lead">Lead</option>
@@ -1027,64 +980,305 @@
                             <option value="complete">Complete</option>
                         </select>
                         <select class="form-select" id="paymentFilter" style="max-width: 200px;">
-                            <option value="">All Payment Status</option>
-                            <option value="Unpaid">Unpaid</option>
-                            <option value="Deposit">Deposit</option>
+                            <option value="">All Payments</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Partial">Partial</option>
                             <option value="Paid in Full">Paid in Full</option>
                         </select>
+                        <button class="btn btn-primary" onclick="openModal('participantModal')">+ Add Participant</button>
                     </div>
-                    <div id="participantsList" class="table-container"></div>
-                </section>
 
-                <!-- SHIPPING TAB -->
-                <section class="content-section" id="shipping">
-                    <h1 class="page-title">Shipping Operations</h1>
+                    <div class="table-container">
+                        <table id="participantsList">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Training</th>
+                                    <th>Stage</th>
+                                    <th>Payment</th>
+                                    <th>Days in Stage</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- COURSES -->
+                <div id="courses" class="content-section">
+                    <h1 class="page-title">Courses</h1>
+
                     <div class="action-bar">
-                        <select class="form-select" id="shippingStatusFilter" style="max-width: 200px;">
-                            <option value="">All Status</option>
-                            <option value="not_shipped">Not Shipped</option>
-                            <option value="label_created">Label Created</option>
-                            <option value="in_transit">In Transit</option>
+                        <select class="form-select" id="courseFilter" style="max-width: 200px;">
+                            <option value="">All Courses</option>
+                            <option value="beginning">Beginning Online Course</option>
+                            <option value="intermediate_1">Intermediate Workshop 1</option>
+                            <option value="intermediate_2">Intermediate Workshop 2</option>
+                            <option value="intermediate_3">Intermediate Workshop 3</option>
+                            <option value="advanced">Advanced Online Course</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Course Enrollment</h2>
+                        </div>
+                        <table id="coursesList">
+                            <thead>
+                                <tr>
+                                    <th>Course Name</th>
+                                    <th>Students Enrolled</th>
+                                    <th>Level</th>
+                                    <th>Progress</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Bulk Course Access</h2>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">Select Participants</label>
+                                <div class="checkbox-list" id="bulkCourseParticipants"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Grant Access To</label>
+                                <div class="checkbox-list">
+                                    <div class="checkbox-list-item">
+                                        <input type="checkbox" id="courseBulkBeginning" value="beginning">
+                                        <label for="courseBulkBeginning">Beginning Online Course</label>
+                                    </div>
+                                    <div class="checkbox-list-item">
+                                        <input type="checkbox" id="courseBulkIntermediate1" value="intermediate_1">
+                                        <label for="courseBulkIntermediate1">Intermediate Workshop 1</label>
+                                    </div>
+                                    <div class="checkbox-list-item">
+                                        <input type="checkbox" id="courseBulkIntermediate2" value="intermediate_2">
+                                        <label for="courseBulkIntermediate2">Intermediate Workshop 2</label>
+                                    </div>
+                                    <div class="checkbox-list-item">
+                                        <input type="checkbox" id="courseBulkIntermediate3" value="intermediate_3">
+                                        <label for="courseBulkIntermediate3">Intermediate Workshop 3</label>
+                                    </div>
+                                    <div class="checkbox-list-item">
+                                        <input type="checkbox" id="courseBulkAdvanced" value="advanced">
+                                        <label for="courseBulkAdvanced">Advanced Online Course</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="bulkGrantCourseAccess()">Grant Access</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMMUNICATIONS -->
+                <div id="communications" class="content-section">
+                    <h1 class="page-title">Communications</h1>
+
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="switchCommunicationTab('templates')">Email Templates</button>
+                        <button class="tab-button" onclick="switchCommunicationTab('outreach')">Outreach</button>
+                        <button class="tab-button" onclick="switchCommunicationTab('log')">Email Log</button>
+                    </div>
+
+                    <!-- EMAIL TEMPLATES TAB -->
+                    <div id="templates" class="tab-content active">
+                        <div class="action-bar">
+                            <button class="btn btn-primary" onclick="openModal('emailTemplateModal')">+ New Template</button>
+                        </div>
+
+                        <div class="table-container">
+                            <table id="emailTemplatesList">
+                                <thead>
+                                    <tr>
+                                        <th>Template Name</th>
+                                        <th>Stage</th>
+                                        <th>Subject</th>
+                                        <th>Preview</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- OUTREACH TAB -->
+                    <div id="outreach" class="tab-content">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                            <!-- STAGE-SPECIFIC QUICK ACTIONS -->
+                            <div>
+                                <h2 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">Quick Actions by Stage</h2>
+                                <div id="quickActionsContainer"></div>
+                            </div>
+
+                            <!-- COMPOSE EMAIL -->
+                            <div>
+                                <div class="email-box" style="position: sticky; top: 0;">
+                                    <div class="email-box-title">📧 Compose Email</div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Recipients</label>
+                                        <select class="form-select" id="emailRecipient">
+                                            <option value="">Select recipient...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Template</label>
+                                        <select class="form-select" id="emailTemplate" onchange="loadEmailTemplate()">
+                                            <option value="">Select template...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Subject</label>
+                                        <input type="text" class="form-input" id="emailSubject" placeholder="Email subject">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Body</label>
+                                        <textarea class="form-textarea" id="emailBody" placeholder="Email body" style="min-height: 150px;"></textarea>
+                                    </div>
+
+                                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <button class="btn btn-secondary btn-small" onclick="copyEmailToClipboard()" title="Copy email body to clipboard">📋 Copy</button>
+                                        <button class="btn btn-secondary btn-small" onclick="openEmailInGmail()" title="Open in Gmail">📧 Gmail</button>
+                                        <button class="btn btn-primary btn-small" onclick="logEmailAsSent()">✓ Log as Sent</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BULK OUTREACH -->
+                        <div class="table-container">
+                            <div class="table-header">
+                                <h2 style="font-size: 1.1rem; font-weight: 600;">Bulk Outreach</h2>
+                            </div>
+                            <div style="padding: 1.5rem;">
+                                <div class="form-group">
+                                    <label class="form-label">Select Stage</label>
+                                    <select class="form-select" id="bulkStageFilter" onchange="updateBulkParticipants()">
+                                        <option value="">All Participants</option>
+                                        <option value="lead">Lead</option>
+                                        <option value="chemistry_call">Chemistry Call</option>
+                                        <option value="application">Application</option>
+                                        <option value="interview">Interview</option>
+                                        <option value="approval">Approval</option>
+                                        <option value="payment">Payment</option>
+                                        <option value=""onboarding">Onboarding</option>
+                                        <option value="complete">Complete</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Select Recipients</label>
+                                    <div class="checkbox-list" id="bulkParticipantList"></div>
+                                </div>
+
+                                <button class="btn btn-primary" onclick="sendToSelectedBulk()">Send to Selected</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- EMAIL LOG TAB -->
+                    <div id="log" class="tab-content">
+                        <div class="table-container">
+                            <table id="emailLogList">
+                                <thead>
+                                    <tr>
+                                        <th>Recipient</th>
+                                        <th>Subject</th>
+                                        <th>Stage</th>
+                                        <th>Status</th>
+                                        <th>Sent Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHIPPING -->
+                <div id="shipping" class="content-section">
+                    <h1 class="page-title">Shipping</h1>
+
+                    <div class="action-bar">
+                        <select class="form-select" id="shippingFilter" style="max-width: 200px;">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="shipped">Shipped</option>
                             <option value="delivered">Delivered</option>
                         </select>
                     </div>
-                    <div id="shippingList" class="table-container"></div>
-                    <h2 style="margin-top: 2rem; margin-bottom: 1rem;">Shipping Stats</h2>
-                    <div id="shippingStats" class="table-container"></div>
-                </section>
 
-                <!-- SETTINGS TAB -->
-                <section class="content-section" id="settings">
+                    <div class="table-container">
+                        <table id="shippingList">
+                            <thead>
+                                <tr>
+                                    <th>Participant</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Status</th>
+                                    <th>Tracking</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SETTINGS -->
+                <div id="settings" class="content-section">
                     <h1 class="page-title">Settings</h1>
-                    <div class="kpi-card" style="max-width: 600px;">
-                        <div class="panel-section">
-                            <div class="panel-section-title">Defaults</div>
-                            <div class="form-group">
-                                <label class="form-label">Default Price ($)</label>
-                                <input type="number" class="form-input" id="defaultPrice" value="2500">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Default Location</label>
-                                <input type="text" class="form-input" id="defaultLocation" value="TBD">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Default Max Capacity</label>
-                                <input type="number" class="form-input" id="defaultCapacity" value="12">
-                            </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Scheduling Links</h2>
                         </div>
-                        <div class="panel-section">
-                            <div class="panel-section-title">Database</div>
+                        <div style="padding: 1.5rem;">
                             <div class="form-group">
-                                <label class="form-label">Connection Status</label>
-                                <div class="badge badge-success">Connected</div>
+                                <label class="form-label">Chemistry Call Link</label>
+                                <input type="url" class="form-input" id="settingsChemistryLink" placeholder="https://calendly.com/...">
                             </div>
-                            <div style="display: flex; gap: 1rem;">
-                                <button class="btn btn-secondary" id="exportCsvBtn">Export CSV</button>
-                                <button class="btn btn-secondary" id="syncDataBtn">Sync Data</button>
+                            <div class="form-group">
+                                <label class="form-label">Interview Scheduling Link</label>
+                                <input type="url" class="form-input" id="settingsInterviewLink" placeholder="https://calendly.com/...">
                             </div>
+                            <div class="form-group">
+                                <label class="form-label">Payment/Stripe Link</label>
+                                <input type="url" class="form-input" id="settingsPaymentLink" placeholder="https://stripe.com/...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Portal Link</label>
+                                <input type="url" class="form-input" id="settingsPortalLink" placeholder="https://yourportal.com/...">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSchedulingLinks()">Save Links</button>
                         </div>
                     </div>
-                </section>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2 style="font-size: 1.1rem; font-weight: 600;">Default Email Signature</h2>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">Email Signature</label>
+                                <textarea class="form-textarea" id="settingsSignature" placeholder="Your default email signature..." style="min-height: 150px;"></textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveEmailSignature()">Save Signature</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1093,74 +1287,39 @@
     <div class="modal-overlay" id="trainingModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title">New Training</h2>
+                <h2 class="modal-title">Training Details</h2>
                 <button class="modal-close" onclick="closeModal('trainingModal')">✕</button>
             </div>
-            <form id="trainingForm">
+            <form onsubmit="submitTrainingForm(event)">
                 <input type="hidden" id="trainingId">
                 <div class="form-group">
                     <label class="form-label">Training Name</label>
                     <input type="text" class="form-input" id="trainingName" required>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Start Date</label>
-                        <input type="date" class="form-input" id="trainingStartDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">End Date</label>
-                        <input type="date" class="form-input" id="trainingEndDate" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Location</label>
-                        <input type="text" class="form-input" id="trainingLocation" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Max Capacity</label>
-                        <input type="number" class="form-input" id="trainingCapacity" required value="12">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Training Type</label>
-                        <input type="text" class="form-input" id="trainingType">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Level</label>
-                        <select class="form-select" id="trainingLevel">
-                            <option value="Beginning">Beginning</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="trainingStatus">
-                            <option value="Draft">Draft</option>
-                            <option value="Open">Open</option>
-                            <option value="Closed">Closed</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Price ($)</label>
-                        <input type="number" class="form-input" id="trainingPrice">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" class="form-input" id="trainingStartDate" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Cohort Name</label>
-                    <input type="text" class="form-input" id="trainingCohort">
+                    <label class="form-label">End Date</label>
+                    <input type="date" class="form-input" id="trainingEndDate" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="trainingDescription"></textarea>
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" id="trainingLocation" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Notes</label>
-                    <textarea class="form-textarea" id="trainingNotes"></textarea>
+                    <label class="form-label">Level</label>
+                    <select class="form-select" id="trainingLevel" required>
+                        <option value="">Select level</option>
+                        <option value="Beginning">Beginning</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Max Capacity</label>
+                    <input type="number" class="form-input" id="trainingCapacity" min="1" required>
                 </div>
                 <div style="display: flex; gap: 1rem;">
                     <button type="submit" class="btn btn-primary">Save Training</button>
@@ -1173,30 +1332,53 @@
     <div class="modal-overlay" id="participantModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title">Add Participant</h2>
+                <h2 class="modal-title">Participant</h2>
                 <button class="modal-close" onclick="closeModal('participantModal')">✕</button>
             </div>
-            <form id="participantForm">
+            <form onsubmit="submitParticipantForm(event)">
                 <input type="hidden" id="participantId">
                 <div class="form-group">
                     <label class="form-label">Training</label>
                     <select class="form-select" id="participantTraining" required>
-                        <option value="">Select a training</option>
+                        <option value="">Select training</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Name</label>
                     <input type="text" class="form-input" id="participantName" required>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="participantEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Phone</label>
-                        <input type="tel" class="form-input" id="participantPhone">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="participantEmail" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" id="participantPhone">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stage</label>
+                    <select class="form-select" id="participantStage" required>
+                        <option value="lead">Lead</option>
+                        <option value="chemistry_call">Chemistry Call</option>
+                        <option value="application">Application</option>
+                        <option value="interview">Interview</option>
+                        <option value="approval">Approval</option>
+                        <option value="payment">Payment</option>
+                        <option value="onboarding">Onboarding</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Status</label>
+                    <select class="form-select" id="participantPaymentStatus" required>
+                        <option value="Pending">Pending</option>
+                        <option value="Partial">Partial</option>
+                        <option value="Paid in Full">Paid in Full</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Payment Amount ($)</label>
+                    <input type="number" class="form-input" id="participantPaymentAmount" min="0" step="0.01">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Address</label>
@@ -1207,8 +1389,50 @@
                     <input type="date" class="form-input" id="participantBirthDate">
                 </div>
                 <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-primary">Add Participant</button>
+                    <button type="submit" class="btn btn-primary">Save Participant</button>
                     <button type="button" class="btn btn-secondary" onclick="closeModal('participantModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="emailTemplateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Email Template</h2>
+                <button class="modal-close" onclick="closeModal('emailTemplateModal')">✕</button>
+            </div>
+            <form onsubmit="submitEmailTemplateForm(event)">
+                <input type="hidden" id="emailTemplateId">
+                <div class="form-group">
+                    <label class="form-label">Template Name</label>
+                    <input type="text" class="form-input" id="emailTemplateName" placeholder="e.g., Chemistry Call Invitation" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stage</label>
+                    <select class="form-select" id="emailTemplateStage" required>
+                        <option value="">Select stage</option>
+                        <option value="lead">Lead</option>
+                        <option value="chemistry_call">Chemistry Call</option>
+                        <option value="application">Application</option>
+                        <option value="interview">Interview</option>
+                        <option value="approval">Approval</option>
+                        <option value="payment">Payment</option>
+                        <option value="onboarding">Onboarding</option>
+                        <option value="complete">Complete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-input" id="emailTemplateSubject" placeholder="Use {{variable}} for placeholders" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Body</label>
+                    <textarea class="form-textarea" id="emailTemplateBody" placeholder="Use {{name}}, {{email}}, {{training_name}}, {{training_dates}}, {{training_location}}, {{training_price}}" style="min-height: 200px;" required></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">Save Template</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('emailTemplateModal')">Cancel</button>
                 </div>
             </form>
         </div>
@@ -1238,6 +1462,8 @@
         let currentPage = 'dashboard';
         let trainingsData = [];
         let applicantsData = [];
+        let emailTemplatesData = [];
+        let emailLogData = [];
         let editDebounceTimer = {};
         const STAGE_ORDER = ['lead', 'chemistry_call', 'application', 'interview', 'approval', 'payment', 'onboarding', 'complete'];
 
@@ -1245,9 +1471,11 @@
         async function fetchAllData() {
             try {
                 updateConnectionStatus(true);
-                const [trainings, applicants] = await Promise.all([
+                const [trainings, applicants, emailTemplates, emailLog] = await Promise.all([
                     db.from('trainings').select('*'),
-                    db.from('applicants').select('*')
+                    db.from('applicants').select('*'),
+                    db.from('email_templates').select('*'),
+                    db.from('email_log').select('*')
                 ]);
 
                 if (trainings.error) throw trainings.error;
@@ -1255,7 +1483,10 @@
 
                 trainingsData = trainings.data || [];
                 applicantsData = applicants.data || [];
+                emailTemplatesData = emailTemplates.data || [];
+                emailLogData = emailLog.data || [];
 
+                populateSelects();
                 renderCurrentPage();
                 updateDashboard();
             } catch (error) {
@@ -1263,19 +1494,6 @@
                 updateConnectionStatus(false);
                 showToast('Error loading data: ' + error.message, 'error');
             }
-        }
-
-        // ==================== REAL-TIME SUBSCRIPTIONS ====================
-        function setupSubscriptions() {
-            db.from('trainings').on('*', payload => {
-                console.log('Training update:', payload);
-                fetchAllData();
-            }).subscribe();
-
-            db.from('applicants').on('*', payload => {
-                console.log('Applicant update:', payload);
-                fetchAllData();
-            }).subscribe();
         }
 
         // ==================== MODAL FUNCTIONS ====================
@@ -1288,6 +1506,7 @@
             document.getElementById(modalId).querySelector('form')?.reset();
             document.getElementById('trainingId').value = '';
             document.getElementById('participantId').value = '';
+            document.getElementById('emailTemplateId').value = '';
         }
 
         // ==================== SIDE PANEL FUNCTIONS ====================
@@ -1322,6 +1541,17 @@
             status.title = connected ? 'Connected' : 'Disconnected';
         }
 
+        // ==================== UTILITY FUNCTIONS ====================
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function formatDatetime(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
         // ==================== PAGE NAVIGATION ====================
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -1334,7 +1564,6 @@
             currentPage = page;
             window.location.hash = '#' + page;
 
-            // Update active nav
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.page === page) {
@@ -1342,7 +1571,6 @@
                 }
             });
 
-            // Show/hide sections
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
@@ -1355,7 +1583,32 @@
             if (currentPage === 'dashboard') renderDashboard();
             else if (currentPage === 'trainings') renderTrainings();
             else if (currentPage === 'participants') renderParticipants();
+            else if (currentPage === 'courses') renderCourses();
+            else if (currentPage === 'communications') renderCommunications();
             else if (currentPage === 'shipping') renderShipping();
+            else if (currentPage === 'settings') renderSettings();
+        }
+
+        // ==================== POPULATE SELECTS ====================
+        function populateSelects() {
+            const trainingSelect = document.getElementById('participantTraining');
+            const emailRecipientSelect = document.getElementById('emailRecipient');
+            const emailTemplateSelect = document.getElementById('emailTemplate');
+
+            trainingSelect.innerHTML = '<option value="">Select training</option>';
+            trainingsData.forEach(t => {
+                trainingSelect.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+            });
+
+            emailRecipientSelect.innerHTML = '<option value="">Select recipient...</option><option value="all">All in Selected Stage</option>';
+            applicantsData.forEach(a => {
+                emailRecipientSelect.innerHTML += `<option value="${a.id}">${a.name} (${a.email})</option>`;
+            });
+
+            emailTemplateSelect.innerHTML = '<option value="">Select template...</option>';
+            emailTemplatesData.forEach(t => {
+                emailTemplateSelect.innerHTML += `<option value="${t.id}">${t.template_name}</option>`;
+            });
         }
 
         // ==================== DASHBOARD ====================
@@ -1366,6 +1619,13 @@
                 .filter(a => a.payment_status === 'Paid in Full')
                 .reduce((sum, a) => sum + (a.payment_amount_cents || 0), 0);
             const upcomingTrainings = trainingsData.filter(t => new Date(t.start_date) > new Date()).length;
+
+            const emailsSentThisWeek = emailLogData.filter(e => {
+                const sent = new Date(e.sent_at);
+                const weekAgo = new Date(new Date() - 7 * 24 * 60 * 60 * 1000);
+                return sent > weekAgo;
+            }).length;
+
             const needsAttention = applicantsData.filter(a => {
                 const updated = new Date(a.updated_at);
                 const days = (new Date() - updated) / (1000 * 60 * 60 * 24);
@@ -1376,13 +1636,13 @@
             document.getElementById('kpiActivePipeline').textContent = activePipeline;
             document.getElementById('kpiRevenue').textContent = '$' + (revenue / 100).toLocaleString('en-US', { minimumFractionDigits: 2 });
             document.getElementById('kpiUpcomingTrainings').textContent = upcomingTrainings;
-            document.getElementById('kpiNeedsAttention').textContent = needsAttention;
+            document.getElementById('kpiEmailsSent').textContent = emailsSentThisWeek;
+            document.getElementById('kpiPendingActions').textContent = needsAttention;
         }
 
         function renderDashboard() {
             updateDashboard();
 
-            // Training Overview Cards
             const trainingCards = trainingsData
                 .filter(t => new Date(t.start_date) > new Date() || new Date(t.end_date) > new Date())
                 .slice(0, 5)
@@ -1422,7 +1682,6 @@
 
             document.getElementById('trainingOverviewCards').innerHTML = trainingCards || '<p style="color: var(--text-muted);">No upcoming trainings</p>';
 
-            // Pipeline Snapshot
             const pipelineCounts = {};
             STAGE_ORDER.forEach(stage => {
                 pipelineCounts[stage] = applicantsData.filter(a => a.pipeline_stage === stage).length;
@@ -1460,10 +1719,7 @@
             `;
             document.getElementById('pipelineSnapshot').innerHTML = pipelineHTML;
 
-            // Alerts
             const alerts = [];
-
-            // Stuck participants
             applicantsData.forEach(a => {
                 const updated = new Date(a.updated_at);
                 const days = Math.floor((new Date() - updated) / (1000 * 60 * 60 * 24));
@@ -1477,7 +1733,6 @@
                 }
             });
 
-            // Trainings at capacity
             trainingsData.forEach(t => {
                 const filled = applicantsData.filter(a => a.training_id === t.id).length;
                 if (filled >= (t.max_capacity || 12)) {
@@ -1598,10 +1853,10 @@
                                     <td>${participant.email}</td>
                                     <td>${training?.name || 'N/A'}</td>
                                     <td><span class="badge badge-primary">${stageLabel}</span></td>
-                                    <td><span class="badge ${participant.payment_status === 'Paid in Full' ? 'badge-success' : 'badge-warning'}">${participant.payment_status || 'Unpaid'}</span></td>
+                                    <td><span class="badge badge-secondary">${participant.payment_status}</span></td>
                                     <td>${daysInStage}d</td>
                                     <td>
-                                        <button class="btn btn-small btn-secondary" onclick="openParticipantPanel('${participant.id}')">View</button>
+                                        <button class="btn btn-small btn-secondary" onclick="viewParticipantDetails('${participant.id}')">View</button>
                                     </td>
                                 </tr>
                             `;
@@ -1612,39 +1867,362 @@
             document.getElementById('participantsList').innerHTML = html;
         }
 
-        // ==================== SHIPPING ====================
-        function renderShipping() {
-            const statusFilter = document.getElementById('shippingStatusFilter')?.value || '';
-            const filtered = applicantsData.filter(a => a.shipping_tracking_number && (!statusFilter || a.shipping_status === statusFilter));
+        // ==================== COURSES ====================
+        function renderCourses() {
+            const courseFilter = document.getElementById('courseFilter')?.value || '';
+
+            const courses = [
+                { id: 'beginning', name: 'Beginning Online Course', level: 'Beginning' },
+                { id: 'intermediate_1', name: 'Intermediate Workshop 1', level: 'Intermediate' },
+                { id: 'intermediate_2', name: 'Intermediate Workshop 2', level: 'Intermediate' },
+                { id: 'intermediate_3', name: 'Intermediate Workshop 3', level: 'Intermediate' },
+                { id: 'advanced', name: 'Advanced Online Course', level: 'Advanced' }
+            ];
+
+            const courseStats = courses.map(course => {
+                const enrolled = applicantsData.filter(a => {
+                    const courseAccess = a.course_access || {};
+                    return courseAccess[course.id];
+                }).length;
+                const percent = applicantsData.length > 0 ? Math.round((enrolled / applicantsData.length) * 100) : 0;
+                return { ...course, enrolled, percent };
+            });
 
             const html = `
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Training</th>
-                            <th>Address</th>
-                            <th>Carrier</th>
-                            <th>Tracking #</th>
+                            <th>Course Name</th>
+                            <th>Students Enrolled</th>
+                            <th>Level</th>
+                            <th>Progress</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${courseStats.map(course => `
+                            <tr>
+                                <td><strong>${course.name}</strong></td>
+                                <td>${course.enrolled}/${applicantsData.length}</td>
+                                <td><span class="badge badge-primary">${course.level}</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${course.percent}%"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-small btn-secondary">Manage</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('coursesList').innerHTML = html;
+
+            // Populate bulk course participant list
+            const bulkParticipantsList = document.getElementById('bulkCourseParticipants');
+            bulkParticipantsList.innerHTML = applicantsData.map(a => `
+                <div class="checkbox-list-item">
+                    <input type="checkbox" value="${a.id}">
+                    <label>${a.name}</label>
+                </div>
+            `).join('');
+        }
+
+        // ==================== COMMUNICATIONS ====================
+        function renderCommunications() {
+            renderEmailTemplates();
+            renderOutreach();
+            renderEmailLog();
+        }
+
+        function renderEmailTemplates() {
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Template Name</th>
+                            <th>Stage</th>
+                            <th>Subject</th>
+                            <th>Preview</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${emailTemplatesData.map(template => {
+                            const preview = template.body.substring(0, 50) + '...';
+                            return `
+                                <tr>
+                                    <td><strong>${template.template_name}</strong></td>
+                                    <td><span class="badge badge-secondary">${template.stage}</span></td>
+                                    <td>${template.subject}</td>
+                                    <td style="font-size: 0.85rem; color: var(--text-muted);">${preview}</td>
+                                    <td>
+                                        <button class="btn btn-small btn-secondary" onclick="editEmailTemplate('${template.id}')">Edit</button>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('emailTemplatesList').innerHTML = html;
+        }
+
+        function renderOutreach() {
+            // Quick action cards
+            const quickActions = [
+                { stage: 'chemistry_call', name: '☎️ Chemistry Call', action: 'Send Scheduling Link' },
+                { stage: 'application', name: '📝 Application', action: 'Send Application Link' },
+                { stage: 'interview', name: '🎤 Interview', action: 'Send Interview Scheduling' },
+                { stage: 'approval', name: '✅ Approval', action: 'Send Invitation + Payment Link' },
+                { stage: 'payment', name: '💳 Payment', action: 'Send Payment Link' },
+                { stage: 'onboarding', name: '🎓 Course Access', action: 'Send Course Access' },
+                { stage: 'complete', name: '🎉 Complete', action: 'Send Completion Notice' }
+            ];
+
+            const quickActionsHTML = quickActions.map(qa => `
+                <div class="quick-action-card">
+                    <div class="quick-action-title">${qa.name}</div>
+                    <div class="quick-action-description">${qa.action}</div>
+                    <button class="btn btn-secondary btn-small" onclick="quickActionEmail('${qa.stage}')">Compose</button>
+                </div>
+            `).join('');
+
+            document.getElementById('quickActionsContainer').innerHTML = quickActionsHTML;
+
+            // Update bulk participant list
+            const bulkStage = document.getElementById('bulkStageFilter')?.value || '';
+            updateBulkParticipants();
+        }
+
+        function renderEmailLog() {
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Subject</th>
+                            <th>Stage</th>
                             <th>Status</th>
-                            <th>Date Shipped</th>
+                            <th>Sent Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${emailLogData.slice(-50).reverse().map(log => {
+                            const applicant = applicantsData.find(a => a.id === log.applicant_id);
+                            return `
+                                <tr>
+                                    <td>${applicant?.name || 'Unknown'} (${log.to_email})</td>
+                                    <td>${log.subject}</td>
+                                    <td><span class="badge badge-secondary">${log.stage}</span></td>
+                                    <td><span class="badge badge-success">${log.status}</span></td>
+                                    <td>${formatDatetime(log.sent_at)}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('emailLogList').innerHTML = html;
+        }
+
+        // ==================== EMAIL FUNCTIONS ====================
+        function loadEmailTemplate() {
+            const templateId = document.getElementById('emailTemplate').value;
+            const template = emailTemplatesData.find(t => t.id === templateId);
+
+            if (template) {
+                document.getElementById('emailSubject').value = template.subject;
+                document.getElementById('emailBody').value = template.body;
+                fillEmailVariables();
+            }
+        }
+
+        function fillEmailVariables() {
+            const recipientId = document.getElementById('emailRecipient').value;
+            let subject = document.getElementById('emailSubject').value;
+            let body = document.getElementById('emailBody').value;
+
+            if (recipientId && recipientId !== 'all') {
+                const recipient = applicantsData.find(a => a.id === recipientId);
+                const training = trainingsData.find(t => t.id === recipient?.training_id);
+
+                if (recipient && training) {
+                    subject = subject
+                        .replace(/{{name}}/g, recipient.name)
+                        .replace(/{{email}}/g, recipient.email)
+                        .replace(/{{training_name}}/g, training.name)
+                        .replace(/{{training_dates}}/g, `${formatDate(training.start_date)} - ${formatDate(training.end_date)}`)
+                        .replace(/{{training_location}}/g, training.location)
+                        .replace(/{{training_price}}/g, training.price_cents ? '$' + (training.price_cents / 100).toFixed(2) : 'TBD');
+
+                    body = body
+                        .replace(/{{name}}/g, recipient.name)
+                        .replace(/{{email}}/g, recipient.email)
+                        .replace(/{{training_name}}/g, training.name)
+                        .replace(/{{training_dates}}/g, `${formatDate(training.start_date)} - ${formatDate(training.end_date)}`)
+                        .replace(/{{training_location}}/g, training.location)
+                        .replace(/{{training_price}}/g, training.price_cents ? '$' + (training.price_cents / 100).toFixed(2) : 'TBD');
+
+                    document.getElementById('emailSubject').value = subject;
+                    document.getElementById('emailBody').value = body;
+                }
+            }
+        }
+
+        function copyEmailToClipboard() {
+            const body = document.getElementById('emailBody').value;
+            navigator.clipboard.writeText(body).then(() => {
+                showToast('Email copied to clipboard', 'success');
+            });
+        }
+
+        function openEmailInGmail() {
+            const subject = encodeURIComponent(document.getElementById('emailSubject').value);
+            const body = encodeURIComponent(document.getElementById('emailBody').value);
+            const recipientId = document.getElementById('emailRecipient').value;
+            const recipient = applicantsData.find(a => a.id === recipientId);
+
+            if (recipient) {
+                const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient.email}&su=${subject}&body=${body}`;
+                window.open(gmailURL, '_blank');
+            } else {
+                showToast('Please select a recipient', 'warning');
+            }
+        }
+
+        function logEmailAsSent() {
+            const recipientId = document.getElementById('emailRecipient').value;
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+            const recipient = applicantsData.find(a => a.id === recipientId);
+
+            if (!recipientId || !subject || !body) {
+                showToast('Please fill in all fields', 'warning');
+                return;
+            }
+
+            const newLog = {
+                applicant_id: recipientId,
+                to_email: recipient.email,
+                subject: subject,
+                body: body,
+                stage: recipient.pipeline_stage || 'lead',
+                status: 'sent',
+                sent_at: new Date().toISOString()
+            };
+
+            db.from('email_log').insert([newLog]).then(({ data, error }) => {
+                if (error) {
+                    showToast('Error logging email: ' + error.message, 'error');
+                } else {
+                    emailLogData.push(newLog);
+                    // Update participant email count
+                    const p = applicantsData.find(a => a.id === recipientId);
+                    if (p) {
+                        p.email_count = (p.email_count || 0) + 1;
+                        p.last_email_sent_at = newLog.sent_at;
+                        db.from('applicants').update({ email_count: p.email_count, last_email_sent_at: p.last_email_sent_at }).eq('id', recipientId);
+                    }
+                    showToast('Email logged as sent', 'success');
+                }
+            });
+            document.getElementById('emailSubject').value = '';
+            document.getElementById('emailBody').value = '';
+            document.getElementById('emailRecipient').value = '';
+            renderEmailLog();
+        }
+
+        function quickActionEmail(stage) {
+            const stageFilter = document.getElementById('bulkStageFilter');
+            stageFilter.value = stage;
+            updateBulkParticipants();
+            switchCommunicationTab('outreach');
+        }
+
+        function updateBulkParticipants() {
+            const stage = document.getElementById('bulkStageFilter')?.value || '';
+            const filtered = stage ? applicantsData.filter(a => a.pipeline_stage === stage) : applicantsData;
+
+            const html = filtered.map(a => `
+                <div class="checkbox-list-item">
+                    <input type="checkbox" value="${a.id}">
+                    <label>${a.name} (${a.email})</label>
+                </div>
+            `).join('');
+
+            document.getElementById('bulkParticipantList').innerHTML = html;
+        }
+
+        function sendToSelectedBulk() {
+            const checkboxes = document.querySelectorAll('#bulkParticipantList input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                showToast('Please select participants', 'warning');
+                return;
+            }
+
+            const recipientIds = Array.from(checkboxes).map(cb => cb.value);
+            const recipients = applicantsData.filter(a => recipientIds.includes(a.id));
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+
+            if (!subject || !body) {
+                showToast('Please fill in subject and body', 'warning');
+                return;
+            }
+
+            // Log all emails
+            recipients.forEach(recipient => {
+                const newLog = {
+                    applicant_id: recipient.id,
+                    to_email: recipient.email,
+                    subject: subject,
+                    body: body,
+                    stage: recipient.pipeline_stage || 'lead',
+                    status: 'sent',
+                    sent_at: new Date().toISOString()
+                };
+                emailLogData.push(newLog);
+            });
+
+            showToast(`Email sent to ${recipients.length} recipients`, 'success');
+            document.getElementById('emailSubject').value = '';
+            document.getElementById('emailBody').value = '';
+            renderEmailLog();
+        }
+
+        // ==================== SHIPPING ====================
+        function renderShipping() {
+            const filter = document.getElementById('shippingFilter')?.value || '';
+            const filtered = filter ? applicantsData.filter(a => a.shipping_status === filter) : applicantsData;
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Participant</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Tracking</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${filtered.map(participant => {
-                            const training = trainingsData.find(t => t.id === participant.training_id);
+                            const status = participant.shipping_status || 'pending';
+                            const tracking = participant.tracking_number || 'N/A';
                             return `
                                 <tr>
-                                    <td>${participant.name}</td>
-                                    <td>${training?.name || 'N/A'}</td>
+                                    <td><strong>${participant.name}</strong></td>
+                                    <td>${participant.email}</td>
                                     <td>${participant.address || 'N/A'}</td>
-                                    <td>${participant.shipping_carrier || 'N/A'}</td>
-                                    <td><code>${participant.shipping_tracking_number || 'N/A'}</code></td>
-                                    <td><span class="badge ${participant.shipping_status === 'delivered' ? 'badge-success' : 'badge-warning'}">${participant.shipping_status || 'not_shipped'}</span></td>
-                                    <td>${participant.shipping_date ? formatDate(participant.shipping_date) : 'N/A'}</td>
+                                    <td><span class="badge badge-warning">${status}</span></td>
+                                    <td>${tracking}</td>
                                     <td>
-                                        ${participant.shipping_tracking_number ? `<button class="btn btn-small btn-secondary" onclick="trackPackage('${participant.shipping_carrier}', '${participant.shipping_tracking_number}')">Track</button>` : ''}
+                                        <button class="btn btn-small btn-secondary" onclick="viewParticipantDetails('${participant.id}')">Update</button>
                                     </td>
                                 </tr>
                             `;
@@ -1653,298 +2231,145 @@
                 </table>
             `;
             document.getElementById('shippingList').innerHTML = html;
-
-            // Shipping stats
-            const stats = {};
-            ['not_shipped', 'label_created', 'in_transit', 'delivered'].forEach(status => {
-                stats[status] = applicantsData.filter(a => a.shipping_status === status).length;
-            });
-
-            const statsHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Count</th>
-                            <th>Percentage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${Object.entries(stats).map(([status, count]) => {
-                            const total = applicantsData.filter(a => a.shipping_tracking_number).length;
-                            const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-                            return `
-                                <tr>
-                                    <td>${status.replace(/_/g, ' ').toUpperCase()}</td>
-                                    <td>${count}</td>
-                                    <td>${percent}%</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            `;
-            document.getElementById('shippingStats').innerHTML = statsHtml;
         }
 
-        // ==================== PARTICIPANT PANEL ====================
-        function openParticipantPanel(participantId) {
-            const participant = applicantsData.find(p => p.id === participantId);
-            if (!participant) return;
+        // ==================== SETTINGS ====================
+        function renderSettings() {
+            const settings = JSON.parse(localStorage.getItem('stepwiseSettings') || '{}');
+            document.getElementById('settingsChemistryLink').value = settings.chemistryLink || '';
+            document.getElementById('settingsInterviewLink').value = settings.interviewLink || '';
+            document.getElementById('settingsPaymentLink').value = settings.paymentLink || '';
+            document.getElementById('settingsPortalLink').value = settings.portalLink || '';
+            document.getElementById('settingsSignature').value = settings.signature || '';
+        }
 
-            const training = trainingsData.find(t => t.id === participant.training_id);
-            const daysInStage = Math.floor((new Date() - new Date(participant.updated_at)) / (1000 * 60 * 60 * 24));
-            const stageIndex = STAGE_ORDER.indexOf(participant.pipeline_stage || 'lead');
+        function saveSchedulingLinks() {
+            const settings = {
+                chemistryLink: document.getElementById('settingsChemistryLink').value,
+                interviewLink: document.getElementById('settingsInterviewLink').value,
+                paymentLink: document.getElementById('settingsPaymentLink').value,
+                portalLink: document.getElementById('settingsPortalLink').value,
+                signature: document.getElementById('settingsSignature').value
+            };
+            localStorage.setItem('stepwiseSettings', JSON.stringify(settings));
+            showToast('Scheduling links saved', 'success');
+        }
+
+        function saveEmailSignature() {
+            const settings = JSON.parse(localStorage.getItem('stepwiseSettings') || '{}');
+            settings.signature = document.getElementById('settingsSignature').value;
+            localStorage.setItem('stepwiseSettings', JSON.stringify(settings));
+            showToast('Email signature saved', 'success');
+        }
+
+        // ==================== PARTICIPANT DETAILS PANEL ====================
+        function viewParticipantDetails(participantId) {
+            const participant = applicantsData.find(a => a.id === participantId);
+            const training = trainingsData.find(t => t.id === participant?.training_id);
+            const emailHistory = emailLogData.filter(e => e.applicant_id === participantId);
+            const lastEmail = emailHistory.length > 0 ? emailHistory[emailHistory.length - 1] : null;
+
+            const courseAccess = participant?.course_access || {};
+            const courseLevel = participant?.course_level || 'Not Set';
+
+            const courseCheckboxes = `
+                <div class="checkbox-list-item">
+                    <input type="checkbox" ${courseAccess.beginning ? 'checked' : ''} onchange="updateParticipantCourse('${participantId}', 'beginning', this.checked)">
+                    <label>Beginning Online Course</label>
+                </div>
+                <div class="checkbox-list-item">
+                    <input type="checkbox" ${courseAccess.intermediate_1 ? 'checked' : ''} onchange="updateParticipantCourse('${participantId}', 'intermediate_1', this.checked)">
+                    <label>Intermediate Workshop 1</label>
+                </div>
+                <div class="checkbox-list-item">
+                    <input type="checkbox" ${courseAccess.intermediate_2 ? 'checked' : ''} onchange="updateParticipantCourse('${participantId}', 'intermediate_2', this.checked)">
+                    <label>Intermediate Workshop 2</label>
+                </div>
+                <div class="checkbox-list-item">
+                    <input type="checkbox" ${courseAccess.intermediate_3 ? 'checked' : ''} onchange="updateParticipantCourse('${participantId}', 'intermediate_3', this.checked)">
+                    <label>Intermediate Workshop 3</label>
+                </div>
+                <div class="checkbox-list-item">
+                    <input type="checkbox" ${courseAccess.advanced ? 'checked' : ''} onchange="updateParticipantCourse('${participantId}', 'advanced', this.checked)">
+                    <label>Advanced Online Course</label>
+                </div>
+            `;
+
+            const emailHistoryHTML = emailHistory.length > 0 ? emailHistory.map(e => `
+                <div style="font-size: 0.85rem; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
+                    <div style="color: var(--text-muted); margin-bottom: 0.25rem;">📧 ${e.subject}</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">${formatDatetime(e.sent_at)}</div>
+                </div>
+            `).join('') : '<p style="color: var(--text-muted); font-size: 0.9rem;">No emails sent yet</p>';
 
             const content = `
                 <div class="panel-section">
-                    <div class="panel-section-title">Contact Information</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Name</div>
-                            <div class="panel-editable" onclick="makeEditable(this, 'name', '${participantId}')">
-                                <div class="panel-value">${participant.name}</div>
-                            </div>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Training</div>
-                            <div class="panel-value">${training?.name || 'N/A'}</div>
-                        </div>
+                    <div class="panel-section-title">Personal Info</div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Name</div>
+                        <div class="panel-field-value">${participant.name}</div>
                     </div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Email</div>
-                            <div class="panel-editable" onclick="makeEditable(this, 'email', '${participantId}')">
-                                <div class="panel-value">${participant.email}</div>
-                            </div>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Phone</div>
-                            <div class="panel-editable" onclick="makeEditable(this, 'phone', '${participantId}')">
-                                <div class="panel-value">${participant.phone || 'N/A'}</div>
-                            </div>
-                        </div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Email</div>
+                        <div class="panel-field-value">${participant.email}</div>
                     </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Address</div>
-                        <div class="panel-editable" onclick="makeEditable(this, 'address', '${participantId}')">
-                            <div class="panel-value">${participant.address || 'N/A'}</div>
-                        </div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Phone</div>
+                        <div class="panel-field-value">${participant.phone || 'N/A'}</div>
+                    </div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Address</div>
+                        <div class="panel-field-value">${participant.address || 'N/A'}</div>
                     </div>
                 </div>
 
                 <div class="panel-section">
-                    <div class="panel-section-title">Pipeline Progress</div>
-                    <div style="margin-bottom: 1rem;">
-                        <strong>${(participant.pipeline_stage || 'lead').replace(/_/g, ' ').toUpperCase()}</strong> - ${daysInStage} days
+                    <div class="panel-section-title">Training Info</div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Training</div>
+                        <div class="panel-field-value">${training?.name || 'N/A'}</div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; overflow-x: auto;">
-                        ${STAGE_ORDER.map((stage, idx) => `
-                            <div class="stage-dot ${idx === stageIndex ? 'active' : idx < stageIndex ? 'completed' : ''}">${idx + 1}</div>
-                            ${idx < STAGE_ORDER.length - 1 ? `<div class="stage-connector ${idx < stageIndex ? 'active' : ''}"></div>` : ''}
-                        `).join('')}
+                    <div class="panel-field">
+                        <div class="panel-field-label">Stage</div>
+                        <div class="panel-field-value"><span class="badge badge-primary">${(participant.pipeline_stage || 'lead').replace(/_/g, ' ').toUpperCase()}</span></div>
                     </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-small btn-primary" onclick="advanceStage('${participantId}')">Advance Stage</button>
-                        <select class="form-select" style="flex: 1; font-size: 0.85rem;" onchange="moveToStage('${participantId}', this.value)">
-                            <option value="">Jump to stage...</option>
-                            ${STAGE_ORDER.map(stage => `<option value="${stage}">${stage.replace(/_/g, ' ')}</option>`).join('')}
+                    <div class="panel-field">
+                        <div class="panel-field-label">Payment Status</div>
+                        <div class="panel-field-value"><span class="badge badge-secondary">${participant.payment_status}</span></div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-section-title">Course Access</div>
+                    <div class="form-group">
+                        <label class="form-label">Course Level</label>
+                        <select class="form-select" onchange="updateParticipantLevel('${participantId}', this.value)">
+                            <option value="" ${courseLevel === 'Not Set' ? 'selected' : ''}>Not Set</option>
+                            <option value="Beginning" ${courseLevel === 'Beginning' ? 'selected' : ''}>Beginning</option>
+                            <option value="Intermediate" ${courseLevel === 'Intermediate' ? 'selected' : ''}>Intermediate</option>
+                            <option value="Advanced" ${courseLevel === 'Advanced' ? 'selected' : ''}>Advanced</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">Payment</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Status</div>
-                            <select class="form-select" value="${participant.payment_status}" onchange="updateField('${participantId}', 'payment_status', this.value)">
-                                <option value="Unpaid">Unpaid</option>
-                                <option value="Deposit">Deposit</option>
-                                <option value="Paid in Full">Paid in Full</option>
-                            </select>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Amount</div>
-                            <input type="number" class="form-input" value="${participant.payment_amount_cents ? participant.payment_amount_cents / 100 : ''}" onchange="updatePaymentAmount('${participantId}', this.value)">
-                        </div>
-                    </div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Payment Date</div>
-                            <input type="date" class="form-input" value="${participant.payment_date ? participant.payment_date.split('T')[0] : ''}" onchange="updateField('${participantId}', 'payment_date', this.value)">
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Deposit Received</div>
-                            <input type="checkbox" class="checkbox" ${participant.deposit_received ? 'checked' : ''} onchange="updateField('${participantId}', 'deposit_received', this.checked)">
-                        </div>
+                    <div class="course-checkbox-group">
+                        ${courseCheckboxes}
                     </div>
                 </div>
 
                 <div class="panel-section">
-                    <div class="panel-section-title">Chemistry Call</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Date</div>
-                            <input type="datetime-local" class="form-input" value="${participant.chemistry_call_date ? formatDateTime(participant.chemistry_call_date) : ''}" onchange="updateField('${participantId}', 'chemistry_call_date', this.value)">
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Status</div>
-                            <select class="form-select" value="${participant.chemistry_call_status || ''}" onchange="updateField('${participantId}', 'chemistry_call_status', this.value)">
-                                <option value="">Not scheduled</option>
-                                <option value="Scheduled">Scheduled</option>
-                                <option value="Completed">Completed</option>
-                                <option value="No Show">No Show</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Notes</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'chemistry_call_notes', this.value)" style="min-height: 60px;">${participant.chemistry_call_notes || ''}</textarea>
-                    </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">Interview</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Date</div>
-                            <input type="datetime-local" class="form-input" value="${participant.interview_date ? formatDateTime(participant.interview_date) : ''}" onchange="updateField('${participantId}', 'interview_date', this.value)">
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Status</div>
-                            <select class="form-select" value="${participant.interview_status || ''}" onchange="updateField('${participantId}', 'interview_status', this.value)">
-                                <option value="">Not scheduled</option>
-                                <option value="Scheduled">Scheduled</option>
-                                <option value="Completed">Completed</option>
-                                <option value="No Show">No Show</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Notes</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'interview_notes_detail', this.value)" style="min-height: 60px;">${participant.interview_notes_detail || ''}</textarea>
-                    </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">Onboarding</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Accommodation</div>
-                            <select class="form-select" value="${participant.accommodation_choice || ''}" onchange="updateField('${participantId}', 'accommodation_choice', this.value)">
-                                <option value="">Select...</option>
-                                <option value="Single">Single</option>
-                                <option value="Shared">Shared</option>
-                                <option value="None">None</option>
-                            </select>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Confirmed</div>
-                            <input type="checkbox" class="checkbox" ${participant.accommodation_confirmed ? 'checked' : ''} onchange="updateField('${participantId}', 'accommodation_confirmed', this.checked)">
-                        </div>
-                    </div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Online Course Access</div>
-                            <input type="checkbox" class="checkbox" ${participant.online_course_access ? 'checked' : ''} onchange="updateField('${participantId}', 'online_course_access', this.checked)">
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Course Progress %</div>
-                            <input type="number" class="form-input" value="${participant.online_course_progress || 0}" onchange="updateField('${participantId}', 'online_course_progress', this.value)">
-                        </div>
-                    </div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Signed Waiver</div>
-                            <input type="checkbox" class="checkbox" ${participant.signed_waiver ? 'checked' : ''} onchange="updateField('${participantId}', 'signed_waiver', this.checked)">
-                        </div>
-                    </div>
+                    <div class="panel-section-title">Email History <span class="email-count-badge">${emailHistory.length}</span></div>
+                    ${emailHistoryHTML}
+                    <button class="btn btn-secondary btn-small" style="width: 100%; margin-top: 1rem;" onclick="sendEmailToParticipant('${participantId}'">📧 Send Email</button>
                 </div>
 
                 <div class="panel-section">
                     <div class="panel-section-title">Shipping</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Tracking #</div>
-                            <input type="text" class="form-input" value="${participant.shipping_tracking_number || ''}" onchange="updateField('${participantId}', 'shipping_tracking_number', this.value)">
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Carrier</div>
-                            <select class="form-select" value="${participant.shipping_carrier || ''}" onchange="updateField('${participantId}', 'shipping_carrier', this.value)">
-                                <option value="">Select...</option>
-                                <option value="usps">USPS</option>
-                                <option value="ups">UPS</option>
-                                <option value="fedex">FedEx</option>
-                            </select>
-                        </div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Status</div>
+                        <div class="panel-field-value"><span class="badge badge-warning">${participant.shipping_status || 'Pending'}</span></div>
                     </div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Status</div>
-                            <select class="form-select" value="${participant.shipping_status || ''}" onchange="updateField('${participantId}', 'shipping_status', this.value)">
-                                <option value="">Select...</option>
-                                <option value="not_shipped">Not Shipped</option>
-                                <option value="label_created">Label Created</option>
-                                <option value="in_transit">In Transit</option>
-                                <option value="delivered">Delivered</option>
-                            </select>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Date Shipped</div>
-                            <input type="date" class="form-input" value="${participant.shipping_date ? participant.shipping_date.split('T')[0] : ''}" onchange="updateField('${participantId}', 'shipping_date', this.value)">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">Health & Dietary</div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Dietary Preferences</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'dietary_preferences', this.value)" style="min-height: 60px;">${participant.dietary_preferences || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Allergies</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'allergies', this.value)" style="min-height: 60px;">${participant.allergies || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Physical Health Notes</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'physical_health', this.value)" style="min-height: 60px;">${participant.physical_health || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Physical Medications</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'physical_medications', this.value)" style="min-height: 60px;">${participant.physical_medications || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Mental Health Diagnosis</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'mental_health_dx', this.value)" style="min-height: 60px;">${participant.mental_health_dx || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Current Mental Health</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'current_mental_health', this.value)" style="min-height: 60px;">${participant.current_mental_health || ''}</textarea>
-                    </div>
-                    <div class="panel-field" style="grid-column: 1/-1;">
-                        <div class="panel-label">Psych Medications</div>
-                        <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'psych_medications', this.value)" style="min-height: 60px;">${participant.psych_medications || ''}</textarea>
-                    </div>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">General Notes</div>
-                    <textarea class="form-textarea" onchange="debounceUpdate('${participantId}', 'notes', this.value)" style="min-height: 80px;">${participant.notes || ''}</textarea>
-                </div>
-
-                <div class="panel-section">
-                    <div class="panel-section-title">Metadata</div>
-                    <div class="panel-row">
-                        <div class="panel-field">
-                            <div class="panel-label">Created</div>
-                            <div class="panel-value">${formatDate(participant.created_at)}</div>
-                        </div>
-                        <div class="panel-field">
-                            <div class="panel-label">Updated</div>
-                            <div class="panel-value">${formatDate(participant.updated_at)}</div>
-                        </div>
+                    <div class="panel-field">
+                        <div class="panel-field-label">Tracking Number</div>
+                        <div class="panel-field-value">${participant.tracking_number || 'N/A'}</div>
                     </div>
                 </div>
             `;
@@ -1953,325 +2378,184 @@
             openSidePanel(content);
         }
 
-        // ==================== EDITING FUNCTIONS ====================
-        function makeEditable(element, field, participantId) {
-            const currentValue = element.querySelector('.panel-value').textContent;
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'form-input';
-            input.value = currentValue === 'N/A' ? '' : currentValue;
-            input.onblur = () => {
-                updateField(participantId, field, input.value);
-                openParticipantPanel(participantId);
-            };
-            input.onkeypress = (e) => {
-                if (e.key === 'Enter') {
-                    updateField(participantId, field, input.value);
-                    openParticipantPanel(participantId);
-                }
-            };
-            element.innerHTML = '';
-            element.appendChild(input);
-            input.focus();
+        function updateParticipantCourse(participantId, courseId, checked) {
+            const participant = applicantsData.find(a => a.id === participantId);
+            if (participant) {
+                if (!participant.course_access) participant.course_access = {};
+                participant.course_access[courseId] = checked;
+                db.from('applicants').update({ course_access: participant.course_access }).eq('id', participantId).then(({ error }) => {
+                    if (error) showToast('Error: ' + error.message, 'error');
+                    else showToast(`${courseId.replace(/_/g, ' ')} access ${checked ? 'granted' : 'revoked'}`, 'success');
+                });
+            }
         }
 
-        function updateField(participantId, field, value) {
-            const participant = applicantsData.find(p => p.id === participantId);
-            if (!participant) return;
-
-            participant[field] = value;
-            participant.updated_at = new Date().toISOString();
-
-            db.from('applicants').update(participant).eq('id', participantId).then(({ error }) => {
-                if (error) {
-                    showToast('Error updating participant: ' + error.message, 'error');
-                } else {
-                    showToast('Participant updated', 'success');
-                }
-            });
+        function updateParticipantLevel(participantId, level) {
+            const participant = applicantsData.find(a => a.id === participantId);
+            if (participant) {
+                participant.course_level = level;
+                db.from('applicants').update({ course_level: level }).eq('id', participantId).then(({ error }) => {
+                    if (error) showToast('Error: ' + error.message, 'error');
+                    else showToast('Course level updated', 'success');
+                });
+            }
         }
 
-        function debounceUpdate(participantId, field, value) {
-            clearTimeout(editDebounceTimer[field]);
-            editDebounceTimer[field] = setTimeout(() => {
-                updateField(participantId, field, value);
-            }, 300);
+        function sendEmailToParticipant(participantId) {
+            const participant = applicantsData.find(a => a.id === participantId);
+            document.getElementById('emailRecipient').value = participantId;
+            fillEmailVariables();
+            switchCommunicationTab('outreach');
+            navigateToPage('communications');
         }
 
-        function updatePaymentAmount(participantId, dollars) {
-            const cents = Math.round(parseFloat(dollars) * 100) || 0;
-            updateField(participantId, 'payment_amount_cents', cents);
-        }
+        function bulkGrantCourseAccess() {
+            const checkboxes = document.querySelectorAll('#bulkCourseParticipants input[type="checkbox"]:checked');
+            const courseCheckboxes = document.querySelectorAll('.quick-action-card input[type="checkbox"]:checked');
 
-        // ==================== STAGE ADVANCEMENT ====================
-        async function advanceStage(participantId) {
-            const participant = applicantsData.find(p => p.id === participantId);
-            if (!participant) return;
-
-            const currentStageIndex = STAGE_ORDER.indexOf(participant.pipeline_stage || 'lead');
-            if (currentStageIndex >= STAGE_ORDER.length - 1) {
-                showToast('Already at final stage', 'warning');
+            if (checkboxes.length === 0 || courseCheckboxes.length === 0) {
+                showToast('Please select participants and courses', 'warning');
                 return;
             }
 
-            const nextStage = STAGE_ORDER[currentStageIndex + 1];
-            const note = prompt(`Add a note for advancing to ${nextStage}:`, '');
-            if (note === null) return;
+            const participantIds = Array.from(checkboxes).map(cb => cb.value);
+            const courseIds = Array.from(document.querySelectorAll('.form-group:has(label) input[type="checkbox"]:checked')).map(cb => cb.id.replace('courseBulk', '').toLowerCase());
 
-            participant.pipeline_stage = nextStage;
-            participant.updated_at = new Date().toISOString();
-
-            const { error } = await db.from('applicants').update(participant).eq('id', participantId);
-            if (error) {
-                showToast('Error advancing stage: ' + error.message, 'error');
-            } else {
-                showToast(`Advanced to ${nextStage}`, 'success');
-                openParticipantPanel(participantId);
-            }
-        }
-
-        function moveToStage(participantId, stage) {
-            if (!stage) return;
-            const participant = applicantsData.find(p => p.id === participantId);
-            if (!participant) return;
-
-            participant.pipeline_stage = stage;
-            participant.updated_at = new Date().toISOString();
-
-            db.from('applicants').update(participant).eq('id', participantId).then(({ error }) => {
-                if (error) {
-                    showToast('Error moving stage: ' + error.message, 'error');
-                } else {
-                    showToast(`Moved to ${stage}`, 'success');
-                    openParticipantPanel(participantId);
+            participantIds.forEach(pId => {
+                const participant = applicantsData.find(a => a.id === pId);
+                if (participant) {
+                    if (!participant.course_access) participant.course_access = {};
+                    courseIds.forEach(cId => {
+                        participant.course_access[cId] = true;
+                    });
                 }
             });
+
+            showToast(`Course access granted to ${participantIds.length} participants`, 'success');
         }
 
-        // ==================== TRAINING CRUD ====================
-        function editTraining(trainingId) {
-            const training = trainingsData.find(t => t.id === trainingId);
-            if (!training) return;
+        // ==================== FORM SUBMISSION ====================
+        function submitParticipantForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('participantId').value;
+            const data = {
+                name: document.getElementById('participantName').value,
+                email: document.getElementById('participantEmail').value,
+                phone: document.getElementById('participantPhone').value,
+                training_id: document.getElementById('participantTraining').value,
+                pipeline_stage: document.getElementById('participantStage').value,
+                payment_status: document.getElementById('participantPaymentStatus').value,
+                payment_amount_cents: parseInt(document.getElementById('participantPaymentAmount').value || 0) * 100,
+                address: document.getElementById('participantAddress').value,
+                birth_date: document.getElementById('participantBirthDate').value
+            };
 
-            document.getElementById('trainingId').value = trainingId;
-            document.getElementById('trainingName').value = training.name;
-            document.getElementById('trainingStartDate').value = training.start_date;
-            document.getElementById('trainingEndDate').value = training.end_date;
-            document.getElementById('trainingLocation').value = training.location;
-            document.getElementById('trainingCapacity').value = training.max_capacity || 12;
-            document.getElementById('trainingType').value = training.training_type || '';
-            document.getElementById('trainingLevel').value = training.training_level || 'Beginning';
-            document.getElementById('trainingStatus').value = training.status || 'Draft';
-            document.getElementById('trainingPrice').value = training.price_cents ? training.price_cents / 100 : '';
-            document.getElementById('trainingCohort').value = training.cohort_name || '';
-            document.getElementById('trainingDescription').value = training.description || '';
-            document.getElementById('trainingNotes').value = training.notes || '';
+            if (id) {
+                const idx = applicantsData.findIndex(a => a.id === id);
+                if (idx >= 0) {
+                    applicantsData[idx] = { ...applicantsData[idx], ...data };
+                }
+            } else {
+                applicantsData.push({ id: Date.now().toString(), ...data });
+            }
 
-            document.querySelector('#trainingModal .modal-title').textContent = 'Edit Training';
-            openModal('trainingModal');
+            showToast('Participant saved', 'success');
+            closeModal('participantModal');
+            renderParticipants();
         }
 
-        document.getElementById('newTrainingBtn')?.addEventListener('click', () => {
-            document.getElementById('trainingId').value = '';
-            document.getElementById('trainingForm').reset();
-            document.querySelector('#trainingModal .modal-title').textContent = 'New Training';
-            openModal('trainingModal');
-        });
+        function submitEmailTemplateForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('emailTemplateId').value;
+            const data = {
+                template_name: document.getElementById('emailTemplateName').value,
+                stage: document.getElementById('emailTemplateStage').value,
+                subject: document.getElementById('emailTemplateSubject').value,
+                body: document.getElementById('emailTemplateBody').value
+            };
 
-        document.getElementById('newTrainingBtn2')?.addEventListener('click', () => {
-            document.getElementById('trainingId').value = '';
-            document.getElementById('trainingForm').reset();
-            document.querySelector('#trainingModal .modal-title').textContent = 'New Training';
-            openModal('trainingModal');
-        });
+            if (id) {
+                const idx = emailTemplatesData.findIndex(t => t.id === id);
+                if (idx >= 0) {
+                    emailTemplatesData[idx] = { ...emailTemplatesData[idx], ...data };
+                }
+            } else {
+                emailTemplatesData.push({ id: Date.now().toString(), ...data });
+            }
 
-        document.getElementById('trainingForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            showToast('Email template saved', 'success');
+            closeModal('emailTemplateModal');
+            populateSelects();
+            renderEmailTemplates();
+        }
 
-            const trainingId = document.getElementById('trainingId').value;
-            const trainingData = {
+        function submitTrainingForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('trainingId').value;
+            const data = {
                 name: document.getElementById('trainingName').value,
                 start_date: document.getElementById('trainingStartDate').value,
                 end_date: document.getElementById('trainingEndDate').value,
                 location: document.getElementById('trainingLocation').value,
-                max_capacity: parseInt(document.getElementById('trainingCapacity').value),
-                training_type: document.getElementById('trainingType').value,
                 training_level: document.getElementById('trainingLevel').value,
-                status: document.getElementById('trainingStatus').value,
-                price_cents: Math.round(parseFloat(document.getElementById('trainingPrice').value) * 100) || 0,
-                cohort_name: document.getElementById('trainingCohort').value,
-                description: document.getElementById('trainingDescription').value,
-                notes: document.getElementById('trainingNotes').value,
-                show_on_apply: true,
-                created_at: new Date().toISOString()
+                max_capacity: parseInt(document.getElementById('trainingCapacity').value)
             };
 
-            let result;
-            if (trainingId) {
-                result = await db.from('trainings').update(trainingData).eq('id', trainingId);
+            if (id) {
+                const idx = trainingsData.findIndex(t => t.id === id);
+                if (idx >= 0) {
+                    trainingsData[idx] = { ...trainingsData[idx], ...data };
+                }
             } else {
-                result = await db.from('trainings').insert([trainingData]);
+                trainingsData.push({ id: Date.now().toString(), ...data });
             }
 
-            if (result.error) {
-                showToast('Error saving training: ' + result.error.message, 'error');
-            } else {
-                showToast(trainingId ? 'Training updated' : 'Training created', 'success');
-                closeModal('trainingModal');
-                fetchAllData();
-            }
-        });
+            showToast('Training saved', 'success');
+            closeModal('trainingModal');
+            populateSelects();
+            renderTrainings();
+        }
 
-        // ==================== PARTICIPANT CRUD ====================
-        function showAddParticipantModal(trainingId = '') {
-            document.getElementById('participantId').value = '';
-            document.getElementById('participantForm').reset();
-            if (trainingId) {
-                document.getElementById('participantTraining').value = trainingId;
+        // ==================== EDIT FUNCTIONS ====================
+        function editTraining(id) {
+            const training = trainingsData.find(t => t.id === id);
+            if (training) {
+                document.getElementById('trainingId').value = training.id;
+                document.getElementById('trainingName').value = training.name;
+                document.getElementById('trainingStartDate').value = training.start_date.split('T')[0];
+                document.getElementById('trainingEndDate').value = training.end_date.split('T')[0];
+                document.getElementById('trainingLocation').value = training.location;
+                document.getElementById('trainingLevel').value = training.training_level;
+                document.getElementById('trainingCapacity').value = training.max_capacity;
+                openModal('trainingModal');
             }
+        }
+
+        function editEmailTemplate(id) {
+            const template = emailTemplatesData.find(t => t.id === id);
+            if (template) {
+                document.getElementById('emailTemplateId').value = template.id;
+                document.getElementById('emailTemplateName').value = template.template_name;
+                document.getElementById('emailTemplateStage').value = template.stage;
+                document.getElementById('emailTemplateSubject').value = template.subject;
+                document.getElementById('emailTemplateBody').value = template.body;
+                openModal('emailTemplateModal');
+            }
+        }
+
+        function showAddParticipantModal(trainingId) {
+            document.getElementById('participantTraining').value = trainingId;
             openModal('participantModal');
         }
 
-        document.getElementById('addParticipantBtn')?.addEventListener('click', () => showAddParticipantModal());
-        document.getElementById('addParticipantBtn2')?.addEventListener('click', () => showAddParticipantModal());
-
-        // Populate training dropdown
-        function updateTrainingDropdown() {
-            const select = document.getElementById('participantTraining');
-            select.innerHTML = '<option value="">Select a training</option>';
-            trainingsData.forEach(t => {
-                const option = document.createElement('option');
-                option.value = t.id;
-                option.textContent = t.name;
-                select.appendChild(option);
-            });
+        // ==================== TAB SWITCHING ====================
+        function switchCommunicationTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        document.getElementById('participantForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const participantData = {
-                training_id: document.getElementById('participantTraining').value,
-                name: document.getElementById('participantName').value,
-                email: document.getElementById('participantEmail').value,
-                phone: document.getElementById('participantPhone').value || null,
-                address: document.getElementById('participantAddress').value || null,
-                birth_date: document.getElementById('participantBirthDate').value || null,
-                application_date: new Date().toISOString(),
-                pipeline_stage: 'lead',
-                payment_status: 'Unpaid',
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-
-            const result = await db.from('applicants').insert([participantData]);
-
-            if (result.error) {
-                showToast('Error adding participant: ' + result.error.message, 'error');
-            } else {
-                showToast('Participant added', 'success');
-                closeModal('participantModal');
-                fetchAllData();
-            }
-        });
-
-        // ==================== EXPORT & UTILITIES ====================
-        function exportToCSV() {
-            const headers = ['Name', 'Email', 'Training', 'Stage', 'Payment Status', 'Amount', 'Date'];
-            const rows = applicantsData.map(p => {
-                const training = trainingsData.find(t => t.id === p.training_id);
-                return [
-                    p.name,
-                    p.email,
-                    training?.name || '',
-                    p.pipeline_stage || '',
-                    p.payment_status || '',
-                    p.payment_amount_cents ? (p.payment_amount_cents / 100).toFixed(2) : '',
-                    formatDate(p.created_at)
-                ];
-            });
-
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'stepwise-export.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-
-        function trackPackage(carrier, tracking) {
-            const urls = {
-                usps: `https://tools.usps.com/go/TrackConfirmAction?tLabels=${tracking}`,
-                ups: `https://www.ups.com/track?tracknum=${tracking}`,
-                fedex: `https://tracking.fedex.com/en/tracking?tracknumbers=${tracking}`
-            };
-            if (urls[carrier]) {
-                window.open(urls[carrier], '_blank');
-            }
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return 'N/A';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        }
-
-        function formatDateTime(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return date.toISOString().slice(0, 16);
-        }
-
-        // ==================== EVENT LISTENERS ====================
-        document.getElementById('refreshBtn')?.addEventListener('click', () => {
-            fetchAllData();
-            showToast('Data refreshed', 'success');
-        });
-
-        document.getElementById('globalSearch')?.addEventListener('input', () => renderParticipants());
-        document.getElementById('stageFilter')?.addEventListener('change', () => renderParticipants());
-        document.getElementById('paymentFilter')?.addEventListener('change', () => renderParticipants());
-        document.getElementById('shippingStatusFilter')?.addEventListener('change', () => renderShipping());
-        document.getElementById('trainingSearch')?.addEventListener('input', () => renderTrainings());
-
-        document.getElementById('exportAllBtn')?.addEventListener('click', exportToCSV);
-        document.getElementById('exportCsvBtn')?.addEventListener('click', exportToCSV);
-
-        document.getElementById('syncDataBtn')?.addEventListener('click', () => {
-            fetchAllData();
-            showToast('Data synced', 'success');
-        });
-
-        // Hash routing
-        window.addEventListener('hashchange', () => {
-            const page = window.location.hash.slice(1) || 'dashboard';
-            if (['dashboard', 'trainings', 'participants', 'shipping', 'settings'].includes(page)) {
-                navigateToPage(page);
-            }
-        });
-
-        // Close modals on ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-                closeSidePanel();
-            }
-        });
-
-        // ==================== INITIALIZATION ====================
-        fetchAllData();
-        updateTrainingDropdown();
-        setInterval(() => {
-            if (currentPage === 'dashboard') updateDashboard();
-        }, 60000);
-    </script>
+        // =</script>
 </body>
 </html>
