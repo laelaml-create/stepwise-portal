@@ -789,7 +789,7 @@
             margin-left: 0.5rem;
         }
 
-        .course-checkbox-group {
+       .course-checkbox-group {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
@@ -1776,43 +1776,142 @@
                 t.location.toLowerCase().includes(searchTerm)
             );
 
-            const html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Training Name</th>
-                            <th>Dates</th>
-                            <th>Location</th>
-                            <th>Level</th>
-                            <th>Status</th>
-                            <th>Spots</th>
-                            <th>Price</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filtered.map(training => {
-                            const filled = applicantsData.filter(a => a.training_id === training.id).length;
-                            const price = training.price_cents ? '$' + (training.price_cents / 100).toFixed(2) : 'TBD';
-                            return `
-                                <tr>
-                                    <td><strong>${training.name}</strong></td>
-                                    <td>${formatDate(training.start_date)} - ${formatDate(training.end_date)}</td>
-                                    <td>${training.location}</td>
-                                    <td><span class="badge badge-primary">${training.training_level || 'TBD'}</span></td>
-                                    <td><span class="badge ${training.status === 'Open' ? 'badge-success' : 'badge-secondary'}">${training.status}</span></td>
-                                    <td>${filled}/${training.max_capacity || 12}</td>
-                                    <td>${price}</td>
-                                    <td>
-                                        <button class="btn btn-small btn-secondary" onclick="editTraining('${training.id}')">Edit</button>
-                                    </td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            `;
+            const html = filtered.map(training => {
+                const participants = applicantsData.filter(a => a.training_id === training.id);
+                const filled = participants.length;
+                const capacity = training.max_capacity || 12;
+                const fillPercent = Math.min(100, Math.round((filled / capacity) * 100));
+                const price = training.price_cents ? '$' + (training.price_cents / 100).toFixed(2) : 'TBD';
+                const isExpanded = window._expandedTraining === training.id;
+
+                return `
+                <div class="card training-card-expandable" style="margin-bottom: 1rem; cursor: pointer;" onclick="toggleTrainingExpand('${training.id}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                <h3 style="font-size: 1.1rem; font-weight: 600;">${training.name}</h3>
+                                <span class="badge ${training.status === 'Open' ? 'badge-success' : 'badge-secondary'}">${training.status}</span>
+                                <span class="badge badge-primary">${training.training_level || 'TBD'}</span>
+                            </div>
+                            <div style="display: flex; gap: 2rem; color: var(--text-muted); font-size: 0.85rem;">
+                                <span>${formatDate(training.start_date)} - ${formatDate(training.end_date)}</span>
+                                <span>${training.location}</span>
+                                <span>${price}</span>
+                                <span>${filled}/${capacity} enrolled</span>
+                            </div>
+                            <div class="progress-bar" style="margin-top: 0.5rem; height: 6px;">
+                                <div class="progress-fill" style="width: ${fillPercent}%; background: ${fillPercent >= 90 ? 'var(--warning)' : 'var(--accent-primary)'};"></div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;" onclick="event.stopPropagation()">
+                            <button class="btn btn-small btn-secondary" onclick="editTraining('${training.id}')">Edit</button>
+                            <span style="font-size: 1.2rem; color: var(--text-muted); transition: transform 0.2s; transform: rotate(${isExpanded ? '180' : '0'}deg);">▼</span>
+                        </div>
+                    </div>
+                    ${isExpanded ? renderTrainingExpanded(training, participants) : ''}
+                </div>`;
+            }).join('');
+
             document.getElementById('trainingsList').innerHTML = html;
+        }
+
+        function toggleTrainingExpand(trainingId) {
+            if (window._expandedTraining === trainingId) {
+                window._expandedTraining = null;
+            } else {
+                window._expandedTraining = trainingId;
+            }
+            renderTrainings();
+        }
+
+        function renderTrainingExpanded(training, participants) {
+            const stageLabels = {
+                lead: 'Lead', chemistry_call: 'Chemistry Call', application: 'Application',
+                interview: 'Interview', approval: 'Approval', payment: 'Payment',
+                onboarding: 'Onboarding', complete: 'Complete'
+            };
+            const stageColors = {
+                lead: '#6b7280', chemistry_call: '#8b5cf6', application: '#3b82f6',
+                interview: '#f59e0b', approval: '#10b981', payment: '#06b6d4',
+                onboarding: '#ec4899', complete: '#22c55e'
+            };
+
+            // Stage summary counts
+            const stageCounts = {};
+            STAGE_ORDER.forEach(s => stageCounts[s] = 0);
+            participants.forEach(p => {
+                const s = p.pipeline_stage || 'lead';
+                if (stageCounts[s] !== undefined) stageCounts[s]++;
+            });
+
+            const stageBreakdown = STAGE_ORDER.map(s => {
+                const count = stageCounts[s];
+                if (count === 0) return '';
+                return `<span class="badge" style="background: ${stageColors[s]}20; color: ${stageColors[s]}; border: 1px solid ${stageColors[s]}40;">${stageLabels[s]}: ${count}</span>`;
+            }).filter(Boolean).join(' ');
+
+            const participantRows = participants.length > 0 ? participants.map(p => {
+                const stageIndex = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
+                const progressPercent = Math.round(((stageIndex + 1) / STAGE_ORDER.length) * 100);
+                const stage = p.pipeline_stage || 'lead';
+                const daysInStage = Math.floor((new Date() - new Date(p.updated_at)) / (1000 * 60 * 60 * 24));
+                const courseProgress = p.online_course_progress || 0;
+
+                return `
+                    <tr onclick="event.stopPropagation(); openParticipantPanel('${p.id}')" style="cursor: pointer;">
+                        <td><strong>${p.name}</strong></td>
+                        <td>${p.email}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="badge" style="background: ${stageColors[stage]}20; color: ${stageColors[stage]}; border: 1px solid ${stageColors[stage]}40; font-size: 0.7rem;">${stageLabels[stage] || stage}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="progress-bar" style="flex: 1; height: 8px; min-width: 80px;">
+                                    <div class="progress-fill" style="width: ${progressPercent}%; background: linear-gradient(90deg, ${stageColors[stage]}, ${stageColors[STAGE_ORDER[Math.min(stageIndex + 1, STAGE_ORDER.length - 1)]]});"></div>
+                                </div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted); min-width: 35px;">${progressPercent}%</span>
+                            </div>
+                        </td>
+                        <td><span class="badge ${p.payment_status === 'Paid in Full' ? 'badge-success' : p.payment_status === 'Deposit' ? 'badge-warning' : 'badge-secondary'}">${p.payment_status || 'Unpaid'}</span></td>
+                        <td>${daysInStage}d</td>
+                        <td style="font-size: 0.85rem;">${courseProgress}%</td>
+                        <td onclick="event.stopPropagation()">
+                            <div style="display: flex; gap: 0.25rem;">
+                                <button class="btn btn-small btn-secondary" onclick="openParticipantPanel('${p.id}')">Edit</button>
+                                <button class="btn btn-small btn-primary" onclick="sendEmailToParticipant('${p.id}')">Email</button>
+                            </div>
+                        </td>
+                    </tr>`;
+            }).join('') : '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">No participants enrolled yet</td></tr>';
+
+            return `
+                <div onclick="event.stopPropagation()" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">${stageBreakdown || '<span style="color: var(--text-muted);">No enrollments</span>'}</div>
+                        <button class="btn btn-small btn-primary" onclick="showAddParticipantModal('${training.id}')">+ Add Participant</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table style="font-size: 0.85rem;">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Stage</th>
+                                    <th>Pipeline Progress</th>
+                                    <th>Payment</th>
+                                    <th>Days</th>
+                                    <th>Course</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>${participantRows}</tbody>
+                        </table>
+                    </div>
+                    ${training.description ? `<div style="margin-top: 0.75rem; padding: 0.75rem; background: var(--glass-light); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);"><strong>Description:</strong> ${training.description}</div>` : ''}
+                    ${training.notes ? `<div style="margin-top: 0.5rem; padding: 0.75rem; background: var(--glass-light); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);"><strong>Notes:</strong> ${training.notes}</div>` : ''}
+                </div>`;
         }
 
         // ==================== PARTICIPANTS ====================
@@ -2358,7 +2457,7 @@
                 <div class="panel-section">
                     <div class="panel-section-title">Email History <span class="email-count-badge">${emailHistory.length}</span></div>
                     ${emailHistoryHTML}
-                    <button class="btn btn-secondary btn-small" style="width: 100%; margin-top: 1rem;" onclick="sendEmailToParticipant('${participantId}'">📧 Send Email</button>
+                    <button class="btn btn-secondary btn-small" style="width: 100%; margin-top: 1rem;" onclick="sendEmailToParticipant('${participantId}');">📧 Send Email</button>
                 </div>
 
                 <div class="panel-section">
@@ -2405,7 +2504,7 @@
             const participant = applicantsData.find(a => a.id === participantId);
             document.getElementById('emailRecipient').value = participantId;
             fillEmailVariables();
-            switchCommunicationTab('outreach');
+    switchCommunicationTab('outreach');
             navigateToPage('communications');
         }
 
@@ -2556,6 +2655,18 @@
             event.target.classList.add('active');
         }
 
-        // =</script>
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('refreshBtn').addEventListener('click', fetchAllData);
+        document.getElementById('globalSearch').addEventListener('input', () => {
+            if (currentPage === 'participants') renderParticipants();
+        });
+        document.getElementById('trainingSearch')?.addEventListener('input', renderTrainings);
+        document.getElementById('stageFilter')?.addEventListener('change', renderParticipants);
+        document.getElementById('paymentFilter')?.addEventListener('change', renderParticipants);
+        document.getElementById('shippingFilter')?.addEventListener('change', renderShipping);
+
+        // ==================== INITIALIZATION ====================
+        fetchAllData();
+    </script>
 </body>
 </html>
