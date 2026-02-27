@@ -829,7 +829,7 @@ const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
 const PROTON_EMAIL = 'stepwisetraining@proton.me';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ===== Pipeline Stage Definitions =====
 const PIPELINE_STAGES = [
@@ -911,7 +911,7 @@ function mapToPipelineStage(participant) {
 
 // ===== Data Loading =====
 async function loadTrainings() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('trainings')
         .select('id, name, start_date, end_date, location, status, price')
         .order('start_date', { ascending: false });
@@ -933,7 +933,7 @@ async function loadTrainings() {
 }
 
 async function loadApplicants() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('applicants')
         .select('*')
         .order('created_at', { ascending: false });
@@ -953,7 +953,7 @@ async function loadApplicants() {
 }
 
 async function loadApplications() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('applications')
         .select('*')
         .order('created_at', { ascending: false });
@@ -1457,7 +1457,7 @@ async function advanceStage(email) {
 
     // Try to update the applicants table
     if (p.training_id || p._source === 'applicants' || p._source === 'merged') {
-        const { error } = await supabase
+        const { error } = await sb
             .from('applicants')
             .update(updates)
             .eq('email', email);
@@ -1504,14 +1504,14 @@ async function saveNotes(email) {
     const notes = document.getElementById('modalNotes')?.value || '';
 
     // Try updating applicants table
-    const { error } = await supabase
+    const { error } = await sb
         .from('applicants')
         .update({ notes: notes })
         .eq('email', email);
 
     if (error) {
         // Try applications table
-        const { error: err2 } = await supabase
+        const { error: err2 } = await sb
             .from('applications')
             .update({ admin_notes: notes })
             .eq('email', email);
@@ -1576,7 +1576,7 @@ document.addEventListener('keydown', (e) => {
 
 // ===== Real-time Subscription =====
 function setupRealtime() {
-    supabase
+    sb
         .channel('applications-changes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, (payload) => {
             console.log('Applications change:', payload);
