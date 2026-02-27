@@ -1518,7 +1518,7 @@
 
         async function loadApplicants() {
             try {
-                const { data, error } = await db.from('applicants').select('*');
+                const { data, error } = await  db.from('applicants').select('*');
                 if (error) throw error;
                 applicants = data || [];
             } catch (error) {
@@ -1901,9 +1901,14 @@
                         <div style="font-size: 0.8rem; line-height: 1.8;">
                             <div><strong>Dietary:</strong> ${p.dietary_preferences || 'N/A'}</div>
                             <div><strong>Allergies:</strong> ${p.allergies || 'None'}</div>
-                            <div><strong>Physical:</strong> ${p.physical_health || 'N/A'}</div>
+                            <div><strong>Physical Health Diagnoses:</strong> ${p.physical_health || 'N/A'}</div>
                             <div><strong>Mental Health:</strong> ${p.mental_health_dx || 'N/A'}</div>
                             <div><strong>Accommodation:</strong> ${p.accommodation_choice || 'N/A'}</div>
+                            <div><strong>Life Circumstances:</strong> ${(p.life_circumstances_options || []).join(', ') || 'N/A'}${p.life_circumstances_other ? ' (Other: ' + p.life_circumstances_other + ')' : ''}</div>
+                            <div><strong>Integration Support:</strong> ${(p.integration_support_options || []).join(', ') || 'N/A'}${p.integration_support_other ? ' (Other: ' + p.integration_support_other + ')' : ''}</div>
+                            <div><strong>Psychedelic Medicine Use:</strong> ${(p.psychedelic_medicine_use || []).join(', ') || 'N/A'}${p.psychedelic_medicine_other ? ' (Other: ' + p.psychedelic_medicine_other + ')' : ''}</div>
+                            <div><strong>Suicide Consideration:</strong> ${p.suicide_consideration || 'N/A'}</div>
+                            <div><strong>Mental Health Support:</strong> ${(p.mental_health_support || []).join(', ') || 'N/A'}${p.mental_health_support_other ? ' (Other: ' + p.mental_health_support_other + ')' : ''}</div>
                         </div>
                     </div>
                 </div>
