@@ -1,1196 +1,1603 @@
-X!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StepWise — Admin Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body, #root { height: 100%; width: 100%; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepWise — Admin Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+/* ===== Glassmorphism Design System ===== */
+:root {
+    --bg-gradient-start: #0f0c29;
+    --bg-gradient-mid: #302b63;
+    --bg-gradient-end: #24243e;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --accent-purple: #8b5cf6;
+    --accent-blue: #667eea;
+}
 
-    :root {
-      --cream: #FAF9F7;
-      --cream-dark: #F2EFEA;
-      --text-primary: #21242C;
-      --text-secondary: #8A8580;
-      --text-muted: #B5B0A8;
-      --border: #EBE7E0;
-      --input-line: #D4CFC7;
-      --brand-amber: #F5A623;
-      --brand-red: #E8573A;
-      --brand-purple: #7B2D8E;
-      --success: #22c55e;
-      --error: #E8573A;
-      --white: #FFFFFF;
-      --info: #3B82F6;
-    }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--cream);
-      color: var(--text-primary);
-      background-image:
-        linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
-      background-size: 48px 48px;
-    }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+    min-height: 100vh;
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
 
-    .heading-serif { font-family: 'Playfair Display', Georgia, serif; }
-    .heading-serif-italic { font-family: 'Playfair Display', Georgia, serif; font-style: italic; }
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(56, 189, 248, 0.15) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: -1;
+}
 
-    /* Top Nav */
-    .top-nav {
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 60px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-left { display: flex; align-items: center; gap: 10px; }
-    .brand-name {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text-primary);
-      letter-spacing: -0.3px;
-      text-decoration: none;
-    }
-    .brand-name:hover { opacity: 0.8; }
-    .brand-dots { display: flex; gap: 4px; align-items: center; }
-    .brand-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .brand-dot.amber { background: var(--brand-amber); }
-    .brand-dot.red { background: var(--brand-red); }
-    .brand-dot.purple { background: var(--brand-purple); }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .nav-badge {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      background: var(--brand-amber);
-      color: var(--white);
-      padding: 4px 10px;
-      border-radius: 4px;
-    }
-    .nav-signout {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: all 0.2s;
-    }
-    .nav-signout:hover { color: var(--text-primary); background: var(--cream-dark); }
+/* ===== Layout ===== */
+.app-container { max-width: 1600px; margin: 0 auto; padding: 1rem; }
 
-    /* Login Card */
-    .login-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 40px;
-      max-width: 480px;
-      margin: 80px auto 0;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-      text-align: center;
-    }
-    .login-card h2 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 32px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-    .login-card p {
-      color: var(--text-secondary);
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 32px;
-    }
-    .login-email-row {
-      font-size: 18px;
-      color: var(--text-primary);
-      margin-bottom: 28px;
-      line-height: 2.4;
-    }
-    .login-email-input {
-      border: none;
-      border-bottom: 2px solid var(--input-line);
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-primary);
-      padding: 4px 8px;
-      min-width: 260px;
-      outline: none;
-      transition: border-color 0.3s;
-      text-align: center;
-    }
-    .login-email-input:focus { border-bottom-color: var(--brand-amber); }
-    .login-email-input::placeholder { color: var(--text-muted); font-weight: 400; }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+}
 
-    /* Gradient line */
-    .gradient-line {
-      height: 4px;
-      border-radius: 2px;
-      background: linear-gradient(90deg, var(--brand-amber), var(--brand-red), var(--brand-purple));
-      margin-bottom: 28px;
-    }
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
 
-    /* Buttons */
-    .btn-continue {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 32px;
-      border: 2px solid var(--text-primary);
-      border-radius: 40px;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.25s;
-    }
-    .btn-continue:hover { background: var(--text-primary); color: var(--white); }
-    .btn-continue:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-continue:disabled:hover { background: transparent; color: var(--text-primary); }
+.header-brand h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 20px;
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .btn-back:hover { color: var(--text-primary); }
+.header-brand .subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
 
-    /* Alert */
-    .alert-banner {
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .alert-banner.error { background: rgba(232,87,58,0.08); color: var(--brand-red); border: 1px solid rgba(232,87,58,0.15); }
-    .alert-banner.success { background: rgba(34,197,94,0.08); color: var(--success); border: 1px solid rgba(34,197,94,0.15); }
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
 
-    /* Spinner */
-    .spinner {
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 2.5px solid rgba(245,166,35,0.25);
-      border-top-color: var(--brand-amber);
-      border-radius: 50%;
-      animation: spin 0.65s linear infinite;
-    }
-    .spinner.white { border-color: rgba(255,255,255,0.3); border-top-color: white; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+/* ===== Glass Components ===== */
+.glass-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s ease-out;
+}
 
-    /* Fade */
-    .fade-in { animation: fadeIn 0.4s ease forwards; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
 
-    /* Dashboard Layout */
-    .dash-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 32px 80px;
-    }
-    .dash-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .dash-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-style: italic;
-      font-weight: 600;
-      font-size: 32px;
-      color: var(--text-primary);
-    }
-    .dash-subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
+.glass-btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+}
 
-    /* Stats Row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      text-align: center;
-    }
-    .stat-number {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    .stat-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
+.glass-btn:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
 
-    /* Filter Bar */
-    .filter-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
-    .filter-chip {
-      padding: 7px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background: var(--white);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .filter-chip:hover { border-color: var(--text-muted); color: var(--text-primary); }
-    .filter-chip.active {
-      border-color: var(--brand-amber);
-      background: #FFF9F0;
-      color: var(--brand-amber);
-      font-weight: 600;
-    }
-    .search-input {
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 7px 16px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--text-primary);
-      outline: none;
-      width: 220px;
-      transition: border-color 0.2s;
-      background: var(--white);
-    }
-    .search-input:focus { border-color: var(--brand-amber); }
-    .search-input::placeholder { color: var(--text-muted); }
+.glass-btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+}
 
-    /* Applications Table */
-    .app-table {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .app-table-header {
-      display: grid;
-      grid-template-columns: 2fr 2fr 1fr 1.2fr 1fr;
-      padding: 12px 24px;
-      border-bottom: 1px solid var(--border);
-      background: var(--cream);
-    }
-    .app-table-header span {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .app-row {
-      display: grid;
-      grid-template-columns: 2fr 2fr 1fr 1.2fr 1fr;
-      padding: 14px 24px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.15s;
-      align-items: center;
-    }
-    .app-row:last-child { border-bottom: none; }
-    .app-row:hover { background: var(--cream); }
-    .app-row-name {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text-primary);
-    }
-    .app-row-email {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    .app-row-level {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-    .app-row-date {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
+.glass-btn-primary:hover {
+    background: linear-gradient(135deg, #7c8ff4, #8a5db5);
+    box-shadow: 0 10px 40px rgba(118, 75, 162, 0.4);
+}
 
-    /* Status Badge */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-    .status-badge.submitted { background: rgba(59,130,246,0.1); color: #2563EB; }
-    .status-badge.under_review { background: rgba(245,166,35,0.12); color: #B8760A; }
-    .status-badge.interview_scheduled { background: rgba(168,85,247,0.1); color: #7C3AED; }
-    .status-badge.interview_approved { background: rgba(34,197,94,0.1); color: #16A34A; }
-    .status-badge.accepted { background: rgba(34,197,94,0.15); color: #15803D; }
-    .status-badge.rejected { background: rgba(232,87,58,0.1); color: #DC2626; }
-    .status-badge.withdrawn { background: rgba(180,180,180,0.15); color: #737373; }
-    .status-badge.draft { background: rgba(180,180,180,0.1); color: #A3A3A3; }
+.glass-btn-sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
+    border-radius: 0.5rem;
+}
 
-    /* Detail View */
-    .detail-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 24px 32px 80px;
-    }
-    .detail-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .detail-name {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-style: italic;
-      font-weight: 600;
-      font-size: 28px;
-      color: var(--text-primary);
-    }
-    .detail-meta {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-    .detail-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.glass-btn-success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.3));
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
 
-    /* Status Select */
-    .status-select {
-      padding: 8px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      background: var(--white);
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .status-select:focus { border-color: var(--brand-amber); }
+.glass-btn-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
 
-    /* Detail Section */
-    .detail-section {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px 28px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    .detail-section-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--brand-amber);
-      margin-bottom: 16px;
-    }
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    .detail-field {}
-    .detail-field-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-    .detail-field-value {
-      font-size: 14px;
-      color: var(--text-primary);
-      line-height: 1.5;
-    }
-    .detail-field-value.empty {
-      color: var(--text-muted);
-      font-style: italic;
-    }
-    .detail-field.full { grid-column: 1 / -1; }
+.glass-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border-radius: 0.75rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
 
-    /* Chip display (read-only) */
-    .chip-display {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .chip-tag {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 500;
-      background: var(--cream-dark);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-    }
+.glass-input:focus {
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+}
 
-    /* Stress meter */
-    .stress-meter {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .stress-bar {
-      flex: 1;
-      height: 8px;
-      border-radius: 4px;
-      background: var(--border);
-      overflow: hidden;
-    }
-    .stress-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s;
-    }
+.glass-input::placeholder { color: rgba(255, 255, 255, 0.4); }
 
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-    .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+select.glass-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2rem;
+}
 
-    /* Responsive */
-    @media (max-width: 800px) {
-      .top-nav { padding: 0 16px; }
-      .dash-container, .detail-container { padding: 16px 16px 60px; }
-      .app-table-header, .app-row { grid-template-columns: 1fr 1fr; gap: 4px; }
-      .app-table-header span:nth-child(n+3), .app-row > *:nth-child(n+3) { display: none; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .filter-bar { gap: 6px; }
-      .search-input { width: 100%; order: -1; }
-      .login-card { padding: 32px 20px; margin-top: 40px; }
-      .login-email-input { min-width: 200px; font-size: 16px; }
-    }
-  </style>
+select.glass-input option { background: #1e1b4b; color: white; }
+
+/* ===== KPI Grid ===== */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    position: relative;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    animation: fadeIn 0.5s ease-out;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.kpi-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+.kpi-value { font-size: 2rem; font-weight: 800; line-height: 1.2; }
+.kpi-sub { font-size: 0.75rem; color: #6ee7b7; margin-top: 0.25rem; }
+.kpi-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 1.2rem;
+}
+
+/* ===== Tabs ===== */
+.tab-bar {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.75rem;
+    padding: 0.25rem;
+    border: 1px solid var(--glass-border);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.tab-btn.active {
+    background: var(--accent-gradient);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.tab-btn:hover:not(.active) { color: white; background: rgba(255, 255, 255, 0.05); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== Pipeline Kanban ===== */
+.pipeline-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scroll-behavior: smooth;
+}
+
+.pipeline-column {
+    flex-shrink: 0;
+    width: 260px;
+    min-height: 300px;
+}
+
+.pipeline-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 2px solid;
+}
+
+.pipeline-col-header h3 { font-size: 0.9rem; font-weight: 700; }
+
+.pipeline-col-count {
+    padding: 0.15rem 0.6rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.pipeline-cards { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.participant-card {
+    padding: 0.85rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.participant-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.participant-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
+.participant-email { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem; }
+.participant-meta { font-size: 0.7rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; }
+
+/* Pipeline column border colors */
+.col-lead { border-color: #64748b; }
+.col-initial_call { border-color: #3b82f6; }
+.col-application { border-color: #f59e0b; }
+.col-interview { border-color: #a855f7; }
+.col-approved { border-color: #10b981; }
+.col-paid { border-color: #22d3ee; }
+.col-confirmed { border-color: #22c55e; }
+
+/* ===== Table View ===== */
+.table-wrapper { overflow-x: auto; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+thead th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--glass-border);
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: middle;
+}
+
+tbody tr { transition: background 0.2s; cursor: pointer; }
+tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.02em;
+}
+
+.badge-lead { background: rgba(100, 116, 139, 0.3); color: #cbd5e1; }
+.badge-initial_call, .badge-call { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+.badge-application, .badge-submitted, .badge-received { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+.badge-under_review { background: rgba(251, 191, 36, 0.3); color: #fde68a; }
+.badge-interview, .badge-interview_scheduled, .badge-interview_complete { background: rgba(168, 85, 247, 0.3); color: #c4b5fd; }
+.badge-approved, .badge-accepted { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+.badge-paid, .badge-paid_in_full, .badge-deposit_paid { background: rgba(34, 211, 238, 0.3); color: #67e8f9; }
+.badge-confirmed, .badge-complete { background: rgba(34, 197, 94, 0.3); color: #86efac; }
+.badge-waitlisted { background: rgba(251, 146, 60, 0.3); color: #fdba74; }
+.badge-declined, .badge-withdrawn, .badge-cancelled { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+.badge-pending { background: rgba(148, 163, 184, 0.3); color: #cbd5e1; }
+
+/* ===== Modal ===== */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: none;
+}
+
+.modal-backdrop.open { display: flex; align-items: center; justify-content: center; opacity: 1; }
+
+.modal {
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(45, 40, 95, 0.98));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5), 0 0 60px rgba(102, 126, 234, 0.15);
+    transform: scale(0.95);
+    transition: transform 0.3s;
+}
+
+.modal-backdrop.open .modal { transform: scale(1); }
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header-info { display: flex; align-items: center; gap: 1rem; }
+
+.modal-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.modal-name { font-size: 1.2rem; font-weight: 700; }
+.modal-email { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.15rem; }
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+
+.modal-close:hover { background: rgba(255, 255, 255, 0.1); }
+
+.modal-body { padding: 1.5rem; }
+
+.modal-section {
+    margin-bottom: 1.5rem;
+}
+
+.modal-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+}
+
+.detail-item label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+}
+
+.detail-item span {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+/* Journey stages in modal */
+.journey-stages { display: flex; flex-direction: column; gap: 0; }
+
+.journey-stage {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-left: 3px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s;
+}
+
+.journey-stage.stage-completed {
+    border-left-color: rgba(16, 185, 129, 0.5);
+}
+
+.journey-stage.stage-current {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-left: 3px solid rgba(139, 92, 246, 0.8);
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.1);
+}
+
+.journey-stage.stage-upcoming { opacity: 0.45; }
+
+.stage-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.stage-icon.completed { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+.stage-icon.current { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
+.stage-icon.upcoming { background: rgba(255, 255, 255, 0.05); color: #64748b; }
+
+.stage-name { font-weight: 600; font-size: 0.85rem; }
+.stage-desc { font-size: 0.75rem; color: var(--text-secondary); }
+
+.stage-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.journey-connector {
+    margin-left: 1.5rem;
+    border-left: 2px dashed rgba(255, 255, 255, 0.1);
+    height: 1.25rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.modal-footer-left { display: flex; gap: 0.5rem; }
+.modal-footer-right { display: flex; gap: 0.5rem; }
+
+/* ===== Loading ===== */
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: var(--text-secondary);
+    gap: 0.75rem;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent-purple);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== Notification Toast ===== */
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    background: rgba(30, 27, 75, 0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.85rem;
+    animation: slideIn 0.3s ease-out;
+    max-width: 350px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.toast.success { border-left: 3px solid #10b981; }
+.toast.error { border-left: 3px solid #ef4444; }
+.toast.info { border-left: 3px solid #3b82f6; }
+
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ===== Empty State ===== */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+}
+
+.empty-state .emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .header { flex-direction: column; gap: 0.75rem; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .pipeline-column { width: 220px; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .modal { width: 95%; }
+    .modal-footer { flex-direction: column; }
+    .modal-footer-left, .modal-footer-right { width: 100%; }
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+/* ===== Search highlight ===== */
+.search-bar { position: relative; }
+.search-bar input { padding-left: 2.25rem; }
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ===== Protonmail Section ===== */
+.email-compose {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    padding: 1rem;
+}
+
+.email-compose textarea {
+    width: 100%;
+    min-height: 100px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    color: white;
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    resize: vertical;
+    outline: none;
+}
+
+.email-compose textarea:focus {
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+/* Notes section */
+.notes-area {
+    width: 100%;
+    min-height: 80px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.5rem;
+    color: white;
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    resize: vertical;
+    outline: none;
+}
+
+.notes-area:focus { border-color: rgba(102, 126, 234, 0.4); }
+
+/* Source indicator */
+.source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.source-jotform { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.source-website { background: rgba(102, 126, 234, 0.2); color: #93c5fd; }
+.source-manual { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
-    const { createClient } = window.supabase;
-
-    /* ── CONFIG ── */
-    const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_LaEErOYcmIuHlCzwwa7HLQ_eVXeVJ-k';
-
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const PORTAL_URL = 'https://stepwise.education/portal';
-    const MAIN_SITE = 'https://stepwise.education';
-
-    const STATUS_OPTIONS = [
-      'submitted',
-      'under_review',
-      'interview_scheduled',
-      'interview_approved',
-      'accepted',
-      'rejected',
-      'withdrawn',
-    ];
-
-    const statusLabel = (s) => {
-      if (!s) return 'Draft';
-      return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    };
-
-    const statusClass = (s) => {
-      if (!s) return 'draft';
-      return s.toLowerCase().replace(/ /g, '_');
-    };
-
-    const formatDate = (d) => {
-      if (!d) return '—';
-      try {
-        return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      } catch { return d; }
-    };
-
-    const safe = (val) => val || '';
-
-    /* Parse JSONB arrays from Supabase */
-    const parseJsonArray = (val) => {
-      if (!val) return [];
-      if (Array.isArray(val)) return val;
-      try { return JSON.parse(val); } catch { return []; }
-    };
-
-    /* ── NAV BAR ── */
-    function NavBar({ isAdmin, onSignOut }) {
-      return (
-        <nav className="top-nav">
-          <div className="nav-left">
-            <a className="brand-name" href={MAIN_SITE}>StepWise</a>
-            <div className="brand-dots">
-              <span className="brand-dot amber"></span>
-              <span className="brand-dot red"></span>
-              <span className="brand-dot purple"></span>
-            </div>
-          </div>
-          <div className="nav-right">
-            {isAdmin && <span className="nav-badge">Admin</span>}
-            {onSignOut && (
-              <button className="nav-signout" onClick={onSignOut}>Sign out</button>
-            )}
-          </div>
-        </nav>
-      );
-    }
-
-    /* ── LOGIN VIEW ── */
-    function LoginView({ onSendLink }) {
-      const [email, setEmail] = useState('');
-      const [loading, setLoading] = useState(false);
-      const [error, setError] = useState('');
-
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!email.trim()) return;
-        setLoading(true);
-        setError('');
-        try {
-          const { error: authError } = await supabase.auth.signInWithOtp({
-            email: email.trim(),
-            options: { shouldCreateUser: true, emailRedirectTo: window.location.origin + window.location.pathname }
-          });
-          if (authError) throw authError;
-          onSendLink(email.trim());
-        } catch (err) {
-          setError(err.message || 'Something went wrong.');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      return (
-        <div>
-          <NavBar />
-          <div className="login-card fade-in">
-            <div className="gradient-line"></div>
-            <h2 className="heading-serif">Admin Dashboard</h2>
-            <p>Sign in with your StepWise admin email to manage applications.</p>
-            {error && <div className="alert-banner error">{error}</div>}
-            <form onSubmit={handleSubmit}>
-              <div className="login-email-row">
-                My email is{' '}
-                <input
-                  className="login-email-input"
-                  type="email"
-                  placeholder="admin@stepwise.education"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </div>
-              <button type="submit" className="btn-continue" disabled={loading || !email.trim()}>
-                {loading ? <span className="spinner"></span> : <>Send Magic Link &rsaquo;</>}
-              </button>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    /* ── CHECK EMAIL VIEW ── */
-    function CheckEmailView({ email, onBack }) {
-      return (
-        <div>
-          <NavBar />
-          <div className="login-card fade-in">
-            <div className="gradient-line"></div>
-            <div style={{fontSize: '56px', marginBottom: '20px'}}>&#9993;</div>
-            <h2 className="heading-serif">Check Your Inbox</h2>
-            <p>
-              We sent a magic link to <strong>{email}</strong>.<br />
-              Click the link in the email to access the admin dashboard.
-            </p>
-            <p style={{fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px'}}>
-              The link expires in 1 hour. Check spam if you don't see it.
-            </p>
-            <button className="btn-back" onClick={onBack}>&lsaquo; Use a different email</button>
-          </div>
-        </div>
-      );
-    }
-
-    /* ── NOT ADMIN VIEW ── */
-    function NotAdminView({ email, onSignOut }) {
-      return (
-        <div>
-          <NavBar onSignOut={onSignOut} />
-          <div className="login-card fade-in">
-            <div className="gradient-line"></div>
-            <div style={{fontSize: '48px', marginBottom: '16px'}}>&#128274;</div>
-            <h2 className="heading-serif">Access Denied</h2>
-            <p>
-              <strong>{email}</strong> does not have admin access.
-              If you're a participant, please use the participant portal instead.
-            </p>
-            <div style={{marginTop: '8px', display: 'flex', gap: '12px', justifyContent: 'center'}}>
-              <a href={PORTAL_URL} className="btn-continue" style={{textDecoration: 'none'}}>
-                Go to Portal &rsaquo;
-              </a>
-              <button className="btn-back" onClick={onSignOut}>&lsaquo; Sign out</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    /* ── APPLICATION DETAIL VIEW ── */
-    function ApplicationDetail({ app, onBack, onStatusChange }) {
-      const [status, setStatus] = useState(app.status || 'submitted');
-      const [saving, setSaving] = useState(false);
-      const [saved, setSaved] = useState(false);
-
-      const handleStatusChange = async (newStatus) => {
-        setStatus(newStatus);
-        setSaving(true);
-        setSaved(false);
-        try {
-          const { error } = await supabase
-            .from('applications')
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
-            .eq('id', app.id);
-          if (error) throw error;
-          setSaved(true);
-          if (onStatusChange) onStatusChange(app.id, newStatus);
-          setTimeout(() => setSaved(false), 2000);
-        } catch (err) {
-          console.error('Status update failed:', err);
-        } finally {
-          setSaving(false);
-        }
-      };
-
-      const Field = ({ label, value, full }) => (
-        <div className={`detail-field ${full ? 'full' : ''}`}>
-          <div className="detail-field-label">{label}</div>
-          <div className={`detail-field-value ${!value ? 'empty' : ''}`}>
-            {value || 'Not provided'}
-          </div>
-        </div>
-      );
-
-      const ChipField = ({ label, value, full }) => {
-        const items = parseJsonArray(value);
-        return (
-          <div className={`detail-field ${full ? 'full' : ''}`}>
-            <div className="detail-field-label">{label}</div>
-            {items.length > 0 ? (
-              <div className="chip-display">
-                {items.map((item, i) => <span key={i} className="chip-tag">{item}</span>)}
-              </div>
-            ) : (
-              <div className="detail-field-value empty">None selected</div>
-            )}
-          </div>
-        );
-      };
-
-      const stressLevel = app.stress_level || 0;
-      const stressColor = stressLevel <= 3 ? 'var(--success)' : stressLevel <= 6 ? 'var(--brand-amber)' : 'var(--brand-red)';
-
-      return (
-        <div>
-          <NavBar isAdmin onSignOut={() => {}} />
-          <div className="detail-container fade-in">
-            <button className="btn-back" onClick={onBack} style={{marginBottom: '16px'}}>&lsaquo; Back to all applications</button>
-
-            <div className="detail-header">
-              <div>
-                <div className="detail-name">{app.preferred_name || app.first_name} {app.last_name}</div>
-                <div className="detail-meta">
-                  {app.email} &middot; Applied {formatDate(app.created_at)} &middot; Level {app.training_level || '?'}
+    <div class="app-container" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <div>
+                    <h1>StepWise</h1>
+                    <div class="subtitle">Operations Dashboard</div>
                 </div>
-              </div>
-              <div className="detail-actions">
-                <select
-                  className="status-select"
-                  value={status}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  disabled={saving}
-                >
-                  {STATUS_OPTIONS.map(s => (
-                    <option key={s} value={s}>{statusLabel(s)}</option>
-                  ))}
+            </div>
+            <div class="header-actions">
+                <div class="search-bar">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="glass-input" id="searchInput" placeholder="Search participants..." style="width: 250px; padding-left: 2.25rem;">
+                </div>
+                <select class="glass-input" id="trainingFilter" style="width: auto;">
+                    <option value="all">All Trainings</option>
                 </select>
-                {saving && <span className="spinner"></span>}
-                {saved && <span style={{color: 'var(--success)', fontSize: '13px', fontWeight: 600}}>Saved</span>}
-              </div>
+                <button class="glass-btn glass-btn-primary" onclick="refreshData()">↻ Refresh</button>
             </div>
+        </header>
 
-            {/* About You */}
-            <div className="detail-section">
-              <div className="detail-section-title">About</div>
-              <div className="detail-grid">
-                <Field label="First Name" value={app.first_name} />
-                <Field label="Last Name" value={app.last_name} />
-                <Field label="Preferred Name" value={app.preferred_name} />
-                <Field label="Birthday" value={[app.birth_month, app.birth_day, app.birth_year].filter(Boolean).join('/')} />
-                <Field label="Email" value={app.email} />
-                <Field label="Phone" value={app.phone} />
-                <Field label="Signal" value={app.signal_handle} />
-                <Field label="Training Level" value={app.training_level} />
-              </div>
+        <!-- KPI Grid -->
+        <div class="kpi-grid" id="kpiGrid">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Applicants</div>
+                <div class="kpi-value" id="kpiTotal">—</div>
+                <div class="kpi-sub" id="kpiTotalSub">Loading...</div>
+                <div class="kpi-icon">👥</div>
             </div>
-
-            {/* Address */}
-            <div className="detail-section">
-              <div className="detail-section-title">Address</div>
-              <div className="detail-grid">
-                <Field label="Street" value={app.street_address} full />
-                {app.street_address_2 && <Field label="Line 2" value={app.street_address_2} full />}
-                <Field label="City" value={app.city} />
-                <Field label="State/Province" value={app.state_province} />
-                <Field label="Postal Code" value={app.postal_code} />
-                <Field label="Country" value={app.country} />
-              </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Active Pipeline</div>
+                <div class="kpi-value" id="kpiActive">—</div>
+                <div class="kpi-sub" id="kpiActiveSub">In progress</div>
+                <div class="kpi-icon">📊</div>
             </div>
-
-            {/* Emergency Contact */}
-            <div className="detail-section">
-              <div className="detail-section-title">Emergency Contact</div>
-              <div className="detail-grid">
-                <Field label="First Name" value={app.emergency_first_name} />
-                <Field label="Last Name" value={app.emergency_last_name} />
-                <Field label="Phone" value={app.emergency_phone} />
-              </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Confirmed</div>
+                <div class="kpi-value" id="kpiConfirmed">—</div>
+                <div class="kpi-sub" id="kpiConfirmedSub">Ready</div>
+                <div class="kpi-icon">✅</div>
             </div>
-
-            {/* Experience */}
-            <div className="detail-section">
-              <div className="detail-section-title">Experience & Background</div>
-              <div className="detail-grid">
-                <Field label="Journey Work Experience" value={app.journey_work_experience} full />
-                <Field label="Medicine Experience" value={app.medicine_experience} full />
-                <Field label="Serving Experience" value={app.serving_experience} full />
-                <Field label="Life Circumstances" value={app.life_circumstances} full />
-                <Field label="Integration Support" value={app.integration_support} full />
-              </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Paid</div>
+                <div class="kpi-value" id="kpiPaid">—</div>
+                <div class="kpi-sub" id="kpiPaidSub">Revenue collected</div>
+                <div class="kpi-icon">💳</div>
             </div>
-
-            {/* Physical Health */}
-            <div className="detail-section">
-              <div className="detail-section-title">Physical Health</div>
-              <div className="detail-grid">
-                <Field label="Health Issues" value={app.physical_health_issues} full />
-                <Field label="Medications" value={app.physical_medications} full />
-                <Field label="Supplements" value={app.supplements} full />
-                <Field label="Allergies" value={app.allergies} full />
-                <ChipField label="Physical Symptoms" value={app.physical_symptoms} full />
-                {app.physical_symptoms_other && <Field label="Other Symptoms" value={app.physical_symptoms_other} full />}
-                <ChipField label="Dietary Preferences" value={app.dietary_preferences} full />
-                {app.dietary_other && <Field label="Other Dietary" value={app.dietary_other} full />}
-              </div>
+            <div class="kpi-card">
+                <div class="kpi-label">New This Week</div>
+                <div class="kpi-value" id="kpiNew">—</div>
+                <div class="kpi-sub" id="kpiNewSub">Last 7 days</div>
+                <div class="kpi-icon">🆕</div>
             </div>
-
-            {/* Mental Health */}
-            <div className="detail-section">
-              <div className="detail-section-title">Mental Health</div>
-              <div className="detail-grid">
-                <Field label="DSM Diagnosis" value={app.dsm_diagnosis} full />
-                <Field label="Mental Health Issues" value={app.mental_health_issues} full />
-                <Field label="Psychiatric Medications" value={app.psych_medications} full />
-                <Field label="Recreational Drug Use" value={app.recreational_drug_use} full />
-                <Field label="Suicide Consideration" value={app.suicide_consideration} full />
-                <Field label="Mental Health Professional" value={app.mental_health_professional} full />
-              </div>
-            </div>
-
-            {/* Stress & Coping */}
-            <div className="detail-section">
-              <div className="detail-section-title">Stress & Coping</div>
-              <div className="detail-grid">
-                <div className="detail-field full">
-                  <div className="detail-field-label">Stress Level</div>
-                  <div className="stress-meter">
-                    <div className="stress-bar">
-                      <div className="stress-fill" style={{width: `${stressLevel * 10}%`, background: stressColor}}></div>
-                    </div>
-                    <span style={{fontWeight: 700, fontSize: '16px', color: stressColor}}>{stressLevel}/10</span>
-                  </div>
-                </div>
-                <ChipField label="Life Experiences" value={app.life_experiences} full />
-                <Field label="Stress Sources" value={app.stress_sources} full />
-                <ChipField label="Cognitive Symptoms" value={app.cognitive_symptoms} full />
-                {app.cognitive_symptoms_other && <Field label="Other Cognitive" value={app.cognitive_symptoms_other} full />}
-                <ChipField label="Coping Mechanisms" value={app.coping_mechanisms} full />
-                {app.coping_other && <Field label="Other Coping" value={app.coping_other} full />}
-                <Field label="Trauma Details" value={app.trauma_details} full />
-              </div>
-            </div>
-
-            {/* Self-Care & Goals */}
-            <div className="detail-section">
-              <div className="detail-section-title">Self-Care & Goals</div>
-              <div className="detail-grid">
-                <Field label="Self Care" value={app.self_care} full />
-                {app.self_care_other && <Field label="Other Self-Care" value={app.self_care_other} full />}
-                <ChipField label="Support Network" value={app.support_network} full />
-                {app.support_other && <Field label="Other Support" value={app.support_other} full />}
-                <Field label="Strengths & Hobbies" value={app.strengths_hobbies} full />
-                <Field label="Training Goals" value={app.training_goals} full />
-                <Field label="Anything Else" value={app.anything_else} full />
-              </div>
-            </div>
-
-            {/* Accommodation */}
-            <div className="detail-section">
-              <div className="detail-section-title">Accommodation</div>
-              <div className="detail-grid">
-                <Field label="VRBO Listing" value={app.vrbo_listing_url} full />
-                <Field label="Bedroom Choice" value={app.bedroom_choice} />
-                <Field label="Dietary Notes" value={app.dietary_notes} full />
-                <Field label="Special Accommodations" value={app.special_accommodations} full />
-              </div>
-            </div>
-
-          </div>
         </div>
-      );
+
+        <!-- Tabs -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="pipeline" onclick="switchTab('pipeline')">Pipeline Board</button>
+            <button class="tab-btn" data-tab="table" onclick="switchTab('table')">Table View</button>
+            <button class="tab-btn" data-tab="applications" onclick="switchTab('applications')">Full Applications</button>
+        </div>
+
+        <!-- Pipeline View -->
+        <div class="tab-content active" id="tab-pipeline">
+            <div class="glass-card">
+                <div class="pipeline-container" id="pipelineContainer">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <span>Loading pipeline...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="tab-content" id="tab-table">
+            <div class="glass-card">
+                <div class="table-wrapper" id="tableContainer">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <span>Loading data...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Applications View -->
+        <div class="tab-content" id="tab-applications">
+            <div class="glass-card">
+                <div id="applicationsContainer">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <span>Loading applications...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participant Detail Modal -->
+    <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header" id="modalHeader"></div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+// ===== Configuration =====
+const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
+const PROTON_EMAIL = 'stepwisetraining@proton.me';
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ===== Pipeline Stage Definitions =====
+const PIPELINE_STAGES = [
+    { id: 'lead', name: 'Leads', icon: '👤', color: '#64748b', borderClass: 'col-lead' },
+    { id: 'initial_call', name: 'Initial Call', icon: '📞', color: '#3b82f6', borderClass: 'col-initial_call' },
+    { id: 'application', name: 'Application', icon: '📋', color: '#f59e0b', borderClass: 'col-application' },
+    { id: 'interview', name: 'Interview', icon: '🎙️', color: '#a855f7', borderClass: 'col-interview' },
+    { id: 'approved', name: 'Approved', icon: '✅', color: '#10b981', borderClass: 'col-approved' },
+    { id: 'paid', name: 'Paid', icon: '💳', color: '#22d3ee', borderClass: 'col-paid' },
+    { id: 'confirmed', name: 'Confirmed', icon: '🎉', color: '#22c55e', borderClass: 'col-confirmed' },
+];
+
+const STAGE_ORDER = PIPELINE_STAGES.map(s => s.id);
+
+// Journey stage actions
+const STAGE_ACTIONS = {
+    lead: [{ id: 'mark_contacted', label: 'Mark Contacted', primary: true }],
+    initial_call: [
+        { id: 'schedule_call', label: 'Schedule Call' },
+        { id: 'complete_call', label: 'Mark Complete', primary: true }
+    ],
+    application: [
+        { id: 'view_application', label: 'View Application' },
+        { id: 'complete_review', label: 'Complete Review', primary: true }
+    ],
+    interview: [
+        { id: 'schedule_interview', label: 'Schedule Interview' },
+        { id: 'complete_interview', label: 'Complete', primary: true }
+    ],
+    approved: [{ id: 'approve', label: 'Confirm Approval', primary: true }],
+    paid: [
+        { id: 'send_stripe_link', label: 'Send Stripe Link', primary: true },
+        { id: 'mark_paid', label: 'Mark as Paid' }
+    ],
+    confirmed: [{ id: 'send_course_link', label: 'Send Course Link', primary: true }],
+};
+
+// ===== State =====
+let allApplicants = [];      // from applicants table
+let allApplications = [];    // from applications table
+let mergedParticipants = [];  // combined & normalized
+let trainings = [];
+let currentFilter = 'all';
+let searchQuery = '';
+
+// ===== Status Mapping =====
+// Map various status strings to pipeline stages
+function mapToPipelineStage(participant) {
+    const appStatus = (participant.app_status || '').toLowerCase().replace(/\s+/g, '_');
+    const acceptance = (participant.acceptance || '').toLowerCase();
+    const paymentStatus = (participant.payment_status || '').toLowerCase().replace(/\s+/g, '_');
+    const regStatus = (participant.registration_status || '').toLowerCase();
+    const formStatus = (participant.form_status || '').toLowerCase();
+
+    // Check payment/registration first (most advanced)
+    if (regStatus === 'complete' || regStatus === 'confirmed') return 'confirmed';
+    if (paymentStatus === 'paid_in_full' || paymentStatus === 'paid') return 'paid';
+    if (paymentStatus === 'deposit_paid') return 'paid';
+
+    // Check acceptance
+    if (acceptance === 'accepted' || appStatus === 'accepted') return 'approved';
+
+    // Check interview stages
+    if (appStatus === 'interview_complete') return 'approved';
+    if (appStatus === 'interview_scheduled' || appStatus === 'interview') return 'interview';
+
+    // Check application stages
+    if (appStatus === 'under_review') return 'application';
+    if (appStatus === 'received' || formStatus === 'submitted') return 'application';
+
+    // For applications table entries with a status
+    if (formStatus === 'submitted' || formStatus === 'received') return 'application';
+
+    // Default: if they have an application record but no explicit status
+    if (participant._source === 'applications') return 'application';
+
+    return 'lead';
+}
+
+// ===== Data Loading =====
+async function loadTrainings() {
+    const { data, error } = await supabase
+        .from('trainings')
+        .select('id, name, start_date, end_date, location, status, price')
+        .order('start_date', { ascending: false });
+
+    if (error) {
+        console.error('Error loading trainings:', error);
+        return;
     }
 
-    /* ── DASHBOARD VIEW ── */
-    function DashboardView({ applications, onSelectApp, onSignOut, onRefresh }) {
-      const [filter, setFilter] = useState('all');
-      const [search, setSearch] = useState('');
+    trainings = data || [];
+    const select = document.getElementById('trainingFilter');
+    select.innerHTML = '<option value="all">All Trainings</option>';
+    trainings.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name || `Training ${t.id.slice(0, 8)}`;
+        select.appendChild(opt);
+    });
+}
 
-      const filtered = useMemo(() => {
-        let list = applications;
-        if (filter !== 'all') {
-          list = list.filter(a => a.status === filter);
-        }
-        if (search.trim()) {
-          const q = search.toLowerCase();
-          list = list.filter(a =>
-            (a.first_name || '').toLowerCase().includes(q) ||
-            (a.last_name || '').toLowerCase().includes(q) ||
-            (a.preferred_name || '').toLowerCase().includes(q) ||
-            (a.email || '').toLowerCase().includes(q)
-          );
-        }
-        return list;
-      }, [applications, filter, search]);
+async function loadApplicants() {
+    const { data, error } = await supabase
+        .from('applicants')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      const counts = useMemo(() => {
-        const c = { all: applications.length };
-        STATUS_OPTIONS.forEach(s => { c[s] = applications.filter(a => a.status === s).length; });
-        return c;
-      }, [applications]);
-
-      return (
-        <div>
-          <NavBar isAdmin onSignOut={onSignOut} />
-          <div className="dash-container fade-in">
-            <div className="dash-header">
-              <div>
-                <div className="dash-title">Applications</div>
-                <div className="dash-subtitle">{applications.length} total application{applications.length !== 1 ? 's' : ''}</div>
-              </div>
-              <button className="btn-continue" onClick={onRefresh} style={{padding: '8px 20px', fontSize: '13px'}}>
-                Refresh
-              </button>
-            </div>
-
-            <div className="stats-row">
-              <div className="stat-card">
-                <div className="stat-number">{counts.all}</div>
-                <div className="stat-label">Total</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number" style={{color: 'var(--info)'}}>{counts.submitted || 0}</div>
-                <div className="stat-label">Submitted</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number" style={{color: 'var(--brand-amber)'}}>{counts.under_review || 0}</div>
-                <div className="stat-label">Under Review</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number" style={{color: 'var(--brand-purple)'}}>{counts.interview_scheduled || 0}</div>
-                <div className="stat-label">Interview</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number" style={{color: 'var(--success)'}}>{(counts.interview_approved || 0) + (counts.accepted || 0)}</div>
-                <div className="stat-label">Approved</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-number" style={{color: 'var(--brand-red)'}}>{counts.rejected || 0}</div>
-                <div className="stat-label">Rejected</div>
-              </div>
-            </div>
-
-            <div className="filter-bar">
-              <input
-                className="search-input"
-                placeholder="Search by name or email..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <div className={`filter-chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
-                All ({counts.all})
-              </div>
-              {STATUS_OPTIONS.filter(s => counts[s] > 0).map(s => (
-                <div
-                  key={s}
-                  className={`filter-chip ${filter === s ? 'active' : ''}`}
-                  onClick={() => setFilter(s)}
-                >
-                  {statusLabel(s)} ({counts[s]})
-                </div>
-              ))}
-            </div>
-
-            {filtered.length > 0 ? (
-              <div className="app-table">
-                <div className="app-table-header">
-                  <span>Name</span>
-                  <span>Email</span>
-                  <span>Level</span>
-                  <span>Status</span>
-                  <span>Date</span>
-                </div>
-                {filtered.map(app => (
-                  <div key={app.id} className="app-row" onClick={() => onSelectApp(app)}>
-                    <div className="app-row-name">
-                      {app.preferred_name || app.first_name} {app.last_name}
-                    </div>
-                    <div className="app-row-email">{app.email}</div>
-                    <div className="app-row-level">{app.training_level || '—'}</div>
-                    <div>
-                      <span className={`status-badge ${statusClass(app.status)}`}>
-                        {statusLabel(app.status)}
-                      </span>
-                    </div>
-                    <div className="app-row-date">{formatDate(app.created_at)}</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div className="empty-state-icon">&#128203;</div>
-                <p style={{fontSize: '16px', fontWeight: 500}}>No applications found</p>
-                <p style={{fontSize: '13px', marginTop: '4px'}}>
-                  {search ? 'Try a different search term.' : 'No applications match this filter.'}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      );
+    if (error) {
+        console.error('Error loading applicants:', error);
+        return [];
     }
+    return (data || []).map(a => ({
+        ...a,
+        _source: 'applicants',
+        _source_label: 'Admin',
+        first_name: a.name ? a.name.split(' ')[0] : '',
+        last_name: a.name ? a.name.split(' ').slice(1).join(' ') : '',
+        full_name: a.name || 'Unknown',
+    }));
+}
 
-    /* ── LOADING VIEW ── */
-    function LoadingView() {
-      return (
-        <div>
-          <NavBar />
-          <div style={{textAlign: 'center', marginTop: '120px'}}>
-            <div className="spinner" style={{width: '28px', height: '28px'}}></div>
-            <p style={{marginTop: '16px', color: 'var(--text-secondary)', fontSize: '14px'}}>Loading...</p>
-          </div>
-        </div>
-      );
+async function loadApplications() {
+    const { data, error } = await supabase
+        .from('applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error loading applications:', error);
+        return [];
     }
+    return (data || []).map(a => ({
+        ...a,
+        _source: 'applications',
+        _source_label: a.created_at && new Date(a.created_at) > new Date('2025-01-01') ? 'Website' : 'JotForm',
+        full_name: [a.first_name, a.last_name].filter(Boolean).join(' ') || 'Unknown',
+        form_status: a.status || '',
+    }));
+}
 
-    /* ── MAIN APP ── */
-    function App() {
-      const [view, setView] = useState('loading');
-      const [session, setSession] = useState(null);
-      const [applications, setApplications] = useState([]);
-      const [selectedApp, setSelectedApp] = useState(null);
-      const [pendingEmail, setPendingEmail] = useState('');
+// Merge applicants + applications by email, keeping the richest record
+function mergeParticipants(applicants, applications) {
+    const byEmail = {};
 
-      useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session: s } }) => {
-          if (s) {
-            setSession(s);
-            checkAdmin(s.user);
-          } else {
-            setView('login');
-          }
-        });
+    // First, add all applicants
+    applicants.forEach(a => {
+        const email = (a.email || '').toLowerCase();
+        if (email) byEmail[email] = { ...a };
+    });
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
-          if (event === 'SIGNED_IN' && s) {
-            setSession(s);
-            checkAdmin(s.user);
-          }
-          if (event === 'SIGNED_OUT') {
-            setSession(null);
-            setApplications([]);
-            setSelectedApp(null);
-            setView('login');
-          }
-        });
+    // Then, merge applications (richer data wins)
+    applications.forEach(a => {
+        const email = (a.email || '').toLowerCase();
+        if (!email) return;
 
-        return () => subscription.unsubscribe();
-      }, []);
-
-      const checkAdmin = async (user) => {
-        setView('loading');
-        try {
-          const { data: isAdmin, error } = await supabase.rpc('has_role', {
-            _user_id: user.id,
-            _role: 'admin'
-          });
-
-          if ((error || !isAdmin) && user.email !== 'laelaml@gmail.com') {
-            setView('not-admin');
-            return;
-          }
-
-          await loadApplications();
-          setView('dashboard');
-        } catch (err) {
-          console.error('Admin check failed:', err); if (user.email === 'laelaml@gmail.com') { await loadApplications(); setView('dashboard'); return; }
-          setView('not-admin');
+        if (byEmail[email]) {
+            // Merge: keep applicants admin fields, add applications detail fields
+            byEmail[email] = {
+                ...byEmail[email],
+                ...a,
+                // Preserve admin statuses if they exist
+                app_status: byEmail[email].app_status || a.status || '',
+                acceptance: byEmail[email].acceptance || '',
+                payment_status: byEmail[email].payment_status || '',
+                registration_status: byEmail[email].registration_status || '',
+                admin_notes: byEmail[email].notes || a.admin_notes || '',
+                training_id: byEmail[email].training_id || a.retreat_id || '',
+                _source: 'merged',
+                _source_label: 'Both',
+                full_name: byEmail[email].full_name || a.full_name,
+            };
+        } else {
+            byEmail[email] = { ...a };
         }
-      };
+    });
 
-      const loadApplications = async () => {
-        try {
-          const { data, error } = await supabase
-            .from('applications')
-            .select('*')
-            .order('created_at', { ascending: false });
+    const result = Object.values(byEmail);
 
-          if (error) throw error;
-          setApplications(data || []);
-        } catch (err) {
-          console.error('Failed to load applications:', err);
-        }
-      };
+    // Assign pipeline stage
+    result.forEach(p => {
+        p.pipeline_stage = mapToPipelineStage(p);
+    });
 
-      const handleRefresh = async () => {
-        await loadApplications();
-      };
+    return result;
+}
 
-      const handleSendLink = (email) => {
-        setPendingEmail(email);
-        setView('check-email');
-      };
+async function refreshData() {
+    showToast('Refreshing data...', 'info');
 
-      const handleSignOut = async () => {
-        await supabase.auth.signOut();
-      };
+    try {
+        await loadTrainings();
+        const [applicants, applications] = await Promise.all([
+            loadApplicants(),
+            loadApplications()
+        ]);
 
-      const handleSelectApp = (app) => {
-        setSelectedApp(app);
-        setView('detail');
-      };
+        allApplicants = applicants;
+        allApplications = applications;
+        mergedParticipants = mergeParticipants(applicants, applications);
 
-      const handleBackToDashboard = () => {
-        setSelectedApp(null);
-        setView('dashboard');
-      };
+        applyFilters();
+        showToast(`Loaded ${mergedParticipants.length} participants`, 'success');
+    } catch (err) {
+        console.error('Error refreshing data:', err);
+        showToast('Error loading data', 'error');
+    }
+}
 
-      const handleStatusChange = (appId, newStatus) => {
-        setApplications(prev =>
-          prev.map(a => a.id === appId ? { ...a, status: newStatus } : a)
+// ===== Filtering =====
+function applyFilters() {
+    let filtered = [...mergedParticipants];
+
+    // Training filter
+    if (currentFilter !== 'all') {
+        filtered = filtered.filter(p =>
+            p.training_id === currentFilter || p.retreat_id === currentFilter
         );
-      };
-
-      return (
-        <div>
-          {view === 'loading' && <LoadingView />}
-          {view === 'login' && <LoginView onSendLink={handleSendLink} />}
-          {view === 'check-email' && (
-            <CheckEmailView email={pendingEmail} onBack={() => setView('login')} />
-          )}
-          {view === 'not-admin' && (
-            <NotAdminView email={session?.user?.email || ''} onSignOut={handleSignOut} />
-          )}
-          {view === 'dashboard' && (
-            <DashboardView
-              applications={applications}
-              onSelectApp={handleSelectApp}
-              onSignOut={handleSignOut}
-              onRefresh={handleRefresh}
-            />
-          )}
-          {view === 'detail' && selectedApp && (
-            <ApplicationDetail
-              app={selectedApp}
-              onBack={handleBackToDashboard}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-        </div>
-      );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+    // Search filter
+    if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(p =>
+            (p.full_name || '').toLowerCase().includes(q) ||
+            (p.email || '').toLowerCase().includes(q) ||
+            (p.phone || '').toLowerCase().includes(q)
+        );
+    }
+
+    renderKPIs(filtered);
+    renderPipeline(filtered);
+    renderTable(filtered);
+    renderApplications(filtered);
+}
+
+// ===== Rendering: KPIs =====
+function renderKPIs(participants) {
+    const total = participants.length;
+    const active = participants.filter(p => !['confirmed', 'lead'].includes(p.pipeline_stage)).length;
+    const confirmed = participants.filter(p => p.pipeline_stage === 'confirmed').length;
+    const paid = participants.filter(p => ['paid', 'confirmed'].includes(p.pipeline_stage)).length;
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newThisWeek = participants.filter(p => p.created_at && new Date(p.created_at) > oneWeekAgo).length;
+
+    document.getElementById('kpiTotal').textContent = total;
+    document.getElementById('kpiTotalSub').textContent = `Across ${trainings.length} trainings`;
+    document.getElementById('kpiActive').textContent = active;
+    document.getElementById('kpiActiveSub').textContent = `In pipeline`;
+    document.getElementById('kpiConfirmed').textContent = confirmed;
+    document.getElementById('kpiConfirmedSub').textContent = 'Fully confirmed';
+    document.getElementById('kpiPaid').textContent = paid;
+    document.getElementById('kpiPaidSub').textContent = 'Payment received';
+    document.getElementById('kpiNew').textContent = newThisWeek;
+    document.getElementById('kpiNewSub').textContent = 'Last 7 days';
+}
+
+// ===== Rendering: Pipeline =====
+function renderPipeline(participants) {
+    const container = document.getElementById('pipelineContainer');
+
+    const html = PIPELINE_STAGES.map(stage => {
+        const stageParticipants = participants.filter(p => p.pipeline_stage === stage.id);
+        const cards = stageParticipants.map(p => `
+            <div class="participant-card" onclick="openModal('${p.email}')">
+                <div class="participant-name">${escapeHtml(p.full_name)}</div>
+                <div class="participant-email">${escapeHtml(p.email || '')}</div>
+                <div class="participant-meta">
+                    ${p._source_label ? `<span class="source-tag ${p._source_label === 'JotForm' ? 'source-jotform' : p._source_label === 'Website' ? 'source-website' : 'source-manual'}">${p._source_label}</span>` : ''}
+                    ${p.created_at ? `<span>📅 ${new Date(p.created_at).toLocaleDateString()}</span>` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        return `
+            <div class="pipeline-column">
+                <div class="pipeline-col-header ${stage.borderClass}">
+                    <h3>${stage.icon} ${stage.name}</h3>
+                    <span class="pipeline-col-count">${stageParticipants.length}</span>
+                </div>
+                <div class="pipeline-cards">
+                    ${cards || `<div class="empty-state" style="padding: 1rem;"><p style="font-size: 0.75rem; opacity: 0.5;">No participants</p></div>`}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = html;
+}
+
+// ===== Rendering: Table =====
+function renderTable(participants) {
+    const container = document.getElementById('tableContainer');
+
+    if (participants.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="emoji">📋</div><p>No participants found</p></div>`;
+        return;
+    }
+
+    const rows = participants.map(p => {
+        const stage = PIPELINE_STAGES.find(s => s.id === p.pipeline_stage) || PIPELINE_STAGES[0];
+        const sourceClass = p._source_label === 'JotForm' ? 'source-jotform' : p._source_label === 'Website' ? 'source-website' : 'source-manual';
+        return `
+            <tr onclick="openModal('${escapeHtml(p.email)}')">
+                <td><strong>${escapeHtml(p.full_name)}</strong></td>
+                <td>${escapeHtml(p.email || '')}</td>
+                <td>${escapeHtml(p.phone || '—')}</td>
+                <td><span class="status-badge badge-${p.pipeline_stage}">${stage.icon} ${stage.name}</span></td>
+                <td>${p.app_status ? `<span class="status-badge badge-${(p.app_status || '').toLowerCase().replace(/\s+/g, '_')}">${escapeHtml(p.app_status)}</span>` : '—'}</td>
+                <td><span class="source-tag ${sourceClass}">${p._source_label || '—'}</span></td>
+                <td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</td>
+                <td>
+                    <button class="glass-btn glass-btn-sm" onclick="event.stopPropagation(); emailParticipant('${escapeHtml(p.email)}', '${escapeHtml(p.full_name)}')">✉️</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Pipeline Stage</th>
+                    <th>App Status</th>
+                    <th>Source</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+// ===== Rendering: Full Applications =====
+function renderApplications(participants) {
+    const container = document.getElementById('applicationsContainer');
+    const apps = participants.filter(p => p._source === 'applications' || p._source === 'merged');
+
+    if (apps.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="emoji">📝</div><p>No full applications found.<br>New applications will appear here from <strong>stepwise.education/apply</strong></p></div>`;
+        return;
+    }
+
+    const rows = apps.map(p => `
+        <tr onclick="openModal('${escapeHtml(p.email)}')">
+            <td><strong>${escapeHtml(p.full_name)}</strong></td>
+            <td>${escapeHtml(p.email || '')}</td>
+            <td>${p.journey_work_experience ? '✅' : '—'}</td>
+            <td>${p.medicine_experience ? '✅' : '—'}</td>
+            <td>${p.physical_health_issues ? '✅' : '—'}</td>
+            <td>${p.mental_health_issues || p.dsm_diagnosis ? '✅' : '—'}</td>
+            <td><span class="status-badge badge-${(p.form_status || p.status || 'pending').toLowerCase()}">${escapeHtml(p.form_status || p.status || 'Submitted')}</span></td>
+            <td>${p.created_at ? new Date(p.created_at).toLocaleDateString() : '—'}</td>
+        </tr>
+    `).join('');
+
+    container.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Journey</th>
+                    <th>Medicine Exp</th>
+                    <th>Physical Health</th>
+                    <th>Mental Health</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+// ===== Modal =====
+function openModal(email) {
+    const p = mergedParticipants.find(x => x.email === email);
+    if (!p) return;
+
+    const initials = (p.full_name || '??').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+    // Header
+    document.getElementById('modalHeader').innerHTML = `
+        <div class="modal-header-info">
+            <div class="modal-avatar">${initials}</div>
+            <div>
+                <div class="modal-name">${escapeHtml(p.full_name)}</div>
+                <div class="modal-email">
+                    ${escapeHtml(p.email || '')}
+                    ${p.phone ? ` · ${escapeHtml(p.phone)}` : ''}
+                    ${p.signal_handle ? ` · Signal: ${escapeHtml(p.signal_handle)}` : ''}
+                </div>
+            </div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+    `;
+
+    // Body
+    let bodyHtml = '';
+
+    // Pipeline Journey
+    bodyHtml += `<div class="modal-section"><h3>📍 Pipeline Journey</h3><div class="journey-stages">`;
+    const currentIdx = STAGE_ORDER.indexOf(p.pipeline_stage);
+    PIPELINE_STAGES.forEach((stage, idx) => {
+        let stateClass = 'stage-upcoming';
+        let iconClass = 'upcoming';
+        let iconSymbol = '○';
+        if (idx < currentIdx) { stateClass = 'stage-completed'; iconClass = 'completed'; iconSymbol = '✓'; }
+        else if (idx === currentIdx) { stateClass = 'stage-current'; iconClass = 'current'; iconSymbol = '◉'; }
+
+        const actions = (idx === currentIdx) ? (STAGE_ACTIONS[stage.id] || []) : [];
+        const actionButtons = actions.map(a =>
+            `<button class="glass-btn glass-btn-sm ${a.primary ? 'glass-btn-primary' : ''}" onclick="handleStageAction('${p.email}', '${a.id}')">${a.label}</button>`
+        ).join('');
+
+        bodyHtml += `
+            <div class="journey-stage ${stateClass}">
+                <div class="stage-icon ${iconClass}">${iconSymbol}</div>
+                <div>
+                    <div class="stage-name">${stage.icon} ${stage.name}</div>
+                    <div class="stage-desc">${getStageDescription(stage.id)}</div>
+                    ${actionButtons ? `<div class="stage-actions">${actionButtons}</div>` : ''}
+                </div>
+            </div>
+            ${idx < PIPELINE_STAGES.length - 1 ? '<div class="journey-connector"></div>' : ''}
+        `;
+    });
+    bodyHtml += '</div></div>';
+
+    // Contact Info
+    bodyHtml += `<div class="modal-section"><h3>📇 Contact Information</h3><div class="detail-grid">`;
+    const contactFields = [
+        ['Email', p.email],
+        ['Phone', p.phone],
+        ['Signal', p.signal_handle],
+        ['Address', [p.street_address, p.city, p.state_province, p.postal_code, p.country].filter(Boolean).join(', ')],
+        ['Birth Date', p.birth_date],
+        ['Emergency Contact', [p.emergency_first_name, p.emergency_last_name].filter(Boolean).join(' ')],
+        ['Emergency Phone', p.emergency_contact_phone || p.emergency_phone],
+    ];
+    contactFields.forEach(([label, value]) => {
+        if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
+    });
+    bodyHtml += '</div></div>';
+
+    // Admin Status
+    bodyHtml += `<div class="modal-section"><h3>🏷️ Status & Classification</h3><div class="detail-grid">`;
+    const statusFields = [
+        ['Pipeline Stage', p.pipeline_stage ? PIPELINE_STAGES.find(s => s.id === p.pipeline_stage)?.name : '—'],
+        ['App Status', p.app_status],
+        ['Acceptance', p.acceptance],
+        ['Payment Status', p.payment_status],
+        ['Registration', p.registration_status],
+        ['Source', p._source_label],
+    ];
+    statusFields.forEach(([label, value]) => {
+        if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
+    });
+    bodyHtml += '</div></div>';
+
+    // Application Details (if from applications table)
+    if (p._source === 'applications' || p._source === 'merged') {
+        bodyHtml += `<div class="modal-section"><h3>📝 Application Details</h3><div class="detail-grid">`;
+        const appFields = [
+            ['Journey/Work Experience', p.journey_work_experience],
+            ['Medicine Experience', p.medicine_experience],
+            ['Serving Experience', p.serving_experience],
+            ['Life Circumstances', p.life_circumstances],
+            ['Integration Support', p.integration_support],
+            ['Physical Health Issues', p.physical_health_issues],
+            ['Medications (Physical)', p.physical_medications],
+            ['Supplements', p.supplements],
+            ['Allergies', p.allergies],
+            ['Dietary Preferences', Array.isArray(p.dietary_preferences) ? p.dietary_preferences.join(', ') : p.dietary_preferences],
+            ['DSM Diagnosis', p.dsm_diagnosis],
+            ['Mental Health Issues', p.mental_health_issues],
+            ['Psych Medications', p.psych_medications],
+            ['Recreational Drug Use', p.recreational_drug_use],
+            ['Stress Level', p.stress_level ? `${p.stress_level}/10` : null],
+            ['Training Goals', p.training_goals],
+            ['Strengths & Hobbies', p.strengths_hobbies],
+        ];
+        appFields.forEach(([label, value]) => {
+            if (value) bodyHtml += `<div class="detail-item"><label>${label}</label><span>${escapeHtml(String(value))}</span></div>`;
+        });
+        bodyHtml += '</div></div>';
+    }
+
+    // Notes
+    bodyHtml += `
+        <div class="modal-section">
+            <h3>📝 Admin Notes</h3>
+            <textarea class="notes-area" id="modalNotes" placeholder="Add notes about this participant...">${escapeHtml(p.admin_notes || p.notes || '')}</textarea>
+            <button class="glass-btn glass-btn-sm" style="margin-top: 0.5rem;" onclick="saveNotes('${p.email}')">Save Notes</button>
+        </div>
+    `;
+
+    // Protonmail Quick Email
+    bodyHtml += `
+        <div class="modal-section">
+            <h3>✉️ Send Email (via Protonmail)</h3>
+            <div class="email-compose">
+                <input class="glass-input" id="emailSubject" placeholder="Subject..." style="margin-bottom: 0.5rem;">
+                <textarea id="emailBody" placeholder="Write your message...">${getEmailTemplate(p)}</textarea>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <button class="glass-btn glass-btn-primary glass-btn-sm" onclick="sendEmail('${escapeHtml(p.email)}')">Open in Protonmail</button>
+                    <button class="glass-btn glass-btn-sm" onclick="copyEmail('${escapeHtml(p.email)}')">Copy Email</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('modalBody').innerHTML = bodyHtml;
+
+    // Footer
+    document.getElementById('modalFooter').innerHTML = `
+        <div class="modal-footer-left">
+            <button class="glass-btn glass-btn-sm" onclick="emailParticipant('${escapeHtml(p.email)}', '${escapeHtml(p.full_name)}')">✉️ Email</button>
+            ${p.phone ? `<button class="glass-btn glass-btn-sm" onclick="window.open('tel:${escapeHtml(p.phone)}')">📞 Call</button>` : ''}
+        </div>
+        <div class="modal-footer-right">
+            <button class="glass-btn glass-btn-sm" onclick="closeModal()">Close</button>
+            <button class="glass-btn glass-btn-sm glass-btn-primary" onclick="advanceStage('${p.email}')">Advance Stage ➡️</button>
+        </div>
+    `;
+
+    document.getElementById('modalBackdrop').classList.add('open');
+}
+
+function closeModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('modalBackdrop').classList.remove('open');
+}
+
+// ===== Stage Management =====
+function getStageDescription(stageId) {
+    const descs = {
+        lead: 'Initial contact logged in the system',
+        initial_call: 'Schedule and complete discovery call',
+        application: 'Review submitted application materials',
+        interview: 'Conduct interview with the participant',
+        approved: 'Participant approved for the retreat',
+        paid: 'Send payment link and process payment',
+        confirmed: 'Send course materials and finalize enrollment',
+    };
+    return descs[stageId] || '';
+}
+
+async function handleStageAction(email, actionId) {
+    const p = mergedParticipants.find(x => x.email === email);
+    if (!p) return;
+
+    switch (actionId) {
+        case 'send_stripe_link':
+            // Open Protonmail compose with payment link
+            const paySubject = encodeURIComponent('StepWise Training — Payment Link');
+            const payBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nThank you for your application to StepWise Training! You have been approved.\n\nPlease use the following link to complete your payment:\n[Payment Link will be inserted here]\n\nIf you have any questions, please don't hesitate to reach out.\n\nWarm regards,\nStepWise Training Team`);
+            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${paySubject}&body=${payBody}`, '_blank');
+            showToast('Opening Protonmail to send payment link...', 'info');
+            break;
+
+        case 'send_course_link':
+            const courseSubject = encodeURIComponent('StepWise Training — Course Access');
+            const courseBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nCongratulations! You are confirmed for your StepWise Training retreat.\n\nHere is your link to access the pre-training course materials:\nhttps://stepwise.education/portal/course\n\nPlease complete the online modules before your retreat start date.\n\nWarm regards,\nStepWise Training Team`);
+            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${courseSubject}&body=${courseBody}`, '_blank');
+            showToast('Opening Protonmail to send course link...', 'info');
+            break;
+
+        case 'mark_contacted':
+        case 'complete_call':
+        case 'complete_review':
+        case 'complete_interview':
+        case 'approve':
+        case 'mark_paid':
+            await advanceStage(email);
+            break;
+
+        case 'schedule_call':
+        case 'schedule_interview':
+            const schedSubject = encodeURIComponent(`StepWise Training — ${actionId === 'schedule_call' ? 'Discovery Call' : 'Interview'} Scheduling`);
+            const schedBody = encodeURIComponent(`Hi ${p.first_name || p.full_name},\n\nThank you for your interest in StepWise Training.\n\nI'd like to schedule a ${actionId === 'schedule_call' ? 'discovery call' : 'interview'} with you. Would any of the following times work?\n\n- \n- \n- \n\nPlease let me know what works best for you.\n\nWarm regards,\nStepWise Training Team`);
+            window.open(`https://mail.proton.me/u/0/compose?to=${p.email}&subject=${schedSubject}&body=${schedBody}`, '_blank');
+            showToast('Opening Protonmail for scheduling...', 'info');
+            break;
+
+        case 'view_application':
+            // Already in the modal, just scroll to application details
+            const appSection = document.querySelector('.modal-section:nth-child(4)');
+            if (appSection) appSection.scrollIntoView({ behavior: 'smooth' });
+            break;
+    }
+}
+
+async function advanceStage(email) {
+    const p = mergedParticipants.find(x => x.email === email);
+    if (!p) return;
+
+    const currentIdx = STAGE_ORDER.indexOf(p.pipeline_stage);
+    if (currentIdx >= STAGE_ORDER.length - 1) {
+        showToast('Already at final stage', 'info');
+        return;
+    }
+
+    const nextStage = STAGE_ORDER[currentIdx + 1];
+    const nextStageName = PIPELINE_STAGES[currentIdx + 1]?.name;
+
+    // Map pipeline stages back to applicants table status values
+    const statusMap = {
+        initial_call: { app_status: 'Under Review' },
+        application: { app_status: 'Received' },
+        interview: { app_status: 'Interview Scheduled' },
+        approved: { app_status: 'Accepted', acceptance: 'Accepted' },
+        paid: { payment_status: 'Paid in Full' },
+        confirmed: { registration_status: 'Complete' },
+    };
+
+    const updates = statusMap[nextStage] || {};
+
+    // Try to update the applicants table
+    if (p.training_id || p._source === 'applicants' || p._source === 'merged') {
+        const { error } = await supabase
+            .from('applicants')
+            .update(updates)
+            .eq('email', email);
+
+        if (error) {
+            console.warn('Could not update applicants table:', error.message);
+        }
+    }
+
+    // Update local state
+    p.pipeline_stage = nextStage;
+    Object.assign(p, updates);
+
+    showToast(`${p.full_name} advanced to ${nextStageName}`, 'success');
+    applyFilters();
+    openModal(email); // Refresh modal
+}
+
+// ===== Email Functions =====
+function getEmailTemplate(participant) {
+    return `Hi ${participant.first_name || participant.full_name},\n\nThank you for your interest in StepWise Training.\n\n\n\nWarm regards,\nStepWise Training Team`;
+}
+
+function emailParticipant(email, name) {
+    const subject = encodeURIComponent('StepWise Training — Follow Up');
+    const body = encodeURIComponent(`Hi ${name ? name.split(' ')[0] : ''},\n\nThank you for your interest in StepWise Training.\n\n\n\nWarm regards,\nStepWise Training Team`);
+    window.open(`https://mail.proton.me/u/0/compose?to=${email}&subject=${subject}&body=${body}`, '_blank');
+}
+
+function sendEmail(email) {
+    const subject = encodeURIComponent(document.getElementById('emailSubject')?.value || 'StepWise Training');
+    const body = encodeURIComponent(document.getElementById('emailBody')?.value || '');
+    window.open(`https://mail.proton.me/u/0/compose?to=${email}&subject=${subject}&body=${body}`, '_blank');
+}
+
+function copyEmail(email) {
+    navigator.clipboard.writeText(email).then(() => {
+        showToast('Email copied to clipboard', 'success');
+    });
+}
+
+// ===== Notes =====
+async function saveNotes(email) {
+    const notes = document.getElementById('modalNotes')?.value || '';
+
+    // Try updating applicants table
+    const { error } = await supabase
+        .from('applicants')
+        .update({ notes: notes })
+        .eq('email', email);
+
+    if (error) {
+        // Try applications table
+        const { error: err2 } = await supabase
+            .from('applications')
+            .update({ admin_notes: notes })
+            .eq('email', email);
+
+        if (err2) {
+            showToast('Could not save notes (check RLS policies)', 'error');
+            return;
+        }
+    }
+
+    // Update local state
+    const p = mergedParticipants.find(x => x.email === email);
+    if (p) {
+        p.admin_notes = notes;
+        p.notes = notes;
+    }
+
+    showToast('Notes saved', 'success');
+}
+
+// ===== Tab Navigation =====
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+    document.getElementById(`tab-${tabId}`)?.classList.add('active');
+}
+
+// ===== Toast Notifications =====
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+}
+
+// ===== Utilities =====
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ===== Event Listeners =====
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    applyFilters();
+});
+
+document.getElementById('trainingFilter').addEventListener('change', (e) => {
+    currentFilter = e.target.value;
+    applyFilters();
+});
+
+// Keyboard shortcut: Escape to close modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+});
+
+// ===== Real-time Subscription =====
+function setupRealtime() {
+    supabase
+        .channel('applications-changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, (payload) => {
+            console.log('Applications change:', payload);
+            showToast('New application data received!', 'info');
+            refreshData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'applicants' }, (payload) => {
+            console.log('Applicants change:', payload);
+            showToast('Applicant data updated!', 'info');
+            refreshData();
+        })
+        .subscribe();
+}
+
+// ===== Initialize =====
+async function init() {
+    await refreshData();
+    setupRealtime();
+}
+
+init();
+    </script>
 </body>
 </html>
