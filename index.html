@@ -950,16 +950,17 @@
             }
         }
     </style>
-</head><body>
+</head>
+<body>
     <div class="container">
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="sidebar-logo">
                 <span style="font-size: 0.95rem;">SW</span>
                 <div class="logo-dots">
-                    <span style="color: var(--brand-yellow);">●</span>
-                    <span style="color: var(--brand-orange);">●</span>
-                    <span style="color: var(--brand-purple);">●</span>
+                    <span style="color: var(--brand-yellow);">â</span>
+                    <span style="color: var(--brand-orange);">â</span>
+                    <span style="color: var(--brand-purple);">â</span>
                 </div>
             </div>
 
@@ -967,19 +968,19 @@
             <div class="nav-group">
                 <div class="nav-group-title">Main</div>
                 <div class="nav-item active" data-page="dashboard">
-                    <span class="nav-item-icon">📈</span>
+                    <span class="nav-item-icon">ð</span>
                     <span>Dashboard</span>
                 </div>
                 <div class="nav-item" data-page="trainings">
-                    <span class="nav-item-icon">🎓</span>
+                    <span class="nav-item-icon">ð</span>
                     <span>Trainings</span>
                 </div>
                 <div class="nav-item" data-page="participants">
-                    <span class="nav-item-icon">👥</span>
+                    <span class="nav-item-icon">ð¥</span>
                     <span>Participants</span>
                 </div>
                 <div class="nav-item" data-page="courses">
-                    <span class="nav-item-icon">📚</span>
+                    <span class="nav-item-icon">ð</span>
                     <span>Courses</span>
                 </div>
             </div>
@@ -988,11 +989,11 @@
             <div class="nav-group">
                 <div class="nav-group-title">Ops</div>
                 <div class="nav-item" data-page="shipping">
-                    <span class="nav-item-icon">📦</span>
+                    <span class="nav-item-icon">ð¦</span>
                     <span>Shipping</span>
                 </div>
                 <div class="nav-item" data-page="communications">
-                    <span class="nav-item-icon">✉️</span>
+                    <span class="nav-item-icon">âï¸</span>
                     <span>Communications</span>
                 </div>
             </div>
@@ -1001,7 +1002,7 @@
             <div class="nav-group">
                 <div class="nav-group-title">Admin</div>
                 <div class="nav-item" data-page="settings">
-                    <span class="nav-item-icon">⚙️</span>
+                    <span class="nav-item-icon">âï¸</span>
                     <span>Settings</span>
                 </div>
             </div>
@@ -1017,8 +1018,8 @@
                     </div>
                 </div>
                 <div class="navbar-right">
-                    <button class="btn-icon" title="Notifications">🔔</button>
-                    <button class="btn-icon" title="User">👤</button>
+                    <button class="btn-icon" title="Notifications">ð</button>
+                    <button class="btn-icon" title="User">ð¤</button>
                 </div>
             </div>
 
@@ -1233,7 +1234,7 @@
     <div class="side-panel" id="sidePanel">
         <div class="panel-header">
             <div class="panel-title" id="panelTitle">Details</div>
-            <button class="panel-close" onclick="closeSidePanel()">✕</button>
+            <button class="panel-close" onclick="closeSidePanel()">â</button>
         </div>
         <div class="panel-content" id="panelContent">
             <!-- Populated by JS -->
@@ -1246,7 +1247,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Add/Edit Training</div>
-                <button class="modal-close" onclick="closeModal('trainingModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('trainingModal')">â</button>
             </div>
             <form onsubmit="saveTraining(event)">
                 <input type="hidden" id="trainingId">
@@ -1288,7 +1289,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Add/Edit Participant</div>
-                <button class="modal-close" onclick="closeModal('participantModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('participantModal')">â</button>
             </div>
             <form onsubmit="saveParticipant(event)">
                 <input type="hidden" id="participantId">
@@ -1329,7 +1330,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Add/Edit Course</div>
-                <button class="modal-close" onclick="closeModal('courseModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('courseModal')">â</button>
             </div>
             <form onsubmit="saveCourse(event)">
                 <input type="hidden" id="courseId">
@@ -1355,7 +1356,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Add Shipment</div>
-                <button class="modal-close" onclick="closeModal('shipmentModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('shipmentModal')">â</button>
             </div>
             <form onsubmit="saveShipment(event)">
                 <div class="form-group">
@@ -1388,7 +1389,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Email Template</div>
-                <button class="modal-close" onclick="closeModal('emailTemplateModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('emailTemplateModal')">â</button>
             </div>
             <form onsubmit="saveEmailTemplate(event)">
                 <input type="hidden" id="emailTemplateId">
@@ -1427,7 +1428,7 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title">Send Outreach</div>
-                <button class="modal-close" onclick="closeModal('outreachModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('outreachModal')">â</button>
             </div>
             <form onsubmit="sendOutreach(event)">
                 <div class="form-group">
@@ -1455,6 +1456,7 @@
         <div class="status-dot" id="statusDot"></div>
         <span id="statusText">Connected</span>
     </div>
+
     <script>
         const SUPABASE_URL = 'https://ybludwecmqghoheotzzz.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlibHVkd2VjbXFnaG9oZW90enp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MzI4MzMsImV4cCI6MjA4NjAwODgzM30._wND5hmDkd4sh7clXaBPZP0lU-c6Traz0KzlYyPxKWk';
@@ -1505,13 +1507,9 @@
         }
 
         async function loadCourses() {
-            try {
-                const { data, error } = await db.from('courses').select('*');
-                if (error) throw error;
-                courses = data || [];
-            } catch (error) {
-                console.error('Error loading courses:', error);
-            }
+            // Course data is derived from applicants table (course_access JSONB, course_level)
+            // No separate courses table needed
+            courses = [];
         }
 
         async function loadEmailTemplates() {
@@ -1574,12 +1572,10 @@
             const totalTrainings = trainings.length;
             const totalApplicants = applicants.length;
             const activeTrainings = trainings.filter(t => {
-                const today = new Date();
-                const start = new Date(t.start_date);
                 const end = new Date(t.end_date);
-                return today >= start && today <= end;
+                return end >= new Date();
             }).length;
-            const completeApplicants = applicants.filter(a => a.stage === 'complete').length;
+            const completeApplicants = applicants.filter(a => a.pipeline_stage === 'complete').length;
 
             const kpiGrid = document.getElementById('kpiGrid');
             kpiGrid.innerHTML = `
@@ -1604,42 +1600,38 @@
 
         function renderDashboardTrainings() {
             const dashboardTrainings = document.getElementById('dashboardTrainings');
-            const activeTrainings = trainings.filter(t => {
-                const today = new Date();
-                const start = new Date(t.start_date);
-                const end = new Date(t.end_date);
-                return today >= start && today <= end;
-            }).slice(0, 3);
+            const upcomingTrainings = trainings.filter(t => new Date(t.end_date) >= new Date()).slice(0, 5);
 
-            dashboardTrainings.innerHTML = activeTrainings.map(t => {
+            dashboardTrainings.innerHTML = upcomingTrainings.length > 0 ? upcomingTrainings.map(t => {
                 const enrolled = applicants.filter(a => a.training_id === t.id).length;
-                const percent = enrolled > 0 ? Math.min(100, (enrolled / 20) * 100) : 0;
+                const capacity = t.max_capacity || 12;
+                const percent = Math.min(100, Math.round((enrolled / capacity) * 100));
                 return `
-                    <div class="training-card" onclick="toggleTrainingExpand('dash-${t.id}')">
+                    <div class="training-card" onclick="switchSection('trainings')">
                         <div class="training-card-header">
                             <div class="training-card-name">${t.name}</div>
-                            <span class="badge badge-primary">${t.level || 'Standard'}</span>
+                            <span class="badge badge-primary">${t.training_level || 'Standard'}</span>
                         </div>
                         <div class="training-card-meta">
-                            <span class="training-card-meta-item">📅 ${formatDate(t.start_date)}</span>
-                            <span class="training-card-meta-item">📍 ${t.location || 'TBA'}</span>
+                            <span class="training-card-meta-item">${formatDate(t.start_date)} - ${formatDate(t.end_date)}</span>
+                            <span class="training-card-meta-item">${t.location || 'TBA'}</span>
                         </div>
                         <div class="training-card-progress">
-                            <span>${enrolled} enrolled</span>
+                            <span>${enrolled}/${capacity} enrolled</span>
                             <div class="progress-bar">
                                 <div class="progress-bar-fill" style="width: ${percent}%"></div>
                             </div>
                         </div>
                     </div>
                 `;
-            }).join('');
+            }).join('') : '<p style="color:#6b7280;padding:1rem;">No upcoming trainings</p>';
         }
 
         function renderPipelineSnapshot() {
             const pipelineSnapshot = document.getElementById('pipelineSnapshot');
             const pipeline = {};
             STAGE_ORDER.forEach(stage => {
-                pipeline[stage] = applicants.filter(a => a.stage === stage).length;
+                pipeline[stage] = applicants.filter(a => (a.pipeline_stage || 'lead') === stage).length;
             });
 
             pipelineSnapshot.innerHTML = `
@@ -1647,7 +1639,7 @@
                     ${STAGE_ORDER.map(stage => `
                         <div style="text-align: center;">
                             <div style="font-size: 1.25rem; font-weight: 700; color: var(--brand-orange);">${pipeline[stage]}</div>
-                            <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: capitalize;">${stage.replace('_', ' ')}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary); text-transform: capitalize;">${stage.replace(/_/g, ' ')}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -1664,11 +1656,11 @@
                     <div class="training-card" onclick="toggleTrainingExpand('${t.id}')">
                         <div class="training-card-header">
                             <div class="training-card-name">${t.name}</div>
-                            <span class="badge badge-primary">${t.level || 'Standard'}</span>
+                            <span class="badge badge-primary">${t.training_level || 'Standard'}</span>
                         </div>
                         <div class="training-card-meta">
-                            <span class="training-card-meta-item">📅 ${formatDate(t.start_date)} - ${formatDate(t.end_date)}</span>
-                            <span class="training-card-meta-item">📍 ${t.location || 'TBA'}</span>
+                            <span class="training-card-meta-item">ð ${formatDate(t.start_date)} - ${formatDate(t.end_date)}</span>
+                            <span class="training-card-meta-item">ð ${t.location || 'TBA'}</span>
                         </div>
                         <div class="training-card-progress">
                             <span>${enrolled} enrolled</span>
@@ -1708,7 +1700,7 @@
                 document.getElementById('trainingStartDate').value = t.start_date;
                 document.getElementById('trainingEndDate').value = t.end_date;
                 document.getElementById('trainingLocation').value = t.location || '';
-                document.getElementById('trainingLevel').value = t.level || 'Beginner';
+                document.getElementById('trainingLevel').value = t.training_level || 'Beginner';
             }
         }
 
@@ -1747,13 +1739,13 @@
             const tbody = document.getElementById('participantsTableBody');
             tbody.innerHTML = applicants.map(p => {
                 const training = trainings.find(t => t.id === p.training_id);
-                const stageIndex = STAGE_ORDER.indexOf(p.stage);
+                const stageIndex = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
                 const stagePercent = ((stageIndex + 1) / STAGE_ORDER.length) * 100;
                 return `
                     <tr onclick="openParticipantPanel('${p.id}')" style="cursor:pointer;">
                         <td><strong>${p.name}</strong></td>
                         <td><small>${p.email}</small></td>
-                        <td><span class="badge badge-secondary">${p.stage.replace('_', ' ')}</span></td>
+                        <td><span class="badge badge-secondary">${(p.pipeline_stage || 'lead').replace(/_/g, ' ')}</span></td>
                         <td><small>${training?.name || 'N/A'}</small></td>
                         <td>
                             <div class="progress-bar" style="width: 100px; display: inline-block;">
@@ -1770,7 +1762,7 @@
             if (!p) return;
 
             const training = trainings.find(t => t.id === p.training_id);
-            const stageIndex = STAGE_ORDER.indexOf(p.stage);
+            const stageIndex = STAGE_ORDER.indexOf(p.pipeline_stage || 'lead');
             const stagePercent = ((stageIndex + 1) / STAGE_ORDER.length) * 100;
 
             document.getElementById('panelTitle').textContent = p.name;
@@ -1794,7 +1786,7 @@
                             <div class="progress-bar-fill" style="width: ${stagePercent}%"></div>
                         </div>
                         <div style="font-size: 0.8rem; color: var(--text-primary);">
-                            <strong>${p.stage.replace('_', ' ')}</strong>
+                            <strong>${(p.pipeline_stage || 'lead').replace(/_/g, ' ')}</strong>
                         </div>
                     </div>
                 </div>
@@ -1824,7 +1816,7 @@
                 document.getElementById('participantName').value = p.name;
                 document.getElementById('participantEmail').value = p.email;
                 document.getElementById('participantTraining').value = p.training_id || '';
-                document.getElementById('participantStage').value = p.stage;
+                document.getElementById('participantStage').value = p.pipeline_stage;
             }
         }
 
